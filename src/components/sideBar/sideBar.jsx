@@ -1,88 +1,93 @@
-import React from 'react'
+import React from 'react';
 import HomeIcon from '@mui/icons-material/Home';
-import { Grid2} from '@mui/material';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatIcon from '@mui/icons-material/Chat';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import Divider from '@mui/material/Divider';
+import Grid2 from '@mui/material/Grid2';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { useTheme as useCustomTheme } from '../../store/ThemeContext';
 
-function sideBar() {
+function Sidebar() {
+  const { darkMode } = useCustomTheme();
+
+  const bgColor = darkMode ? '#121212' : '#ffffff';
+  const textColor = darkMode ? '#ffffff' : '#000000';
+  const btnColor = darkMode ? '#121212' : '#ffffff';
+
+  const menuItems = [
+    { icon: <HomeIcon />, label: 'Home' },
+    { icon: <SearchIcon />, label: 'Search' },
+    { icon: <ChatIcon />, label: 'Messages' },
+    { icon: <AddBoxOutlinedIcon />, label: 'Create' },
+    { icon: <AccountCircleOutlinedIcon />, label: 'Profile' }
+  ];
+
   return (
-    <>
-    <Box  sx={{ flexGrow: 1 }}>
-      <Grid2 container direction='row'  alignItems='center'  sx={{backgroundColor: 'white', padding: '10px', position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 1}}>
+    <Box sx={{ flexGrow: 1 }}>
+      <Grid2
+        container
+        alignItems="center"
+        sx={{
+          bgcolor: bgColor,
+          color: textColor,
+          transition: 'all 0.3s ease-in-out',
+          padding: '10px',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          zIndex: 1
+        }}
+      >
         <Grid2 item>
-    <Card sx={{height: '100vh' ,position: 'fixed', top: '4.5rem', left: 0, zIndex: 1}} >
-    <CardContent>
-      <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
-        <Grid2  container direction='column'  alignItems='center' gap={3}>
-        <Grid2  item container direction='row'  alignItems='center' gap={3}>
-          <Grid2>
-            <HomeIcon/>
-          </Grid2>
-          <Grid2>
-          <button style={{backgroundColor: 'white',border: 'none', fontSize: '1.1rem',cursor: 'pointer', textDecoration: 'none'}}>
-              Home
-              </button>
-          </Grid2>
-          </Grid2>
-          <Grid2  container direction='row'  alignItems='center' gap={2}>
-          <Grid2>
-            <SearchIcon/>
-          </Grid2>
-          <Grid2>
-          <button style={{backgroundColor: 'white',border: 'none', fontSize: '1.1rem',cursor: 'pointer', textDecoration: 'none'}}>
-              Search
-              </button>
-          </Grid2>
-          </Grid2>
-          <Grid2  container direction='row'  alignItems='center' gap={2}>
-          <Grid2 >
-           <ChatIcon />
-          </Grid2>
-          <Grid2>
-          <button style={{backgroundColor: 'white',border: 'none',fontSize: '1rem',cursor: 'pointer'}}>
-              Messages
-              </button>
-          </Grid2>
-          </Grid2>
-          <Grid2  container direction='row'  alignItems='center' gap={2}>
-          <Grid2>
-            <AddBoxOutlinedIcon/>
-          </Grid2>
-          <Grid2>
-          <button style={{backgroundColor: 'white',border: 'none', fontSize: '1.1rem',cursor: 'pointer', textDecoration: 'none'}}>
-              Create
-              </button>
-          </Grid2>
-          </Grid2>
-          <Grid2 item container direction='row'  alignItems='center' gap={2}>
-          <Grid2>
-            <AccountCircleOutlinedIcon/>
-          </Grid2>
-          <Grid2>
-          <button style={{backgroundColor: 'white', border: 'none', fontSize: '1.1rem',cursor: 'pointer', textDecoration: 'none'}}>
-              Profile
-              </button>
-          </Grid2>
-          </Grid2>
-          </Grid2>
-      </Typography>
-     
-    </CardContent>
-    </Card>
-    </Grid2></Grid2>
+          <Box
+            sx={{
+              height: '100vh',
+              position: 'fixed',
+              top: '4.5rem',
+              left: 0,
+              zIndex: 1,
+              padding: '1rem'
+            }}
+          >
+            <Grid2 container direction="column" spacing={3}>
+              {menuItems.map((item, index) => (
+                <Grid2
+                  key={index}
+                  container
+                  direction="row"
+                  alignItems="center"
+                  spacing={1}
+                >
+                  <Grid2 item>{item.icon}</Grid2>
+                  <Grid2 item>
+                    <Button
+                      sx={{
+                        backgroundColor: btnColor,
+                        border: 'none',
+                        fontSize: '1.1rem',
+                        cursor: 'pointer',
+                        color: textColor,
+                        textTransform: 'none',
+                        '&:hover': {
+                          backgroundColor: darkMode ? '#1e1e1e' : '#f0f0f0'
+                        }
+                      }}
+                    >
+                      {item.label}
+                    </Button>
+                  </Grid2>
+                </Grid2>
+              ))}
+            </Grid2>
+          </Box>
+        </Grid2>
+      </Grid2>
     </Box>
-    
-    
-    </>
-  )
+  );
 }
 
-export default sideBar;
+export default Sidebar;

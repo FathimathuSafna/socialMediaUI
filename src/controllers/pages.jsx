@@ -28,26 +28,26 @@ function Pages() {
         transition: 'all 0.3s ease-in-out'
       }}
       direction='row'
-      >
+    >
       {/* Sidebar Section */}
-      <Grid2 direction='column' size={{xs:0,md:2}}>
-        <Grid2 xs={12} md={12}
-         sx={{
-          textAlign: 'center',
-          fontSize: '1.5rem',
-          fontWeight: 'bold',
-          color: textColor,
-          padding: '10px',
-          paddingTop: '15px',
-          position: 'fixed',
-          top: '20px', // <-- add this line
-          display: { xs: 'none', md: 'flex' }
-        }}
+      <Grid2 direction='column' size={{ xs: 0, md: 2, lg: 2 }}>
+        <Grid2 xs={12} md={12} lg={12}
+          sx={{
+            textAlign: 'center',
+            fontSize: '1.2rem',
+            fontWeight: 'bold',
+            color: textColor,
+            padding: '10px',
+            paddingTop: '15px',
+            position: 'fixed',
+            top: '20px',
+            display: { xs: 'none', md: 'flex' }
+          }}
         >
-          APPMOSHPERE
+          APPMOSPHERE
         </Grid2>
-        <Grid2 md={12} sx={{ display: { xs: 'none', sm: 'none', md: 'flex' } }} >
-          <SIDEBAR/>
+        <Grid2 md={12} lg={12} sx={{ display: { xs: 'none', sm: 'none', md: 'flex' } }}>
+          <SIDEBAR />
         </Grid2>
         <Grid2 sx={{ display: { xs: 'none', sm: 'flex', md: 'none' } }}>
           <SMALLBAR />
@@ -56,7 +56,8 @@ function Pages() {
 
       {/* Main Content Section */}
       <Grid2 container direction="column" size={10}>
-        <Grid2 md={10} xs={12}  offset={{ xs: 0, sm: 0, md: 0, lg: 0 }}>
+        {/* Navbar Section */}
+        <Grid2 md={10} xs={12} sx={{ position: 'relative', zIndex: 1000 }}>
           <Box
             sx={{
               position: 'fixed',
@@ -67,33 +68,32 @@ function Pages() {
               gap: 3,
               bgcolor: bgColor,
               color: textColor,
-              overflow: 'hidden', // Prevent content overflow
-              padding: '0 16px',
-              
+              overflow: 'hidden',
+              height: '64px', // Ensure navbar height is fixed
             }}
           >
             <NAVBAR />
           </Box>
         </Grid2>
 
-        {/* Posts Section */}
+        {/* Content Below Navbar */}
         <Grid2
           container
-          direction='row'
           size={{ xs: 12, md: 10, lg: 10 }}
-          
           sx={{
-            marginTop: '49px',
-            height: 'calc(100% - 50px)'
+            marginTop: '64px',  // Adjust for navbar height
+            paddingTop: '30px',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
           }}
         >
           <Grid2
             container
             size={{ xs: 12, sm: 12, md: 12, lg: 10 }}
-            offset={{ xs: 0, sm: 1, md: 2, lg: 0 }}
+            offset={{ xs: 0, sm: 1, md: 1, lg: 0 }}
             sx={{
               display: { xs: 'flex', md: 'flex' },
-              justifyContent: { xs: 'center', md: 'space-between' },
+              justifyContent: { xs: 'center' },
               boxShadow: 2,
               bgcolor: postBg,
               color: textColor,
@@ -110,10 +110,11 @@ function Pages() {
           </Grid2>
 
           {/* List Section */}
-          <Grid2 container size={{ sm: 2, md: 2 }} spacing={-3}>
+          <Grid2 container size={{ sm: 2, md: 2, lg: 2 }}>
             <Grid2
               direction='column'
-              size={{ xs: 12, sm: 2, md: 2 }}
+              size={{ xs: 12, sm: 2, md: 12, lg: 2 }}
+              offset={{ xs: 0, sm: 1, md: 2, lg: 0 }}
               paddingLeft={4}
               pt={2}
               pb={3}

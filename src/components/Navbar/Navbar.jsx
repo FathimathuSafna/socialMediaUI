@@ -9,6 +9,8 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import Brightness7Icon from '@mui/icons-material/Brightness7'; 
+import Brightness4Icon from '@mui/icons-material/Brightness4'; 
 import { useTheme as useCustomTheme } from '../../store/ThemeContext';
 
 const Search = styled('div')(({ theme }) => ({
@@ -50,10 +52,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function PrimarySearchAppBar({ toggleDrawer, ...props }) {
+export default function PrimarySearchAppBar({ toggleDrawer }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-  const { darkMode, toggleDarkMode } = useCustomTheme();///
+  const { darkMode, toggleDarkMode } = useCustomTheme();
+
+  const bgColor = darkMode ? '#121212' : '#ffffff';
+  const textColor = darkMode ? '#ffffff' : '#000000';
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -138,86 +143,98 @@ export default function PrimarySearchAppBar({ toggleDrawer, ...props }) {
       position: 'fixed',
       top: 0,
       width: '100%',
+      maxWidth: { xs: '100%', sm: '90%', md: 'calc(10/12 * 100%)' }, // Adjust width based on grid 10/12
       zIndex: 1000,
       boxSizing: 'border-box',
       paddingLeft: 0,
       paddingRight: 0
     }}>
-      <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black' }} elevation={0}>
-        <Toolbar sx={{ display: 'flex',alignItems:'flex-end' }}>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={toggleDrawer}
-          >
-            {/* <MenuIcon /> */}
-          </IconButton>
+      <AppBar position="static" sx={{ bgcolor: bgColor, color: textColor, transition: 'all 0.3s ease-in-out' }} elevation={0}>
+        <Toolbar sx={{ display: 'flex',justifyContent: 'space-between',flexWrap: 'wrap', minHeight: '64px' }}>
 
-          <Typography variant="h6" sx={{ display: { xs: 'flex', md: 'none' }, flexGrow: 1 }}>
-            APPMOSPHERE
-          </Typography>
-
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
-
-          <Box />
-
-          {/* Desktop View */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={5} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-
-            <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-
+          {/* Left: Logo + Search */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <IconButton
               size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
+              edge="start"
               color="inherit"
+              aria-label="open drawer"
+              onClick={toggleDrawer}
+              sx={{ mr: 1 }}
             >
-              <AccountCircle />
+              {/* <MenuIcon /> */}
             </IconButton>
 
-            {/* Theme Toggle */}
-            <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
-              <Typography variant="body2" sx={{ mr: 1 }}>
-                {darkMode ? 'Dark' : 'Light'} Mode
-              </Typography>
-              <Switch checked={darkMode} onChange={toggleDarkMode} />
-            </Box>
+            <Typography variant="h6" sx={{ display: { xs: 'flex', md: 'none' }, mr: 2 }}>
+              APPMOSPHERE
+            </Typography>
+
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ 'aria-label': 'search' }}
+              />
+            </Search>
           </Box>
 
-          {/* Mobile View */}
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
+          {/* Right: Mail, Notification, Profile, Theme */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+              <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                <Badge badgeContent={5} color="error">
+                  <MailIcon />
+                </Badge>
+              </IconButton>
+
+              <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
+                <Badge badgeContent={17} color="error">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+
+              <IconButton
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
+                <IconButton
+                  onClick={toggleDarkMode}
+                  color="inherit"
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  {darkMode ? (
+                    <Brightness7Icon /> // Sun icon for light mode
+                  ) : (
+                    <Brightness4Icon /> // Moon icon for dark mode
+                  )}
+                </IconButton>
+              </Box>
+            </Box>
+
+            {/* Mobile View */}
+            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+              <IconButton
+                size="large"
+                aria-label="show more"
+                aria-controls={mobileMenuId}
+                aria-haspopup="true"
+                onClick={handleMobileMenuOpen}
+                color="inherit"
+              >
+                <MoreIcon />
+              </IconButton>
+            </Box>
           </Box>
         </Toolbar>
       </AppBar>
