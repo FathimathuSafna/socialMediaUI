@@ -1,114 +1,182 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Skeleton from '@mui/material/Skeleton';
-import { Box, Grid2 } from '@mui/material';
+import { useState } from 'react';
+import { useTheme } from '@mui/material/styles';
+import { Box } from '@mui/material';
+import { 
+  Favorite, 
+  FavoriteBorder, 
+  ChatBubbleOutline, 
+  Send, 
+  BookmarkBorder, 
+  MoreVert 
+} from '@mui/icons-material';
+import { useTheme as useCustomTheme } from '../../store/ThemeContext';
 
-function Media(props) {
-  const { loading = false } = props;
+
+const InstagramPost = () => {
+  const { darkMode } = useCustomTheme();
+  const bgColor = darkMode ? '#121212' : '#ffffff';
+  const textColor = darkMode ? '#ffffff' : '#000000';
+  const theme = useCustomTheme();
+
+
+  const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState(1243);
+
+  const handleLike = () => {
+    setLiked(!liked);
+    setLikes(liked ? likes - 1 : likes + 1);
+  };
 
   return (
-      <Grid2 container  xs={10} md={12} sx={{filter:'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))'}}>
-      <Grid2 item  >
-      <Card 
-        sx={{  
-          m: 2, 
-          boxShadow: 'none',
-          '& .MuiPaper-root': {
-            boxShadow: 'none',
-            border: 'none'
-          },
-          '&.MuiCard-root': {
-            border: 0,
-            boxShadow: 'none',
-          }
+    <div style={{
+      maxWidth: '470px',
+      margin: '24px auto',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
+    }}>
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '14px 4px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{
+            width: '32px',
+            height: '32px',
+            backgroundImage: 'url(https://i.pravatar.cc/150?img=5)',
+            backgroundSize: 'cover',
+            marginRight: '12px',
+            borderRadius: '50%',
+          }}/>
+          <span style={{ fontWeight: '600', fontSize: '14px' }}>travel_lover</span>
+        </div>
+        <button style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '8px'
+        }}>
+          <MoreVert style={{ fontSize: '20px', color: '#262626' }} />
+        </button>
+      </div>
+
+      {/* Image */}
+      <div 
+        style={{
+          width: '100%',
+          aspectRatio: '1/1',
+          backgroundImage: 'url(https://i.pinimg.com/736x/65/46/26/654626eefd5c62ab965fe1763c0e22c1.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          cursor: 'pointer'
         }}
-        elevation={0}
-      >
-        <CardHeader
-          avatar={
-            loading ? (
-              <Skeleton animation="wave" variant="circular" width={40} height={40} />
-            ) : (
-              <Avatar
-                alt="Ted talk"
-                src="https://pbs.twimg.com/profile_images/877631054525472768/Xp5FAPD5_reasonably_small.jpg"
-              />
-            )
-          }
-          action={
-            loading ? null : (
-              <IconButton aria-label="settings">
-                <MoreVertIcon />
-              </IconButton>
-            )
-          }
-          title={
-            loading ? (
-              <Skeleton
-                animation="wave"
-                height={10}
-                width="80%"
-                style={{ marginBottom: 6 }}
-              />
-            ) : (
-              'Ted'
-            )
-          }
-          subheader={
-            loading ? (
-              <Skeleton animation="wave" height={10} width="40%" />
-            ) : (
-              '5 hours ago'
-            )
-          }
+        onDoubleClick={handleLike}
+      />
+
+      {/* Action Buttons */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '6px 0',
+        marginTop: '4px'
+      }}>
+        <div>
+          <button 
+            onClick={handleLike}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '8px 8px 8px 0'
+            }}
+          >
+            {liked ? 
+              <Favorite style={{ color: '#ed4956', fontSize: '24px' }} /> : 
+              <FavoriteBorder style={{ fontSize: '24px', color: '#8e8e8e' }} />
+            }
+          </button>
+          <button style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '8px'
+          }}>
+            <ChatBubbleOutline style={{ fontSize: '24px', color: '#8e8e8e' }} />
+          </button>
+          <button style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '8px'
+          }}>
+            <Send style={{ fontSize: '24px', color: '#8e8e8e' }} />
+          </button>
+        </div>
+        <button style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '8px'
+        }}>
+          <BookmarkBorder style={{ fontSize: '24px', color: '#8e8e8e' }} />
+        </button>
+      </div>
+
+      {/* Likes */}
+      <div style={{ 
+        fontWeight: '600', 
+        margin: '4px 0', 
+        fontSize: '14px',
+        padding: '0 8px'
+      }}>
+        {likes.toLocaleString()} likes
+      </div>
+
+      {/* Caption */}
+      <div style={{ 
+        fontSize: '14px',
+        lineHeight: '1.4',
+        padding: '0 8px',
+        marginBottom: '4px'
+      }}>
+        <span style={{ fontWeight: '600', marginRight: '4px' }}>travel_lover</span>
+        Sunset views in Santorini are unreal! #Greece #Travel #Sunset
+      </div>
+
+      {/* Comments */}
+      <div style={{ 
+        color: '#8e8e8e', 
+        fontSize: '14px',
+        padding: '0 8px',
+        marginBottom: '4px',
+        cursor: 'pointer'
+      }}>
+        View all 142 comments
+      </div>
+
+      {/* Timestamp */}
+      <div style={{ 
+        color: '#8e8e8e', 
+        fontSize: '10px',
+        textTransform: 'uppercase',
+        padding: '0 8px',
+        letterSpacing: '0.2px'
+      }}>
+        3 HOURS AGO
+      </div>
+      <Box sx={{ paddingTop: '10px' }}>
+        <Box
+          component="hr"
+          sx={{
+            border: 0,
+            height: '1px',
+            backgroundColor: darkMode ? '#000':'#fff' ,
+          }}
         />
-        {loading ? (
-          <Skeleton sx={{ height: 190 }} animation="wave" variant="rectangular" />
-        ) : (
-          <CardMedia
-            component="img"
-            height="140"
-            image="https://pi.tedcdn.com/r/talkstar-photos.s3.amazonaws.com/uploads/72bda89f-9bbf-4685-910a-2f151c4f3a8a/NicolaSturgeon_2019T-embed.jpg?w=512"
-            alt="Nicola Sturgeon on a TED talk stage"
-          />
-        )}
-        <CardContent>
-          {loading ? (
-            <React.Fragment>
-              <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
-              <Skeleton animation="wave" height={10} width="80%" />
-            </React.Fragment>
-          ) : (
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {
-                "Why First Minister of Scotland Nicola Sturgeon thinks GDP is the wrong measure of a country's success:"
-              }
-            </Typography>
-          )}
-        </CardContent>
-      </Card>
-      </Grid2>
-      </Grid2>
-    
-  );
-}
-
-Media.propTypes = {
-  loading: PropTypes.bool,
-};
-
-export default function Facebook() {
-  return (
-    <div>
-      <Media />
+      </Box>
     </div>
   );
-}
+};
+
+export default InstagramPost;

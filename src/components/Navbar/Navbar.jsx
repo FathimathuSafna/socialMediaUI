@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   styled, alpha, AppBar, Box, Toolbar, IconButton,
-  Typography, InputBase, Badge, MenuItem, Menu, Switch
+  Typography, InputBase, Badge, MenuItem, Menu
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
@@ -9,8 +9,8 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import Brightness7Icon from '@mui/icons-material/Brightness7'; 
-import Brightness4Icon from '@mui/icons-material/Brightness4'; 
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
 import { useTheme as useCustomTheme } from '../../store/ThemeContext';
 
 const Search = styled('div')(({ theme }) => ({
@@ -135,6 +135,12 @@ export default function PrimarySearchAppBar({ toggleDrawer }) {
         </IconButton>
         <p>Profile</p>
       </MenuItem>
+      <MenuItem onClick={toggleDarkMode}>
+        <IconButton color="inherit">
+          {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+        </IconButton>
+        <p>{darkMode ? 'Light' : 'Dark'} Mode</p>
+      </MenuItem>
     </Menu>
   );
 
@@ -143,44 +149,31 @@ export default function PrimarySearchAppBar({ toggleDrawer }) {
       position: 'fixed',
       top: 0,
       width: '100%',
-      maxWidth: { xs: '100%', sm: '90%', md: 'calc(10/12 * 100%)' }, // Adjust width based on grid 10/12
+      left: 0,
       zIndex: 1000,
-      boxSizing: 'border-box',
-      paddingLeft: 0,
-      paddingRight: 0
+      bgcolor: bgColor,
+      color: textColor
     }}>
       <AppBar position="static" sx={{ bgcolor: bgColor, color: textColor, transition: 'all 0.3s ease-in-out' }} elevation={0}>
-        <Toolbar sx={{ display: 'flex',justifyContent: 'space-between',flexWrap: 'wrap', minHeight: '64px' }}>
-
-          {/* Left: Logo + Search */}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={toggleDrawer}
-              sx={{ mr: 1 }}
-            >
-              {/* <MenuIcon /> */}
-            </IconButton>
-
-            <Typography variant="h6" sx={{ display: { xs: 'flex', md: 'none' }, mr: 2 }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', minHeight: { xs: '56px', sm: '64px' } }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+            
+            <Typography variant="h6" noWrap component="div" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' }, fontWeight: 'bold' }}>
               APPMOSPHERE
             </Typography>
-
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </Search>
+            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Search…"
+                  inputProps={{ 'aria-label': 'search' }}
+                />
+              </Search>
+            </Box>
           </Box>
 
-          {/* Right: Mail, Notification, Profile, Theme */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
               <IconButton size="large" aria-label="show 4 new mails" color="inherit">
@@ -188,13 +181,11 @@ export default function PrimarySearchAppBar({ toggleDrawer }) {
                   <MailIcon />
                 </Badge>
               </IconButton>
-
               <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
                 <Badge badgeContent={17} color="error">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
-
               <IconButton
                 size="large"
                 edge="end"
@@ -206,23 +197,10 @@ export default function PrimarySearchAppBar({ toggleDrawer }) {
               >
                 <AccountCircle />
               </IconButton>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
-                <IconButton
-                  onClick={toggleDarkMode}
-                  color="inherit"
-                  sx={{ display: 'flex', alignItems: 'center' }}
-                >
-                  {darkMode ? (
-                    <Brightness7Icon /> // Sun icon for light mode
-                  ) : (
-                    <Brightness4Icon /> // Moon icon for dark mode
-                  )}
-                </IconButton>
-              </Box>
+              <IconButton onClick={toggleDarkMode} color="inherit">
+                {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+              </IconButton>
             </Box>
-
-            {/* Mobile View */}
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
               <IconButton
                 size="large"

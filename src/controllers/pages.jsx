@@ -17,7 +17,7 @@ function Pages() {
 
   const bgColor = darkMode ? '#121212' : '#ffffff';
   const textColor = darkMode ? '#ffffff' : '#000000';
-  const postBg = darkMode ? '#1e1e1e' : '#F5F5F4';
+  const postBg = darkMode ? '#1e1e1e' : '#ffffff';
 
   return (
     <Grid2
@@ -30,8 +30,8 @@ function Pages() {
       direction='row'
     >
       {/* Sidebar Section */}
-      <Grid2 direction='column' size={{ xs: 0, md: 2, lg: 2 }}>
-        <Grid2 xs={12} md={12} lg={12}
+      <Grid2 direction='column' size={{xs:2, md: 2, lg: 2 }}>
+        <Grid2 xs={0} md={12} lg={12}
           sx={{
             textAlign: 'center',
             fontSize: '1.2rem',
@@ -46,18 +46,18 @@ function Pages() {
         >
           APPMOSPHERE
         </Grid2>
-        <Grid2 md={12} lg={12} sx={{ display: { xs: 'none', sm: 'none', md: 'flex' } }}>
+        <Grid2 xs={0} md={12} lg={12} sx={{ display: { xs: 'none', sm: 'none', md: 'flex' } }}>
           <SIDEBAR />
         </Grid2>
-        <Grid2 sx={{ display: { xs: 'none', sm: 'flex', md: 'none' } }}>
+        <Grid2 xs={0} md={0} sx={{ display: { xs: 'none', sm: 'flex', md: 'none' } }}>
           <SMALLBAR />
         </Grid2>
       </Grid2>
 
       {/* Main Content Section */}
-      <Grid2 container direction="column" size={10}>
+      <Grid2 container direction="column" size={{md:10}}>
         {/* Navbar Section */}
-        <Grid2 md={10} xs={12} sx={{ position: 'relative', zIndex: 1000 }}>
+        <Grid2 md={10} xs={12}  sx={{ position: 'relative', zIndex: 1000 }}>
           <Box
             sx={{
               position: 'fixed',
@@ -70,6 +70,7 @@ function Pages() {
               color: textColor,
               overflow: 'hidden',
               height: '64px', // Ensure navbar height is fixed
+              flexWrap: 'wrap',
             }}
           >
             <NAVBAR />
@@ -82,10 +83,10 @@ function Pages() {
           size={{ xs: 12, md: 10, lg: 10 }}
           sx={{
             marginTop: '64px',  // Adjust for navbar height
-            paddingTop: '30px',
+            paddingTop: '5px',
             flexDirection: 'row',
             flexWrap: 'wrap',
-          }}
+          }} 
         >
           <Grid2
             container
@@ -94,15 +95,13 @@ function Pages() {
             sx={{
               display: { xs: 'flex', md: 'flex' },
               justifyContent: { xs: 'center' },
-              boxShadow: 2,
-              bgcolor: postBg,
+              bgcolor: bgColor,
               color: textColor,
-              borderRadius: 2,
-              p: 1
+              p: 1,
             }}
           >
             {[...Array(4)].map((_, rowIndex) => (
-              <Grid2 key={rowIndex} size={{ xs: 11, sm: 6, md: 6 }}>
+              <Grid2 key={rowIndex} size={{ xs: 11, sm: 6, md: 11 }}>
                 <POSTS />
                 <POSTS />
               </Grid2>
@@ -113,8 +112,8 @@ function Pages() {
           <Grid2 container size={{ sm: 2, md: 2, lg: 2 }}>
             <Grid2
               direction='column'
-              size={{ xs: 12, sm: 2, md: 12, lg: 2 }}
-              offset={{ xs: 0, sm: 1, md: 2, lg: 0 }}
+              size={{ xs: 12, sm: 2, md: 2, lg: 2 }}
+              offset={{ xs: 0, sm: 1, md: 0, lg: 0 }}
               paddingLeft={4}
               pt={2}
               pb={3}
@@ -131,7 +130,7 @@ function Pages() {
       </Grid2>
 
       {/* Footer Section */}
-      <Grid2 size={{ xs: 12 }} sx={{ display: { xs: 'flex', md: 'none' } }}>
+      <Grid2 size={{ xs: 12 }} sx={{ display: { xs: 'flex', sm: 'none', md: 'none' } }}>
         <Box
           sx={{
             position: 'fixed',
