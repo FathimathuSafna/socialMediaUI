@@ -82,8 +82,8 @@ function Pages() {
           container
           size={{ xs: 12, md: 10, lg: 10 }}
           sx={{
-            marginTop: '64px',  // Adjust for navbar height
-            paddingTop: '5px',
+            marginTop: '16px',  // Adjust for navbar height
+            paddingTop: '2px',
             flexDirection: 'row',
             flexWrap: 'wrap',
           }} 
@@ -114,13 +114,13 @@ function Pages() {
               direction='column'
               size={{ xs: 12, sm: 2, md: 2, lg: 2 }}
               offset={{ xs: 0, sm: 1, md: 0, lg: 0 }}
-              paddingLeft={4}
-              pt={2}
+              paddingLeft={1}
+              pt={8}
               pb={3}
               sx={{ color: textColor }}
             >
               {[...Array(4)].map((_, idx) => (
-                <Grid2 key={idx} size={{ sm: 2, md: 2 }} pb={1}>
+                <Grid2 key={idx} size={{ sm: 2, md: 2 }} pb={1} >
                   <LIST />
                 </Grid2>
               ))}
@@ -130,21 +130,8 @@ function Pages() {
       </Grid2>
 
       {/* Footer Section */}
-      <Grid2 size={{ xs: 12 }} sx={{ display: { xs: 'flex', sm: 'none', md: 'none' } }}>
-        <Box
-          sx={{
-            position: 'fixed',
-            bottom: 0,
-            width: '100%',
-            zIndex: 1000,
-            boxSizing: 'border-box',
-            gap: 3,
-            bgcolor: bgColor,
-            color: textColor
-          }}
-        >
-          <FOOTERBAR />
-        </Box>
+      <Grid2>
+          <FOOTERBAR/>
       </Grid2>
     </Grid2>
   );

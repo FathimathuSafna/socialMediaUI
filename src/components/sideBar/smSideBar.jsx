@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatIcon from '@mui/icons-material/Chat';
@@ -9,9 +9,13 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useTheme as useCustomTheme } from '../../store/ThemeContext';
+import AddPost from '../../create/addPost';
 
 function SmSideBar() {
   const { darkMode } = useCustomTheme();
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const bgColor = darkMode ? '#121212' : '#ffffff';
   const textColor = darkMode ? '#ffffff' : '#000000';
@@ -21,11 +25,12 @@ function SmSideBar() {
     { icon: <HomeIcon /> },
     { icon: <SearchIcon /> },
     { icon: <ChatIcon /> },
-    { icon: <AddBoxOutlinedIcon /> },
+    { icon: <AddBoxOutlinedIcon /> ,action:handleOpen},
     { icon: <AccountCircleOutlinedIcon /> }
   ];
 
   return (
+    <>
     <Box sx={{ flexGrow: 1 }}>
       <Grid2
         container
@@ -62,7 +67,18 @@ function SmSideBar() {
                   alignItems="center"
                   spacing={1}
                 >
-                  <Grid2 item>{item.icon}</Grid2>
+                  <Grid2 item><Button
+                  sx={{
+                    backgroundColor: btnColor,
+                    border: 'none',
+                    fontSize: '1.1rem',
+                    cursor: 'pointer',
+                    color: textColor,
+                    textTransform: 'none',
+                    '&:hover': {
+                      backgroundColor: darkMode ? '#1e1e1e' : '#f0f0f0'
+                    }
+                  }}  onClick={item.action}>{item.icon}</Button></Grid2>
                  
                 </Grid2>
               ))}
@@ -71,6 +87,9 @@ function SmSideBar() {
         </Grid2>
       </Grid2>
     </Box>
+
+<AddPost open={open} handleClose={handleClose} />
+</>
   );
 }
 
