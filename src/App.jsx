@@ -1,10 +1,28 @@
 import './App.css'
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import PAGES from'./controllers/pages'
 import LOGIN from './pages/login'
 import SIGNUP from './pages/signup'
-import { AppContext } from './AppContext'
+import { AppContext } from './store/Context'
 import { BrowserRouter as Router,Routes,Route } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+
+const ProtectedRoute = ({ children }) => {
+  const supabase = useSupabaseClient();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        navigate('/login');
+      }
+    });
+  }, []);
+
+  return children;
+};
+
 
 
 function App() {
@@ -14,7 +32,7 @@ function App() {
     <>
     <Router>
       <Routes>
-        <Route path="/" element={<PAGES/>} />
+        <Route path="/" element={<ProtectedRoute><PAGES/></ProtectedRoute>} />
         <Route path="/login" element={<LOGIN/>} />
         <Route path="/signup" element={<SIGNUP/>} />
 
