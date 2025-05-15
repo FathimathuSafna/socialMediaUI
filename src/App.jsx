@@ -6,18 +6,18 @@ import SIGNUP from './pages/signup'
 import { AppContext } from './store/Context'
 import { BrowserRouter as Router,Routes,Route } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import VERIFY from './pages/verify'
+
 
 const ProtectedRoute = ({ children }) => {
-  const supabase = useSupabaseClient();
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) {
+   const token = localStorage.getItem('token')
+    if (!token) {
         navigate('/login');
       }
-    });
+    
   }, []);
 
   return children;
@@ -35,6 +35,7 @@ function App() {
         <Route path="/" element={<ProtectedRoute><PAGES/></ProtectedRoute>} />
         <Route path="/login" element={<LOGIN/>} />
         <Route path="/signup" element={<SIGNUP/>} />
+        <Route path="/verify" element={<VERIFY/>} />
 
 
         </Routes>

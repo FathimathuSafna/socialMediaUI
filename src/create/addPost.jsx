@@ -1,119 +1,126 @@
-import React, { useState } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
-import TextField from '@mui/material/TextField';
-import { MuiFileInput } from 'mui-file-input';
-import AddIcon from '@mui/icons-material/Add';
-import { useNavigate } from 'react-router-dom';
-import {supabase} from '../store/supabaseClient'
-
-
+import React, { useState } from "react";
+import { Typography, Box, Button, Modal, TextField } from "@mui/material";
+import { MuiFileInput } from "mui-file-input";
+import AddIcon from "@mui/icons-material/Add";
+import { useNavigate } from "react-router-dom";
+import { Formik, Form, Field } from "formik";
+import { supabase } from "../store/supabaseClient";
+import * as Yup from "yup";
+import Axios from "axios";
+import { createPost } from "../service/postAPI";
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 300,
-  bgcolor: 'background.paper',
+  bgcolor: "background.paper",
   borderRadius: 2,
   boxShadow: 24,
   p: 4,
 };
 
-const CustomFileInput = ({ value, onChange }) => (
-  <Box
-    sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      border: '2px dashed #ccc',
-      borderRadius: '8px',
-      padding: '30px',
-      marginBottom: '20px',
-      marginTop: '10px',
-      cursor: 'pointer',
-    }}
-  >
-    <MuiFileInput
-      value={value}
-      onChange={onChange}
-      InputProps={{
-        startAdornment: value
-          ? null
-          : (
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: '100%',
-                  pointerEvents: 'none',
-                }}
-              >
-                <AddIcon sx={{ fontSize: 40, color: 'text.secondary' }} />
-                <Typography variant="body2" color="text.secondary" mt={1}>
-                  Click to upload image
-                </Typography>
-              </Box>
-            ),
-        sx: {
-          height: value ? 'auto' : '150px',
-          '& .MuiOutlinedInput-notchedOutline': {
-            border: 'none',
-          },
-        },
-      }}
-    />
-    {value && (
-      <Box sx={{ mt: 2 }}>
-        <Typography variant="body2">{value.name}</Typography>
-      </Box>
-    )}
-  </Box>
-);
+// Custom Formik-compatible FileInput
+const FileInput = ({ field, form }) => {
+  const { name, value } = field;
+  const { setFieldValue } = form;
+  const [preview, setPreview] = useState(null);
+
+  const handleFileChange = (file) => {
+    setFieldValue(name, file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setPreview(null);
+    }
+  };
+
+  return (
+    <Box sx={{ width: "100%" }}>
+      <MuiFileInput
+        value={value}
+        onChange={handleFileChange}
+        placeholder="Click to upload"
+        fullWidth
+      />
+
+      {/* Show preview outside the input */}
+      {preview && (
+        <Box sx={{ mt: 2 }}>
+          <img src={preview} alt="Preview" style={{ maxWidth: "100%" }} />
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+// Validation Schema
+const validationSchema = Yup.object().shape({
+  description: Yup.string().required("Description is required"),
+  location: Yup.string().required("Location is required"),
+  file: Yup.mixed().required("Image is required"),
+});
 
 const AddPost = ({ open, handleClose }) => {
-  const navigate = useNavigate()
-  const [value, setValue] = useState(null);
-  const [description, setDescription] = useState('');
-  const [imageUrl, setImageUrl] = useState(null);
-  const date = new Date().toISOString().split('T')[0];
+  const navigate = useNavigate();
 
+  const handleSubmit = async (values, { setSubmitting }) => {
+    const { location, file, description } = values;
+    debugger;
 
+    try {
+      // 1. Upload image to Supabase Storage
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `uploads/${fileName}`;
 
-  const handleUpload = async () => {
-    if (!value || !description) return;
+      const { data, error: uploadError } = await supabase.storage
+        .from("posts")
+        .upload(filePath, file);
 
-    // Upload image to Supabase storage
-    const { data: fileData, error: uploadError } = await supabase.storage
-      .from('posts')
-      .upload(`images/${Date.now()}_${value.name}`, value);
+      if (uploadError) throw uploadError;
 
-    if (uploadError) {
-      console.error('Upload failed:', uploadError);
-      return;
-    }
+      // 2. Get the public URL
+      const { data: publicUrlData } = supabase.storage
+        .from("posts")
+        .getPublicUrl(filePath);
 
-    // Insert the post data into Supabase table
-    const { error: insertError } = await supabase.from('posts').insert([
-      {
-        image_url: fileData.path,
-        description: description,
-      },
-    ]);
+      const imageUrl = publicUrlData.publicUrl;
 
-    if (insertError) {
-      console.error('Insert failed:', insertError);
-    } else {
-      handleClose(); 
-      navigate('/'); 
+      // 3. Send image URL to your backend API
+      const token = localStorage.getItem("token");
+
+      createPost(
+        {
+          location,
+          postImageUrl: imageUrl,
+          description,
+        },
+        {
+          headers: {
+            token: `${token}`,
+          },
+        }
+      )
+        .then((response) => {
+          console.log(response.data);
+          setSubmitting(false);
+          handleClose();
+          navigate("/");
+        })
+
+        .catch((error) => {
+          console.error("Error during creating post:", error);
+          setSubmitting(false);
+        });
+    } catch (error) {
+      console.error("Error during file upload:", error);
+      setSubmitting(false);
     }
   };
 
@@ -124,25 +131,65 @@ const AddPost = ({ open, handleClose }) => {
           Create New Post
         </Typography>
 
-        <CustomFileInput value={value} onChange={setValue} />
+        <Formik
+          initialValues={{ location: "", file: null, description: "" }}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting, errors, touched }) => (
+            <Form>
+              <Field name="location">
+                {({ field }) => (
+                  <TextField
+                    {...field}
+                    label="location"
+                    fullWidth
+                    variant="outlined"
+                    margin="normal"
+                    error={Boolean(touched.location && errors.location)}
+                    helperText={touched.location && errors.location}
+                  />
+                )}
+              </Field>
+              <Field name="file">
+                {({ field, form }) => <FileInput field={field} form={form} />}
+              </Field>
 
-        <TextField
-          label="Description"
-          fullWidth
-          variant="outlined"
-          margin="normal"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+              <Field name="description">
+                {({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Description"
+                    fullWidth
+                    variant="outlined"
+                    margin="normal"
+                    error={Boolean(touched.description && errors.description)}
+                    helperText={touched.description && errors.description}
+                  />
+                )}
+              </Field>
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Button variant="outlined" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="contained" onClick={handleUpload}>
-            Post
-          </Button>
-        </Box>
+              <Box
+                sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}
+              >
+                <Button
+                  variant="outlined"
+                  onClick={handleClose}
+                  disabled={isSubmitting}
+                >
+                  Close
+                </Button>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  Post
+                </Button>
+              </Box>
+            </Form>
+          )}
+        </Formik>
       </Box>
     </Modal>
   );

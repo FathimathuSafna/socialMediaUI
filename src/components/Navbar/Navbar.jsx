@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {
   styled, alpha, AppBar, Box, Toolbar, IconButton,
-  Typography, InputBase, Badge, MenuItem, Menu
+  Typography, InputBase, Badge, MenuItem, Menu,
+  Button
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
@@ -12,6 +13,8 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import { useTheme as useCustomTheme } from '../../store/ThemeContext';
+import { useNavigate } from "react-router-dom";
+
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -53,6 +56,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar({ toggleDrawer }) {
+    const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const { darkMode, toggleDarkMode } = useCustomTheme();
@@ -212,6 +216,16 @@ export default function PrimarySearchAppBar({ toggleDrawer }) {
               >
                 <MoreIcon />
               </IconButton>
+            </Box>
+            <Box >
+              <Button color='inherit' onClick={() =>{
+                localStorage.removeItem('token');
+                navigate('/login');
+                
+              }} >
+                
+                signOut
+                </Button>
             </Box>
           </Box>
         </Toolbar>

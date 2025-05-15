@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { Avatar, Box, Button, Card, CardContent, CardActions, Typography } from '@mui/joy';
+import { useTheme as useCustomTheme } from '../../store/ThemeContext';
 import Grid from '@mui/material/Grid2';
 
 export default function BottomActionsCard() {
+   const { darkMode } = useCustomTheme();
+  
+    const bgColor = darkMode ? '#121212' : '#ffffff';
+    const textColor = darkMode ? '#ffffff' : '#000000';
   return (
     <Card
       variant="outlined"
@@ -10,7 +15,9 @@ export default function BottomActionsCard() {
         width: 300,
         height:30,
         resize: 'vertical',
-        border:0
+        border:0,
+        backgroundColor: bgColor,
+        color: textColor
       }}
     >
         <Grid container alignItems="center" spacing={4} >
