@@ -55,6 +55,15 @@ export const USER_INSTANCE = createAxiosInstance(
 
 export const POST_INSTANCE = createAxiosInstance(
   `${baseURL}/post/`
- 
 );
 setupInterceptors(POST_INSTANCE);
+
+
+export const FOLLOW_INSTANCE = createAxiosInstance(
+  `${baseURL}/follow/`
+);
+setupInterceptors(FOLLOW_INSTANCE);
+
+
+
+
