@@ -119,7 +119,7 @@ function Pages() {
               pb={3}
               sx={{ color: textColor }}
             >
-              {[...Array(4)].map((_, idx) => (
+              {[...Array(1)].map((_, idx) => (
                 <Grid2 key={idx} size={{ sm: 2, md: 2 }} pb={1} >
                   <LIST />
                 </Grid2>
