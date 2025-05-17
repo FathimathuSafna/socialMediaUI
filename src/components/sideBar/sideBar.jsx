@@ -8,11 +8,15 @@ import Grid2 from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { useTheme as useCustomTheme } from '../../store/ThemeContext';
-import AddPost from '../../create/addPost';
+import AddPost from '../../modal/addPost';
+import SearchDialog from '../../modal/searchDialog';
 
 function Sidebar() {
   const { darkMode } = useCustomTheme();
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchHandleOpen = () => setSearchOpen(true);
+  const searchHandleClose = () => setSearchOpen(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -22,7 +26,7 @@ function Sidebar() {
 
   const menuItems = [
     { icon: <HomeIcon />, label: 'Home' },
-    { icon: <SearchIcon />, label: 'Search' },
+    { icon: <SearchIcon />, label: 'Search' ,action: searchHandleOpen},
     { icon: <ChatIcon />, label: 'Messages' },
     { icon: <AddBoxOutlinedIcon />, label: 'Create', action: handleOpen },
     { icon: <AccountCircleOutlinedIcon />, label: 'Profile' }
@@ -95,6 +99,7 @@ function Sidebar() {
 
       {/* Image Upload Modal */}
       <AddPost open={open} handleClose={handleClose} />
+      <SearchDialog open={searchOpen} handleClose={searchHandleClose} />
     </>
   );
 }

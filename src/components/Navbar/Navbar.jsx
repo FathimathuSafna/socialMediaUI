@@ -166,7 +166,7 @@ export default function PrimarySearchAppBar({ toggleDrawer }) {
             <Typography variant="h6" noWrap component="div" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' }, fontWeight: 'bold' }}>
               APPMOSPHERE
             </Typography>
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            {/* <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
               <Search >
                 <SearchIconWrapper>
                   <SearchIcon />
@@ -176,7 +176,7 @@ export default function PrimarySearchAppBar({ toggleDrawer }) {
                   inputProps={{ 'aria-label': 'search' }}
                 />
               </Search>
-            </Box>
+            </Box> */}
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>

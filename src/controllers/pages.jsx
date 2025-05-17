@@ -109,7 +109,7 @@ function Pages() {
           </Grid2>
 
           {/* List Section */}
-          <Grid2 container size={{ sm: 2, md: 2, lg: 2 }}>
+          <Grid2 container size={{ sm: 2, md: 2, lg: 2 }} sx={{display:{xs:'none',sm:'flex',md:'flex'}}} >
             <Grid2
               direction='column'
               position='fixed'
@@ -131,7 +131,7 @@ function Pages() {
       </Grid2>
 
       {/* Footer Section */}
-      <Grid2>
+      <Grid2  sx={{display:{xs:'flex', sm: 'none', md: 'none'}}}>
           <FOOTERBAR/>
       </Grid2>
     </Grid2>

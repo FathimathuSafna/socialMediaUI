@@ -9,13 +9,17 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useTheme as useCustomTheme } from '../../store/ThemeContext';
-import AddPost from '../../create/addPost';
+import AddPost from '../../modal/addPost';
+import SearchDialog from '../../modal/searchDialog';
 
 function SmSideBar() {
   const { darkMode } = useCustomTheme();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchHandleOpen = () => setSearchOpen(true);
+  const searchHandleClose = () => setSearchOpen(false);
 
   const bgColor = darkMode ? '#121212' : '#ffffff';
   const textColor = darkMode ? '#ffffff' : '#000000';
@@ -23,7 +27,7 @@ function SmSideBar() {
 
   const menuItems = [
     { icon: <HomeIcon /> },
-    { icon: <SearchIcon /> },
+    { icon: <SearchIcon />,action: searchHandleOpen },
     { icon: <ChatIcon /> },
     { icon: <AddBoxOutlinedIcon /> ,action:handleOpen},
     { icon: <AccountCircleOutlinedIcon /> }
@@ -89,6 +93,9 @@ function SmSideBar() {
     </Box>
 
 <AddPost open={open} handleClose={handleClose} />
+      <SearchDialog open={searchOpen} handleClose={searchHandleClose} />
+
+
 </>
   );
 }
