@@ -12,6 +12,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
+import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded';
 import { useTheme as useCustomTheme } from '../../store/ThemeContext';
 import { useNavigate } from "react-router-dom";
 
@@ -166,7 +167,7 @@ export default function PrimarySearchAppBar({ toggleDrawer }) {
               APPMOSPHERE
             </Typography>
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <Search>
+              <Search >
                 <SearchIconWrapper>
                   <SearchIcon />
                 </SearchIconWrapper>
@@ -180,6 +181,13 @@ export default function PrimarySearchAppBar({ toggleDrawer }) {
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+              <IconButton size="large" aria-label="show 2 new request" color="inherit" onClick={() => 
+                navigate('/addFriend')
+              } >
+                <Badge badgeContent={2} color="error">
+                  <PersonAddAltRoundedIcon />
+                </Badge>
+              </IconButton>
               <IconButton size="large" aria-label="show 4 new mails" color="inherit">
                 <Badge badgeContent={5} color="error">
                   <MailIcon />

@@ -49,13 +49,13 @@ const handleFollow = (userId) => {
           }}
         >
           <Grid container alignItems="center" spacing={2}>
-            <Grid item>
+            <Grid item sx={{ width: 50 }}>
               <Avatar src={user.profileImageUrl || "/static/images/avatar/1.jpg"} />
             </Grid>
-            <Grid item xs>
+            <Grid item sx={{ width: 100 }}>
               <Typography level="title">{user.name}</Typography>
             </Grid>
-            <Grid item>
+            <Grid item sx={{ width: 50 }}>
               <Button variant="solid" color="primary"  onClick={() => handleFollow(user._id)}>
                 Follow
               </Button>

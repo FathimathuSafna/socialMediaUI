@@ -7,6 +7,7 @@ import { AppContext } from './store/Context'
 import { BrowserRouter as Router,Routes,Route } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 import VERIFY from './pages/verify'
+import ADD_FRIENDS from './pages/addFriends'
 
 
 const ProtectedRoute = ({ children }) => {
@@ -36,6 +37,7 @@ function App() {
         <Route path="/login" element={<LOGIN/>} />
         <Route path="/signup" element={<SIGNUP/>} />
         <Route path="/verify" element={<VERIFY/>} />
+        <Route path="/addFriend" element={<ADD_FRIENDS/>} />
 
 
         </Routes>

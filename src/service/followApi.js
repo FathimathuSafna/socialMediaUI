@@ -6,7 +6,6 @@ export const getFollowers = async (token) => {
       headers: {
         token: `${token}`,
       }});
-    console.log("Followers data:", response);
     return response.data;
     
   } catch (error) {
@@ -17,7 +16,6 @@ export const getFollowers = async (token) => {
 
 export const followUser = async (data) => {
   try {
-    console.log("Data in followUser:", data);
     const response = await FOLLOW_INSTANCE.post(`/`, data)
     return response.data;
   }

@@ -100,7 +100,7 @@ function Pages() {
               p: 1,
             }}
           >
-            {[...Array(4)].map((_, rowIndex) => (
+            {[...Array(1)].map((_, rowIndex) => (
               <Grid2 key={rowIndex} size={{ xs: 11, sm: 6, md: 11 }}>
                 <POSTS />
                 <POSTS />
@@ -112,6 +112,7 @@ function Pages() {
           <Grid2 container size={{ sm: 2, md: 2, lg: 2 }}>
             <Grid2
               direction='column'
+              position='fixed'
               size={{ xs: 12, sm: 2, md: 2, lg: 2 }}
               offset={{ xs: 0, sm: 1, md: 0, lg: 0 }}
               paddingLeft={1}

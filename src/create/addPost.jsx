@@ -52,7 +52,7 @@ const FileInput = ({ field, form }) => {
       {/* Show preview outside the input */}
       {preview && (
         <Box sx={{ mt: 2 }}>
-          <img src={preview} alt="Preview" style={{ maxWidth: "100%" }} />
+          <img src={preview} alt="Preview" style={{ maxWidth: 80 }} />
         </Box>
       )}
     </Box>

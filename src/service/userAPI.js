@@ -30,3 +30,14 @@ export const verify = async (data) => {
         throw error;
     }
 }
+
+export const getAllUsers = async (data) => {
+    try {
+        const response = await USER_INSTANCE.get("/", data);
+        console.log("Users data:", response);
+        return response.data;
+    } catch (error) {
+        console.error("Error during fetching users:", error);
+        throw error;
+    }
+}
