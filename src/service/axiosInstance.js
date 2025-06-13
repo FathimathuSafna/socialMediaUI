@@ -64,6 +64,11 @@ export const FOLLOW_INSTANCE = createAxiosInstance(
 );
 setupInterceptors(FOLLOW_INSTANCE);
 
+export const COMMENT_INSTANCE = createAxiosInstance(
+  `${baseURL}/comment/`
+);  
+setupInterceptors(COMMENT_INSTANCE);
+
 
 
 

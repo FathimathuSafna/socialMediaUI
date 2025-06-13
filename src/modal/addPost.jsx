@@ -71,7 +71,6 @@ const AddPost = ({ open, handleClose }) => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     const { location, file, description } = values;
-    debugger;
 
     try {
       // 1. Upload image to Supabase Storage

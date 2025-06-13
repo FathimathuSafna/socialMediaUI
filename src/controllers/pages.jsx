@@ -103,7 +103,6 @@ function Pages() {
             {[...Array(1)].map((_, rowIndex) => (
               <Grid2 key={rowIndex} size={{ xs: 11, sm: 6, md: 11 }}>
                 <POSTS />
-                <POSTS />
               </Grid2>
             ))}
           </Grid2>
