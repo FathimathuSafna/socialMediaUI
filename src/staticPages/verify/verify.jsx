@@ -26,19 +26,17 @@ function Verify() {
   }, []);
 
   const location = useLocation();
-  const phoneNumber = location.state?.phoneNumber;
   const handleSubmit = async (values, { setSubmitting }) => {
     console.log("Verifying OTP:", values.otp);
     // Example Axios call (uncomment and modify as needed)
     try {
       verify({
-        otp: values.otp,
-        phoneNumber: phoneNumber,
+        otp: values.otp
       })
         .then((response) => {
-          console.log(response.data);
+          console.log("respons",response.data);
           localStorage.setItem("token", response.data);
-          navigate("/");
+          navigate("/login");
         })
         .catch((error) => {
           console.error("Error during OTP verification:", error);

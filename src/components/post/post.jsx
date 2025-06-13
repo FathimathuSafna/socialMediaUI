@@ -11,13 +11,14 @@ import {
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import { getPosts } from "../../service/postAPI";
 import { getAllUsers } from "../../service/userApi";
+import { likePost } from "../../service/likeAPI";
 import COMMANTMODAL from "../../modal/commentModal"; // Assuming you have a comment modal component
 
 const InstagramPost = () => {
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState({});
   const [likes, setLikes] = useState(1243);
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
@@ -42,10 +43,26 @@ const InstagramPost = () => {
     }
   }, [token]);
 
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikes((prevLikes) => (liked ? prevLikes - 1 : prevLikes + 1));
+  const handleLike = (postId) => {
+    if (token) {
+      likePost({ postId })
+        .then((response) => {
+          if (response.data?.status === true) {
+            setLiked((prevLiked) => ({
+              ...prevLiked,
+              [postId]: true,
+            }));
+          } else {
+            setLiked((prevLiked) => ({
+              ...prevLiked,
+              [postId]: false,
+            }));
+          }
+        })
+        .catch((error) => console.error("Error liking post:", error));
+    }
   };
+
 
   const getUserById = (userId) => users.find((u) => u._id === userId);
 
@@ -114,7 +131,8 @@ const InstagramPost = () => {
                 backgroundPosition: "center",
                 cursor: "pointer",
               }}
-              onDoubleClick={handleLike}
+              onDoubleClick={() => handleLike(post._id)}
+
             />
 
             {/* Action Buttons */}
@@ -127,8 +145,8 @@ const InstagramPost = () => {
               }}
             >
               <div>
-                <button onClick={handleLike} style={btnStyle}>
-                  {liked ? (
+                <button onClick={() => handleLike(post._id)} style={btnStyle}>
+                  {liked [post._id]? (
                     <Favorite style={{ color: "#ed4956", fontSize: "24px" }} />
                   ) : (
                     <FavoriteBorder
@@ -153,7 +171,7 @@ const InstagramPost = () => {
             </div>
 
             {/* Likes */}
-            <div
+            {/* <div
               style={{
                 fontWeight: "600",
                 margin: "4px 0",
@@ -162,7 +180,7 @@ const InstagramPost = () => {
               }}
             >
               {likes.toLocaleString()} likes
-            </div>
+            </div> */}
 
             {/* Caption */}
             <div

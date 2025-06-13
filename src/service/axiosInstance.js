@@ -69,6 +69,11 @@ export const COMMENT_INSTANCE = createAxiosInstance(
 );  
 setupInterceptors(COMMENT_INSTANCE);
 
+export const LIKE_INSTANCE = createAxiosInstance(
+  `${baseURL}/like/`
+);
+setupInterceptors(LIKE_INSTANCE);
+
 
 
 
