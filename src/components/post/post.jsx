@@ -11,7 +11,7 @@ import {
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import { getPosts } from "../../service/postAPI";
 import { getAllUsers } from "../../service/userApi";
-import { likePost } from "../../service/likeAPI";
+import { likePost,getLikesCount } from "../../service/likeAPI";
 import COMMANTMODAL from "../../modal/commentModal"; // Assuming you have a comment modal component
 
 const InstagramPost = () => {
@@ -19,7 +19,7 @@ const InstagramPost = () => {
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
   const [liked, setLiked] = useState({});
-  const [likes, setLikes] = useState(1243);
+  const [likes, setLikes] = useState();
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
@@ -40,6 +40,18 @@ const InstagramPost = () => {
       getAllUsers(token)
         .then((response) => setUsers(response.data))
         .catch((error) => console.error(error));
+
+        getLikesCount({ token})
+        .then((response) => {
+          console.log("Likes count response:", response);
+                      console.log("likes count:",response.data)
+          if (response.status === true) {
+            setLikes(response.data);
+          } else {
+            console.error("Failed to fetch likes count");
+          }
+        })
+
     }
   }, [token]);
 
@@ -65,11 +77,16 @@ const InstagramPost = () => {
 
 
   const getUserById = (userId) => users.find((u) => u._id === userId);
+  const getPostById = (postId) => posts.find((p) => p._id === postId);
+  
 
   return (
     <>
       {posts.map((post) => {
+        console.log("Post data:", post._id);
         const user = getUserById(post.userId) || {}; // Assuming post.userId exists
+        const like = getPostById(post._id) || {};
+        
         return (
           <div
             key={post.id}
@@ -171,7 +188,7 @@ const InstagramPost = () => {
             </div>
 
             {/* Likes */}
-            {/* <div
+            <div
               style={{
                 fontWeight: "600",
                 margin: "4px 0",
@@ -179,8 +196,8 @@ const InstagramPost = () => {
                 padding: "0 8px",
               }}
             >
-              {likes.toLocaleString()} likes
-            </div> */}
+              {setLikes[post._id]} likes
+            </div>
 
             {/* Caption */}
             <div

@@ -17,13 +17,13 @@ export const getFollowers = async (token) => {
 export const followUser = async (data) => {
   try {
     console.log("Data to follow user:", data);
+    console.log('token:',data.token)
     const response = await FOLLOW_INSTANCE.post(`/`, data, {
       headers: {
         token: `${data.token}`, 
       }
     }
     )
-    console.log("Response from follow user:", response);
     return response.data;
   }
     catch (error) {

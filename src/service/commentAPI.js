@@ -25,3 +25,17 @@ export const getComments = async (postId,token) => {
     throw error;
   }
 }
+
+export const editComment = async (data, token) => {
+  try {
+    const response = await COMMENT_INSTANCE.put(`/${data.commentId}`, data, {
+      headers: {
+        token: `${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error during editing comment:", error);
+    throw error;
+  }
+}
