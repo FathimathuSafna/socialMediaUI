@@ -11,7 +11,7 @@ import {
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import { getPosts } from "../../service/postAPI";
 import { getAllUsers } from "../../service/userApi";
-import { likePost,getLikesCount } from "../../service/likeAPI";
+import { likePost, getLikesCount } from "../../service/likeAPI";
 import COMMANTMODAL from "../../modal/commentModal"; // Assuming you have a comment modal component
 
 const InstagramPost = () => {
@@ -19,7 +19,7 @@ const InstagramPost = () => {
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
   const [liked, setLiked] = useState({});
-  const [likes, setLikes] = useState();
+  const [likes, setLikes] = useState({});
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
@@ -31,62 +31,78 @@ const InstagramPost = () => {
   const [selectedPostId, setSelectedPostId] = useState(null);
   const token = localStorage.getItem("token");
 
+  
+
   useEffect(() => {
     if (token) {
-      getPosts(token)
-        .then((response) => setPosts(response.data))
-        .catch((error) => console.error(error));
+     
+       getPosts(token)
+      .then((response) => {
+        const fetchedPosts = response.data;
+        setPosts(fetchedPosts);
+
+        // Fetch likes for each post
+        Promise.all(
+          fetchedPosts.map((post) =>
+            getLikesCount(post._id, token).then((response) => ({
+              postId: post._id,
+              count: response.data || 0,
+            })
+          )
+          )
+        ).then((likesArray) => {
+          const likesMap = {};
+          likesArray.forEach((item) => {
+            likesMap[item.postId] = item.count;
+          });
+          setLikes(likesMap);
+        });
+      })
+      .catch((error) => console.error("Failed to fetch posts:", error));
 
       getAllUsers(token)
         .then((response) => setUsers(response.data))
         .catch((error) => console.error(error));
 
-        getLikesCount({ token})
-        .then((response) => {
-          console.log("Likes count response:", response);
-                      console.log("likes count:",response.data)
-          if (response.status === true) {
-            setLikes(response.data);
-          } else {
-            console.error("Failed to fetch likes count");
-          }
-        })
-
+     
     }
   }, [token]);
 
-  const handleLike = (postId) => {
-    if (token) {
-      likePost({ postId })
-        .then((response) => {
-          if (response.data?.status === true) {
-            setLiked((prevLiked) => ({
-              ...prevLiked,
-              [postId]: true,
-            }));
-          } else {
-            setLiked((prevLiked) => ({
-              ...prevLiked,
-              [postId]: false,
-            }));
-          }
-        })
-        .catch((error) => console.error("Error liking post:", error));
-    }
-  };
+ const handleLike = (postId) => {
+  if (token) {
+    likePost({ postId })
+      .then((response) => {
+        setLiked((prevLiked) => ({
+          ...prevLiked,
+          [postId]: !prevLiked[postId],
+        }));
 
+        return getLikesCount(postId, token);
+      })
+      .then((res) => {
+        setLikes((prevLikes) => ({
+          ...prevLikes,
+          [postId]: res.data || 0,
+        }));
+      })
+      .catch((error) => console.error("Error liking post:", error));
+  }
+};
 
   const getUserById = (userId) => users.find((u) => u._id === userId);
-  const getPostById = (postId) => posts.find((p) => p._id === postId);
-  
+const getPostLikesCountById = (postId) => {
+  return likes[postId] || 0;
+};
 
   return (
     <>
       {posts.map((post) => {
         console.log("Post data:", post._id);
-        const user = getUserById(post.userId) || {}; // Assuming post.userId exists
-        const like = getPostById(post._id) || {};
-        
+        const user = getUserById(post.userId) || {};
+        const like = getPostLikesCountById(post._id) ?? 0;
+
+        // console.log("Post likes count:", like);
+
         return (
           <div
             key={post.id}
@@ -149,7 +165,6 @@ const InstagramPost = () => {
                 cursor: "pointer",
               }}
               onDoubleClick={() => handleLike(post._id)}
-
             />
 
             {/* Action Buttons */}
@@ -163,7 +178,7 @@ const InstagramPost = () => {
             >
               <div>
                 <button onClick={() => handleLike(post._id)} style={btnStyle}>
-                  {liked [post._id]? (
+                  {liked[post._id] ? (
                     <Favorite style={{ color: "#ed4956", fontSize: "24px" }} />
                   ) : (
                     <FavoriteBorder
@@ -196,7 +211,7 @@ const InstagramPost = () => {
                 padding: "0 8px",
               }}
             >
-              {setLikes[post._id]} likes
+              {like} likes
             </div>
 
             {/* Caption */}

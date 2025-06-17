@@ -39,3 +39,18 @@ export const editComment = async (data, token) => {
     throw error;
   }
 }
+
+export const deleteComment = async (commentId, token) => {
+  try {
+    const response = await COMMENT_INSTANCE.delete(`/${commentId}`, {
+      headers: {
+        token: `${token}`,
+      },
+    });
+    console.log("Response from deleteComment:", response);
+    return response.data;
+  } catch (error) {
+    console.error("Error during deleting comment:", error);
+    throw error;
+  }
+}

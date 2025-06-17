@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import {
   Modal,
   Box,
@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import Grid2 from "@mui/material/Grid2";
 import { useFormik } from "formik";
-import { createComment, getComments, editComment } from "../service/commentAPI";
+import { createComment, getComments, editComment,deleteComment } from "../service/commentAPI";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const ITEM_HEIGHT = 48;
@@ -52,14 +52,17 @@ export default function SlideUpModal({ open, handleClose, postId }) {
     },
   });
 
+
+
   const editFormik = useFormik({
     initialValues: { editedComment: "" },
+    enableReinitialize: true,
     onSubmit: (values, { resetForm }) => {
       if (!editingComment) return;
-
+    
       editComment(
         {
-          commentId: editingComment._id,
+          commentId:editingComment.commentId,
           commentText: values.editedComment,
         },
         { headers: { token } }
@@ -83,9 +86,22 @@ export default function SlideUpModal({ open, handleClose, postId }) {
   };
 
   const handleEditClick = (comment, idx) => {
+    console.log("Editing ................:", comment);
     setEditingComment(comment);
-    editFormik.setFieldValue("editedComment", comment.commentText);
+    editFormik.setFieldValue("editedComment", comment.commentText,comment.commentId);
     setEditModalOpen(true);
+    handleMenuClose(idx);
+  };
+
+  const handleDeleteComment = (commentId, idx) => {
+    console.log("Deleting comment with ID:", commentId);
+    console.log("Token:", idx);
+    const token = idx
+    deleteComment(commentId, token)
+      .then(() => {
+        fetchComments();
+      })
+      .catch((err) => console.error("Error deleting comment:", err));
     handleMenuClose(idx);
   };
 
@@ -115,71 +131,90 @@ export default function SlideUpModal({ open, handleClose, postId }) {
             }}
           >
             {/* Comment List */}
-            <Grid2 container direction="column" spacing={2} sx={{ flex: 1, width: "100%" }}>
+            <Grid2
+              container
+              direction="column"
+              spacing={2}
+              sx={{ flex: 1, width: "100%" }}
+            >
               <Grid2 sx={{ flex: 1, overflowY: "auto", maxHeight: 180 }}>
                 {comments.length > 0 ? (
-                  comments.map((comment, idx) => (
-                    <Box
-                      key={idx}
-                      sx={{
-                        mb: 1,
-                        p: 1,
-                        borderRadius: 1,
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        bgcolor: "#f7f7f7",
-                      }}
-                    >
-                      <Box>
-                        <span style={{ fontWeight: 600 }}>{comment.userName}:</span>{" "}
-                        {comment.commentText}
-                      </Box>
-                      <Box>
-                        <IconButton
-                          size="small"
-                          onClick={(e) => handleMenuOpen(e, idx)}
-                          aria-controls={`menu-${idx}`}
-                          aria-haspopup="true"
-                        >
-                          <MoreVertIcon fontSize="small" />
-                        </IconButton>
-                        <Menu
-                          id={`menu-${idx}`}
-                          anchorEl={menuAnchorEls[idx]}
-                          open={Boolean(menuAnchorEls[idx])}
-                          onClose={() => handleMenuClose(idx)}
-                          PaperProps={{
-                            style: {
-                              maxHeight: ITEM_HEIGHT * 4.5,
-                              width: "20ch",
-                            },
+                  comments.map(
+                    (comment, idx) => (
+                      (
+                        <Box
+                          key={idx}
+                          sx={{
+                            mb: 1,
+                            p: 1,
+                            borderRadius: 1,
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            bgcolor: "#f7f7f7",
                           }}
                         >
-                          {menuOptions.map((option) => (
-                            <MenuItem
-                              key={option}
-                              onClick={() =>
-                                option === "Edit"
-                                  ? handleEditClick(comment, idx)
-                                  : handleMenuClose(idx)
-                              }
+                          <Box>
+                            <span style={{ fontWeight: 600 }}>
+                              {comment.userName}:
+                            </span>{" "}
+                            {comment.commentText}
+                          </Box>
+                          <Box>
+                            <IconButton
+                              size="small"
+                              onClick={(e) => handleMenuOpen(e, idx)}
+                              aria-controls={`menu-${idx}`}
+                              aria-haspopup="true"
                             >
-                              {option}
-                            </MenuItem>
-                          ))}
-                        </Menu>
-                      </Box>
-                    </Box>
-                  ))
+                              <MoreVertIcon fontSize="small" />
+                            </IconButton>
+                            <Menu
+                              id={`menu-${idx}`}
+                              anchorEl={menuAnchorEls[idx]}
+                              open={Boolean(menuAnchorEls[idx])}
+                              onClose={() => handleMenuClose(idx)}
+                              PaperProps={{
+                                style: {
+                                  maxHeight: ITEM_HEIGHT * 4.5,
+                                  width: "20ch",
+                                },
+                              }}
+                            >
+                              {menuOptions.map((option) => (
+                                <MenuItem
+                                  key={option}
+                                  onClick={() =>
+                                    option === "Edit"
+                                      ? handleEditClick(comment, idx)
+                                      : option === "Delete"
+                                      ? handleDeleteComment(comment.commentId, token)
+                                      : handleMenuClose(idx)
+                                  }
+                                >
+                                  {option}
+                                </MenuItem>
+                              ))}
+                            </Menu>
+                          </Box>
+                        </Box>
+                      )
+                    )
+                  )
                 ) : (
-                  <Box sx={{ color: "#888", fontSize: 14 }}>No comments yet.</Box>
+                  <Box sx={{ color: "#888", fontSize: 14 }}>
+                    No comments yet.
+                  </Box>
                 )}
               </Grid2>
             </Grid2>
 
             {/* Comment Input */}
-            <Grid2 container spacing={1} sx={{ width: "100%", alignItems: "center" }}>
+            <Grid2
+              container
+              spacing={1}
+              sx={{ width: "100%", alignItems: "center" }}
+            >
               <Grid2 xs={9}>
                 <TextField
                   fullWidth
@@ -192,7 +227,9 @@ export default function SlideUpModal({ open, handleClose, postId }) {
                     "& .MuiOutlinedInput-root": {
                       "& fieldset": { border: "2px dotted #555" },
                       "&:hover fieldset": { border: "2px dotted #000" },
-                      "&.Mui-focused fieldset": { border: "2px dotted rgb(18, 18, 18)" },
+                      "&.Mui-focused fieldset": {
+                        border: "2px dotted rgb(18, 18, 18)",
+                      },
                     },
                   }}
                 />
@@ -224,7 +261,9 @@ export default function SlideUpModal({ open, handleClose, postId }) {
             boxShadow: 24,
           }}
         >
-          <Typography variant="h6" mb={2}>Edit Comment</Typography>
+          <Typography variant="h6" mb={2}>
+            Edit Comment
+          </Typography>
           <TextField
             fullWidth
             name="editedComment"
@@ -238,9 +277,11 @@ export default function SlideUpModal({ open, handleClose, postId }) {
             <Button onClick={() => setEditModalOpen(false)} sx={{ mr: 1 }}>
               Cancel
             </Button>
-            <Button type="submit" onClick={setEditingComment[comment._id]} variant="contained">
-              Update
-            </Button>
+            <Box display="flex" justifyContent="flex-end" mt={2}>
+              <Button type="submit" variant="contained">
+                Update
+              </Button>
+            </Box>
           </Box>
         </Box>
       </Modal>
