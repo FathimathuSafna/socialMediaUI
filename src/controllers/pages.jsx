@@ -100,11 +100,10 @@ function Pages() {
               p: 1,
             }}
           >
-            {[...Array(1)].map((_, rowIndex) => (
-              <Grid2 key={rowIndex} size={{ xs: 11, sm: 6, md: 11 }}>
+            
+              <Grid2 size={{ xs: 11, sm: 6, md: 11 }}>
                 <POSTS />
               </Grid2>
-            ))}
           </Grid2>
 
           {/* List Section */}

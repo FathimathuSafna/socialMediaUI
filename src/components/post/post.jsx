@@ -18,10 +18,7 @@ const InstagramPost = () => {
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
-  const [liked, setLiked] = useState({});
-  const [likes, setLikes] = useState({});
   const [posts, setPosts] = useState([]);
-  const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
   const handleOpen = (postId) => {
     setSelectedPostId(postId);
@@ -29,79 +26,31 @@ const InstagramPost = () => {
   };
   const handleClose = () => setOpen(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
-  const token = localStorage.getItem("token");
 
-  
-
-  useEffect(() => {
-    if (token) {
-     
-       getPosts(token)
+  const getAllPosts = () => {
+    getPosts()
       .then((response) => {
         const fetchedPosts = response.data;
         setPosts(fetchedPosts);
-
-        // Fetch likes for each post
-        Promise.all(
-          fetchedPosts.map((post) =>
-            getLikesCount(post._id, token).then((response) => ({
-              postId: post._id,
-              count: response.data || 0,
-            })
-          )
-          )
-        ).then((likesArray) => {
-          const likesMap = {};
-          likesArray.forEach((item) => {
-            likesMap[item.postId] = item.count;
-          });
-          setLikes(likesMap);
-        });
       })
       .catch((error) => console.error("Failed to fetch posts:", error));
+  };
+  useEffect(() => {
+    getAllPosts();
+  }, []);
 
-      getAllUsers(token)
-        .then((response) => setUsers(response.data))
-        .catch((error) => console.error(error));
-
-     
-    }
-  }, [token]);
-
- const handleLike = (postId) => {
-  if (token) {
+  const handleLike = (postId) => {
     likePost({ postId })
       .then((response) => {
-        setLiked((prevLiked) => ({
-          ...prevLiked,
-          [postId]: !prevLiked[postId],
-        }));
-
-        return getLikesCount(postId, token);
-      })
-      .then((res) => {
-        setLikes((prevLikes) => ({
-          ...prevLikes,
-          [postId]: res.data || 0,
-        }));
+        getAllPosts();
       })
       .catch((error) => console.error("Error liking post:", error));
-  }
-};
-
-  const getUserById = (userId) => users.find((u) => u._id === userId);
-const getPostLikesCountById = (postId) => {
-  return likes[postId] || 0;
-};
+  };
 
   return (
     <>
       {posts.map((post) => {
-        console.log("Post data:", post._id);
-        const user = getUserById(post.userId) || {};
-        const like = getPostLikesCountById(post._id) ?? 0;
-
-        // console.log("Post likes count:", like);
+        
 
         return (
           <div
@@ -131,7 +80,7 @@ const getPostLikesCountById = (postId) => {
                     width: "32px",
                     height: "32px",
                     backgroundImage: `url(${
-                      user.profilePicture || "https://i.pravatar.cc/150?img=5"
+                      post.userId.profilePicture || "https://i.pravatar.cc/150?img=5"
                     })`,
                     backgroundSize: "cover",
                     marginRight: "12px",
@@ -139,7 +88,7 @@ const getPostLikesCountById = (postId) => {
                   }}
                 />
                 <span style={{ fontWeight: "600", fontSize: "14px" }}>
-                  {user.userName || "Unknown"}
+                  {post.userId.userName || "Unknown"}
                 </span>
               </div>
               <button
@@ -178,7 +127,7 @@ const getPostLikesCountById = (postId) => {
             >
               <div>
                 <button onClick={() => handleLike(post._id)} style={btnStyle}>
-                  {liked[post._id] ? (
+                  {post.isLiked ? (
                     <Favorite style={{ color: "#ed4956", fontSize: "24px" }} />
                   ) : (
                     <FavoriteBorder
@@ -211,7 +160,7 @@ const getPostLikesCountById = (postId) => {
                 padding: "0 8px",
               }}
             >
-              {like} likes
+              {post.likeCount} likes
             </div>
 
             {/* Caption */}
@@ -224,7 +173,7 @@ const getPostLikesCountById = (postId) => {
               }}
             >
               <span style={{ fontWeight: "600", marginRight: "4px" }}>
-                {user.userName || "travel_lover"}
+                {post.userId.userName || "unknown"}
               </span>
               {post.description}
             </div>

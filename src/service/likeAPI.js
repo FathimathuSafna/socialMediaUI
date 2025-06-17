@@ -17,13 +17,11 @@ export const likePost = async (data) => {
 
 export const getLikesCount = async (data,token) => {
   try {
-    console.log("Data for fetching likes count:................", data,token);
     const response = await LIKE_INSTANCE.get(`/${data}`, {
       headers: {
         token: `${token}`,
       },
     });
-    console.log("Likes count response:", response);
     return response.data;
   } catch (error) {
     console.error("Error during fetching likes:", error);
