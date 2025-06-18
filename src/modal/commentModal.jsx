@@ -21,6 +21,7 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
 import SendIcon from "@mui/icons-material/Send";
+import Skeleton from "@mui/material/Skeleton";
 
 const ITEM_HEIGHT = 48;
 
@@ -35,14 +36,19 @@ export default function SlideUpModal({
   const [menuAnchorEls, setMenuAnchorEls] = useState({});
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingComment, setEditingComment] = useState(null);
+  const [loading, setLoading] = useState(false);
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
 
   const fetchComments = () => {
     if (postId) {
+      setLoading(true);
       getComments(postId)
-        .then((response) => setComments(response.data))
+        .then((response) => {
+          setComments(response.data)
+        setLoading(false)
+    })
         .catch((error) => console.error("Error fetching comments:", error));
     }
   };
@@ -181,7 +187,20 @@ export default function SlideUpModal({
               }}
             >
               <Grid2 sx={{ flex: 1, scrollbarWidth: "none" }}>
-                {comments.length > 0 ? (
+                {loading ? (
+                  <>
+                    {[1, 2, 3].map((i) => (
+                      <Box key={i} sx={{ mb: 1 }}>
+                        <Skeleton
+                          variant="text"
+                          width="80%"
+                          height={32}
+                          sx={{ bgcolor: darkMode ? "#333" : "#ccc" }}
+                        />
+                      </Box>
+                    ))}
+                  </>
+                ) : comments.length > 0 ? (
                   comments.map((comment, idx) => {
                     const menuOptions = comment.isEditable
                       ? ["Edit", "Delete"]
@@ -272,59 +291,57 @@ export default function SlideUpModal({
             </Grid2>
 
             {/* Comment Input */}
-            <Grid2
-              container
-              spacing={1}
-              sx={{ width: "100%", alignItems: "center" }}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1, // spacing between TextField and Button
+                width: "100%", // take full available width
+              }}
             >
-              <Grid2 xs={9}>
-                <TextField
-                  name="comment"
-                  value={formik.values.comment}
-                  onChange={formik.handleChange}
-                  placeholder="Type your comment here..."
-                  sx={{
-                    width: "100%",
+              <TextField
+                name="comment"
+                value={formik.values.comment}
+                onChange={formik.handleChange}
+                placeholder="Type your comment here..."
+                fullWidth
+                sx={{
+                  color: textColor,
+                  backgroundColor: bgColor,
+                  "& .MuiInputBase-input": {
+                    height: "20px",
+                    padding: "8px 12px",
+                    fontSize: "14px",
                     color: textColor,
                     backgroundColor: bgColor,
-                    "& .MuiInputBase-input": {
-                      height: "20px",
-                      padding: "8px 12px",
-                      fontSize: "14px",
-                      color: textColor,
-                      backgroundColor: bgColor,
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    minHeight: "32px",
+                    backgroundColor: bgColor,
+                    "& fieldset": { border: "2px dotted #555" },
+                    "&:hover fieldset": { border: "2px dotted #000" },
+                    "&.Mui-focused fieldset": {
+                      border: "2px dotted rgb(18, 18, 18)",
                     },
-                    "& .MuiOutlinedInput-root": {
-                      minHeight: "32px",
-                      backgroundColor: bgColor,
-                      "& fieldset": { border: "2px dotted #555" },
-                      "&:hover fieldset": { border: "2px dotted #000" },
-                      "&.Mui-focused fieldset": {
-                        border: "2px dotted rgb(18, 18, 18)",
-                      },
-                    },
-                  }}
-                />
-              </Grid2>
+                  },
+                }}
+              />
 
-              {formik.values.comment.trim() !== "" && (
-                <Grid2 xs={3}>
-                  <Button
-                    sx={{
-                      backgroundColor: bgColor,
-                      color: textColor,
-                      boxShadow: "none",
-                      fontSize: "13px",
-                    }}
-                    type="submit"
-                    variant="contained"
-                    fullWidth
-                  >
-                    <SendIcon />
-                  </Button>
-                </Grid2>
-              )}
-            </Grid2>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  backgroundColor: bgColor,
+                  color: textColor,
+                  boxShadow: "none",
+                  fontSize: "13px",
+                  minWidth: "50px",
+                  padding: "6px 12px",
+                }}
+              >
+                <SendIcon />
+              </Button>
+            </Box>
           </Box>
         </Slide>
       </Modal>
