@@ -63,8 +63,7 @@ export default function ResponsiveDialog({ open, handleClose }) {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await getAllUsers(token, value); // Pass search key if your API supports it
+      const response = await getAllUsers( value); // Pass search key if your API supports it
       setSearchResults(response.data); // Adjust if your API returns differently
     } catch (error) {
       setSearchResults([]);

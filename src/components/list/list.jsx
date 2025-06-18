@@ -10,23 +10,25 @@ export default function BottomActionsCard() {
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? '#121212' : '#ffffff';
   const textColor = darkMode ? '#ffffff' : '#000000';
-    const token = localStorage.getItem('token');
+
+const getAllFollowers = () => {
+  getFollowers()
+    .then((response) => {
+      setFollowers(response.data);
+    })
+    .catch((error) => {
+      console.error("Error fetching followers:", error);
+    })
+  }
 
   useEffect(() => {
-    if (token) {
-    getFollowers(token)
-      .then((response) => setFollowers(response.data)
-    )
-      .catch((error) => console.error(error));
-  }
-  }, [token]);
+    getAllFollowers()
+  }, []);
 
 const handleFollow = (userId) => {
-    followUser({ token, followedUserId: userId })
+    followUser({followedUserId: userId })
       .then((response) => {
-        console.log("Followed:", response);
-        setFollow((prev) => new Set(prev).add(userId));
-        window.location.reload();
+        getAllFollowers()
       })
       .catch((error) => {
         console.error("Error following user:", error);

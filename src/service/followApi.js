@@ -1,11 +1,8 @@
 import { FOLLOW_INSTANCE } from "./axiosInstance";
 
-export const getFollowers = async (token) => {
+export const getFollowers = async () => {
   try {
-    const response = await FOLLOW_INSTANCE.get(`/`, {
-      headers: {
-        token: `${token}`,
-      }});
+    const response = await FOLLOW_INSTANCE.get(`/`);
     return response.data;
     
   } catch (error) {
@@ -17,12 +14,7 @@ export const getFollowers = async (token) => {
 export const followUser = async (data) => {
   try {
     console.log("Data to follow user:", data);
-    console.log('token:',data.token)
-    const response = await FOLLOW_INSTANCE.post(`/`, data, {
-      headers: {
-        token: `${data.token}`, 
-      }
-    }
+    const response = await FOLLOW_INSTANCE.post(`/`, data
     )
     return response.data;
   }

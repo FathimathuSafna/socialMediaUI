@@ -91,8 +91,6 @@ const AddPost = ({ open, handleClose }) => {
 
       const imageUrl = publicUrlData.publicUrl;
 
-      // 3. Send image URL to your backend API
-      const token = localStorage.getItem("token");
 
       createPost(
         {
@@ -100,11 +98,6 @@ const AddPost = ({ open, handleClose }) => {
           postImageUrl: imageUrl,
           description,
         },
-        {
-          headers: {
-            token: `${token}`,
-          },
-        }
       )
         .then((response) => {
           console.log(response.data);

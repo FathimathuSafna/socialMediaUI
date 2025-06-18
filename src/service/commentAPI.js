@@ -10,14 +10,9 @@ export const createComment = async (data) => {
   }
 }
 
-export const getComments = async (postId,token) => {
+export const getComments = async (postId) => {
   try {
     const response = await COMMENT_INSTANCE.get(`/${postId}`, 
-      {
-      headers: {
-        token: `${token}`,
-      }
-    }
     );
     return response.data;
   } catch (error) {
@@ -26,12 +21,9 @@ export const getComments = async (postId,token) => {
   }
 }
 
-export const editComment = async (data, token) => {
+export const editComment = async (data) => {
   try {
     const response = await COMMENT_INSTANCE.put(`/${data.commentId}`, data, {
-      headers: {
-        token: `${token}`,
-      },
     });
     return response.data;
   } catch (error) {
@@ -40,13 +32,9 @@ export const editComment = async (data, token) => {
   }
 }
 
-export const deleteComment = async (commentId, token) => {
+export const deleteComment = async (commentId) => {
   try {
-    const response = await COMMENT_INSTANCE.delete(`/${commentId}`, {
-      headers: {
-        token: `${token}`,
-      },
-    });
+    const response = await COMMENT_INSTANCE.delete(`/${commentId}`);
     console.log("Response from deleteComment:", response);
     return response.data;
   } catch (error) {

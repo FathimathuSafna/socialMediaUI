@@ -10,8 +10,7 @@ import {
 } from "@mui/icons-material";
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import { getPosts } from "../../service/postAPI";
-import { getAllUsers } from "../../service/userApi";
-import { likePost, getLikesCount } from "../../service/likeAPI";
+import { likePost } from "../../service/likeAPI";
 import COMMANTMODAL from "../../modal/commentModal"; // Assuming you have a comment modal component
 
 const InstagramPost = () => {
@@ -50,8 +49,6 @@ const InstagramPost = () => {
   return (
     <>
       {posts.map((post) => {
-        
-
         return (
           <div
             key={post.id}
@@ -135,7 +132,7 @@ const InstagramPost = () => {
                     />
                   )}
                 </button>
-                <button style={btnStyle} onClick={() => handleOpen(post._id)}>
+                <button style={btnStyle} onClick={() => handleOpen(post._id,post.description,post.userId.userName)}>
                   <ChatBubbleOutline
                     style={{ fontSize: "24px", color: "#8e8e8e" }}
                   />
@@ -221,6 +218,8 @@ const InstagramPost = () => {
                 open={open}
                 handleClose={handleClose}
                 postId={selectedPostId}
+                description={post.description}
+                userName={post.userId.userName}
               />
             )}
           </div>

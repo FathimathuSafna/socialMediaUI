@@ -12,22 +12,36 @@ import {
 } from "@mui/material";
 import Grid2 from "@mui/material/Grid2";
 import { useFormik } from "formik";
-import { createComment, getComments, editComment,deleteComment } from "../service/commentAPI";
+import {
+  createComment,
+  getComments,
+  editComment,
+  deleteComment,
+} from "../service/commentAPI";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useTheme as useCustomTheme } from "../store/ThemeContext";
+import SendIcon from "@mui/icons-material/Send";
 
 const ITEM_HEIGHT = 48;
-const menuOptions = ["Edit", "Delete", "Report"];
 
-export default function SlideUpModal({ open, handleClose, postId }) {
+export default function SlideUpModal({
+  open,
+  handleClose,
+  postId,
+  description,
+  userName,
+}) {
   const [comments, setComments] = useState([]);
   const [menuAnchorEls, setMenuAnchorEls] = useState({});
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingComment, setEditingComment] = useState(null);
-  const token = localStorage.getItem("token");
+  const { darkMode } = useCustomTheme();
+  const bgColor = darkMode ? "#121212" : "#ffffff";
+  const textColor = darkMode ? "#ffffff" : "#000000";
 
   const fetchComments = () => {
-    if (token && postId) {
-      getComments(postId, token)
+    if (postId) {
+      getComments(postId)
         .then((response) => setComments(response.data))
         .catch((error) => console.error("Error fetching comments:", error));
     }
@@ -35,15 +49,12 @@ export default function SlideUpModal({ open, handleClose, postId }) {
 
   useEffect(() => {
     fetchComments();
-  }, [token, postId]);
+  }, [postId]);
 
   const formik = useFormik({
     initialValues: { comment: "" },
     onSubmit: (values, { resetForm }) => {
-      createComment(
-        { commentText: values.comment, postId },
-        { headers: { token } }
-      )
+      createComment({ commentText: values.comment, postId })
         .then(() => {
           resetForm();
           fetchComments();
@@ -52,21 +63,16 @@ export default function SlideUpModal({ open, handleClose, postId }) {
     },
   });
 
-
-
   const editFormik = useFormik({
     initialValues: { editedComment: "" },
     enableReinitialize: true,
     onSubmit: (values, { resetForm }) => {
       if (!editingComment) return;
-    
-      editComment(
-        {
-          commentId:editingComment.commentId,
-          commentText: values.editedComment,
-        },
-        { headers: { token } }
-      )
+
+      editComment({
+        commentId: editingComment.commentId,
+        commentText: values.editedComment,
+      })
         .then(() => {
           resetForm();
           setEditModalOpen(false);
@@ -88,16 +94,17 @@ export default function SlideUpModal({ open, handleClose, postId }) {
   const handleEditClick = (comment, idx) => {
     console.log("Editing ................:", comment);
     setEditingComment(comment);
-    editFormik.setFieldValue("editedComment", comment.commentText,comment.commentId);
+    editFormik.setFieldValue(
+      "editedComment",
+      comment.commentText,
+      comment.commentId
+    );
     setEditModalOpen(true);
     handleMenuClose(idx);
   };
 
-  const handleDeleteComment = (commentId, idx) => {
-    console.log("Deleting comment with ID:", commentId);
-    console.log("Token:", idx);
-    const token = idx
-    deleteComment(commentId, token)
+  const handleDeleteComment = (commentId) => {
+    deleteComment(commentId)
       .then(() => {
         fetchComments();
       })
@@ -114,34 +121,74 @@ export default function SlideUpModal({ open, handleClose, postId }) {
             component="form"
             onSubmit={formik.handleSubmit}
             sx={{
-              top: "50%",
-              left: "50%",
+              top: "20%",
+              left: "27%",
               transform: "translate(-50%, -50%)",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              alignItems: "center",
               bottom: 0,
               position: "absolute",
               width: "40%",
-              bgcolor: "background.paper",
+              bgcolor: bgColor,
+              textColor: textColor,
               p: 4,
               boxShadow: 24,
               borderRadius: "10px 10px 0 0",
+              overflowY: "hidden",
             }}
           >
+            <Grid2 container direction="row" mb={3} spacing={2}>
+              <Grid2
+                xs={6}
+                sx={{
+                  textAlign: "left",
+                  fontSize: "15px",
+                  color: textColor,
+                  fontWeight: "bold",
+                  fontFamily: "Arial", // Make sure the font is available
+                }}
+              >
+                {userName}
+              </Grid2>
+
+              <Grid2 xs={6}>
+                <Typography
+                  sx={{
+                    textAlign: "left",
+                    fontSize: 14,
+                    color: textColor,
+                    fontWeight: "light",
+                    fontFamily: "Georgia",
+                  }}
+                >
+                  {description}
+                </Typography>
+              </Grid2>
+            </Grid2>
+
             {/* Comment List */}
             <Grid2
               container
               direction="column"
-              spacing={2}
-              sx={{ flex: 1, width: "100%" }}
+              spacing={1}
+              sx={{
+                width: "100%",
+                display: "flex",
+                flexGrow: 1,
+                overflowY: "auto",
+                scrollbarWidth: "none",
+              }}
             >
-              <Grid2 sx={{ flex: 1, overflowY: "auto", maxHeight: 180 }}>
+              <Grid2 sx={{ flex: 1, scrollbarWidth: "none" }}>
                 {comments.length > 0 ? (
-                  comments.map(
-                    (comment, idx) => (
-                      (
+                  comments.map((comment, idx) => {
+                    const menuOptions = comment.isEditable
+                      ? ["Edit", "Delete"]
+                      : ["Report"];
+
+                    return (
+                      <Grid2>
                         <Box
                           key={idx}
                           sx={{
@@ -151,17 +198,25 @@ export default function SlideUpModal({ open, handleClose, postId }) {
                             display: "flex",
                             justifyContent: "space-between",
                             alignItems: "center",
-                            bgcolor: "#f7f7f7",
                           }}
                         >
                           <Box>
-                            <span style={{ fontWeight: 600 }}>
+                            <span
+                              style={{
+                                fontWeight: 900,
+                                fontSize: 17,
+                                color: textColor,
+                              }}
+                            >
                               {comment.userName}:
                             </span>{" "}
-                            {comment.commentText}
+                            <span style={{ fontSize: 16, color: textColor }}>
+                              {comment.commentText}
+                            </span>
                           </Box>
                           <Box>
                             <IconButton
+                              sx={{ color: textColor }}
                               size="small"
                               onClick={(e) => handleMenuOpen(e, idx)}
                               aria-controls={`menu-${idx}`}
@@ -175,22 +230,29 @@ export default function SlideUpModal({ open, handleClose, postId }) {
                               open={Boolean(menuAnchorEls[idx])}
                               onClose={() => handleMenuClose(idx)}
                               PaperProps={{
-                                style: {
+                                sx: {
                                   maxHeight: ITEM_HEIGHT * 4.5,
                                   width: "20ch",
+                                  bgcolor: bgColor,
+                                  color: textColor,
                                 },
                               }}
                             >
                               {menuOptions.map((option) => (
                                 <MenuItem
                                   key={option}
-                                  onClick={() =>
-                                    option === "Edit"
-                                      ? handleEditClick(comment, idx)
-                                      : option === "Delete"
-                                      ? handleDeleteComment(comment.commentId, token)
-                                      : handleMenuClose(idx)
-                                  }
+                                  onClick={() => {
+                                    if (option === "Edit") {
+                                      handleEditClick(comment, idx);
+                                    } else if (option === "Delete") {
+                                      handleDeleteComment(
+                                        comment.commentId,
+                                        idx
+                                      );
+                                    } else {
+                                      handleMenuClose(idx);
+                                    }
+                                  }}
                                 >
                                   {option}
                                 </MenuItem>
@@ -198,11 +260,11 @@ export default function SlideUpModal({ open, handleClose, postId }) {
                             </Menu>
                           </Box>
                         </Box>
-                      )
-                    )
-                  )
+                      </Grid2>
+                    );
+                  })
                 ) : (
-                  <Box sx={{ color: "#888", fontSize: 14 }}>
+                  <Box sx={{ color: textColor, fontSize: 14 }}>
                     No comments yet.
                   </Box>
                 )}
@@ -217,14 +279,24 @@ export default function SlideUpModal({ open, handleClose, postId }) {
             >
               <Grid2 xs={9}>
                 <TextField
-                  fullWidth
                   name="comment"
                   value={formik.values.comment}
                   onChange={formik.handleChange}
                   placeholder="Type your comment here..."
-                  variant="outlined"
                   sx={{
+                    width: "100%",
+                    color: textColor,
+                    backgroundColor: bgColor,
+                    "& .MuiInputBase-input": {
+                      height: "20px",
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      color: textColor,
+                      backgroundColor: bgColor,
+                    },
                     "& .MuiOutlinedInput-root": {
+                      minHeight: "32px",
+                      backgroundColor: bgColor,
                       "& fieldset": { border: "2px dotted #555" },
                       "&:hover fieldset": { border: "2px dotted #000" },
                       "&.Mui-focused fieldset": {
@@ -234,11 +306,24 @@ export default function SlideUpModal({ open, handleClose, postId }) {
                   }}
                 />
               </Grid2>
-              <Grid2 xs={3}>
-                <Button type="submit" variant="contained" fullWidth>
-                  Comment
-                </Button>
-              </Grid2>
+
+              {formik.values.comment.trim() !== "" && (
+                <Grid2 xs={3}>
+                  <Button
+                    sx={{
+                      backgroundColor: bgColor,
+                      color: textColor,
+                      boxShadow: "none",
+                      fontSize: "13px",
+                    }}
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                  >
+                    <SendIcon />
+                  </Button>
+                </Grid2>
+              )}
             </Grid2>
           </Box>
         </Slide>
