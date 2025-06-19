@@ -8,18 +8,7 @@ import { supabase } from "../store/supabaseClient";
 import * as Yup from "yup";
 import Axios from "axios";
 import { createPost } from "../service/postAPI";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 300,
-  bgcolor: "background.paper",
-  borderRadius: 2,
-  boxShadow: 24,
-  p: 4,
-};
+import { useTheme as useCustomTheme } from "../store/ThemeContext";
 
 // Custom Formik-compatible FileInput
 const FileInput = ({ field, form }) => {
@@ -68,6 +57,9 @@ const validationSchema = Yup.object().shape({
 
 const AddPost = ({ open, handleClose }) => {
   const navigate = useNavigate();
+  const { darkMode } = useCustomTheme();
+  const bgColor = darkMode ? "#121212" : "#ffffff";
+  const textColor = darkMode ? "#ffffff" : "#000000";
 
   const handleSubmit = async (values, { setSubmitting }) => {
     const { location, file, description } = values;
@@ -91,14 +83,11 @@ const AddPost = ({ open, handleClose }) => {
 
       const imageUrl = publicUrlData.publicUrl;
 
-
-      createPost(
-        {
-          location,
-          postImageUrl: imageUrl,
-          description,
-        },
-      )
+      createPost({
+        location,
+        postImageUrl: imageUrl,
+        description,
+      })
         .then((response) => {
           console.log(response.data);
           setSubmitting(false);
@@ -118,8 +107,21 @@ const AddPost = ({ open, handleClose }) => {
 
   return (
     <Modal open={open} onClose={handleClose}>
-      <Box sx={style}>
-        <Typography variant="h6" component="h2" gutterBottom>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 300,
+          borderRadius: 2,
+          boxShadow: 24,
+          p: 4,
+          color: textColor,
+          backgroundColor: bgColor,
+        }}
+      >
+        <Typography variant="h6" sx={{fontStyle:'inherit'}} component="h2" gutterBottom>
           Create New Post
         </Typography>
 
@@ -140,6 +142,14 @@ const AddPost = ({ open, handleClose }) => {
                     margin="normal"
                     error={Boolean(touched.location && errors.location)}
                     helperText={touched.location && errors.location}
+                    sx={{
+                      "& .MuiInputBase-input": {
+                        color: "#8e8e8e",
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: "#8e8e8e",
+                      },
+                    }}
                   />
                 )}
               </Field>
@@ -157,6 +167,14 @@ const AddPost = ({ open, handleClose }) => {
                     margin="normal"
                     error={Boolean(touched.description && errors.description)}
                     helperText={touched.description && errors.description}
+                    sx={{
+                      "& .MuiInputBase-input": {
+                        color: "#8e8e8e",
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: "#8e8e8e",
+                      },
+                    }}
                   />
                 )}
               </Field>

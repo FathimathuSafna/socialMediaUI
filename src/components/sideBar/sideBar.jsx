@@ -10,8 +10,12 @@ import Button from '@mui/material/Button';
 import { useTheme as useCustomTheme } from '../../store/ThemeContext';
 import AddPost from '../../modal/addPost';
 import SearchDialog from '../../modal/searchDialog';
+import { useLocation, useNavigate } from "react-router-dom";
+
+
 
 function Sidebar() {
+    const navigate = useNavigate();
   const { darkMode } = useCustomTheme();
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -23,13 +27,14 @@ function Sidebar() {
   const bgColor = darkMode ? '#121212' : '#ffffff';
   const textColor = darkMode ? '#ffffff' : '#000000';
   const btnColor = darkMode ? '#121212' : '#ffffff';
+  const userName = localStorage.getItem("userName")
 
   const menuItems = [
-    { icon: <HomeIcon />, label: 'Home' },
+    { icon: <HomeIcon />, label: 'Home',action:()=> navigate('/') },
     { icon: <SearchIcon />, label: 'Search' ,action: searchHandleOpen},
     { icon: <ChatIcon />, label: 'Messages' },
     { icon: <AddBoxOutlinedIcon />, label: 'Create', action: handleOpen },
-    { icon: <AccountCircleOutlinedIcon />, label: 'Profile' }
+    { icon: <AccountCircleOutlinedIcon />, label: 'Profile' ,action:()=> navigate(`/profile/${userName}`)}
   ];
 
   return (

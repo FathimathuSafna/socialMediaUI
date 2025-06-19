@@ -77,7 +77,7 @@ const InstagramPost = () => {
                     width: "32px",
                     height: "32px",
                     backgroundImage: `url(${
-                      post.userId.profilePicture || "https://i.pravatar.cc/150?img=5"
+                      post.userId.profilePictureUrl || "https://i.pravatar.cc/150?img=5"
                     })`,
                     backgroundSize: "cover",
                     marginRight: "12px",
@@ -132,7 +132,7 @@ const InstagramPost = () => {
                     />
                   )}
                 </button>
-                <button style={btnStyle} onClick={() => handleOpen(post._id,post.description,post.userId.userName)}>
+                <button style={btnStyle} onClick={() => handleOpen(post._id,post.description,post.userId.userName,post.userId.profilePictureUrl)}>
                   <ChatBubbleOutline
                     style={{ fontSize: "24px", color: "#8e8e8e" }}
                   />
@@ -220,6 +220,7 @@ const InstagramPost = () => {
                 postId={selectedPostId}
                 description={post.description}
                 userName={post.userId.userName}
+                profilePicture={post.userId.profilePictureUrl}
               />
             )}
           </div>

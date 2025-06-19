@@ -38,7 +38,8 @@ function Login() {
       })
         .then((response) => {
           console.log(response.data);
-          localStorage.setItem("token", response.data);
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("userName",response.data.userName)
           navigate("/");
         })
         .catch((error) => {

@@ -1,3 +1,4 @@
+import { data } from "react-router-dom";
 import { USER_INSTANCE } from "./axiosInstance";
 
 export const signup = async (data) => {
@@ -38,3 +39,14 @@ export const getAllUsers = async (data) => {
     throw error;
   }
 };
+
+export const getUserDetails = async (userName) =>{
+  try{
+    console.log("SSSS",userName)
+    const response = await USER_INSTANCE.get(`/${userName}`)
+    return response.data
+  } catch (error){
+    console.log("error during fetching users:",error)
+    throw error
+  }
+}

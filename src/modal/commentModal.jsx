@@ -22,6 +22,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
 import SendIcon from "@mui/icons-material/Send";
 import Skeleton from "@mui/material/Skeleton";
+import Avatar from "@mui/material/Avatar";
 
 const ITEM_HEIGHT = 48;
 
@@ -31,6 +32,7 @@ export default function SlideUpModal({
   postId,
   description,
   userName,
+  profilePicture
 }) {
   const [comments, setComments] = useState([]);
   const [menuAnchorEls, setMenuAnchorEls] = useState({});
@@ -46,9 +48,9 @@ export default function SlideUpModal({
       setLoading(true);
       getComments(postId)
         .then((response) => {
-          setComments(response.data)
-        setLoading(false)
-    })
+          setComments(response.data);
+          setLoading(false);
+        })
         .catch((error) => console.error("Error fetching comments:", error));
     }
   };
@@ -146,7 +148,7 @@ export default function SlideUpModal({
           >
             <Grid2 container direction="row" mb={3} spacing={2}>
               <Grid2
-                xs={6}
+                xs={4}
                 sx={{
                   textAlign: "left",
                   fontSize: "15px",
@@ -155,10 +157,28 @@ export default function SlideUpModal({
                   fontFamily: "Arial", // Make sure the font is available
                 }}
               >
+                {profilePicture ? (
+                 profilePicture
+                ) : (
+                  <Avatar src="/broken-image.jpg" />
+                )}
+
+              </Grid2>
+              <Grid2 direction='column'
+                xs={4}
+                sx={{
+                  textAlign: "left",
+                  fontSize: "15px",
+                  color: textColor,
+                  fontWeight: "bold",
+                  fontFamily: "Arial", // Make sure the font is available
+                }}
+              >
+                <Grid2>
                 {userName}
               </Grid2>
 
-              <Grid2 xs={6}>
+              <Grid2 xs={6} mt={1}>
                 <Typography
                   sx={{
                     textAlign: "left",
@@ -170,6 +190,7 @@ export default function SlideUpModal({
                 >
                   {description}
                 </Typography>
+              </Grid2>
               </Grid2>
             </Grid2>
 
@@ -219,7 +240,14 @@ export default function SlideUpModal({
                             alignItems: "center",
                           }}
                         >
-                          <Box>
+                          <Box display="flex" gap={2}>
+                            <span style={{ fontSize: 11 }}>
+                              {comment.profileImage ? (
+                                comment.profileImage
+                              ) : (
+                                <Avatar src="/broken-image.jpg" />
+                              )}
+                            </span>
                             <span
                               style={{
                                 fontWeight: 900,
