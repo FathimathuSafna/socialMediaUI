@@ -32,6 +32,7 @@ export const verify = async (data) => {
 
 export const getAllUsers = async (data) => {
   try {
+    console.log("Fetching all users...",data);
     const response = await USER_INSTANCE.get("/", data);
     return response.data;
   } catch (error) {
@@ -42,7 +43,6 @@ export const getAllUsers = async (data) => {
 
 export const getUserDetails = async (userName) =>{
   try{
-    console.log("SSSS",userName)
     const response = await USER_INSTANCE.get(`/${userName}`)
     return response.data
   } catch (error){

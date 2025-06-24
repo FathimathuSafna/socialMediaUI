@@ -30,12 +30,17 @@ function Pages() {
       sx={{
         bgcolor: bgColor,
         color: textColor,
+        minHeight: "100vh",
         transition: "all 0.3s ease-in-out",
       }}
       direction="row"
     >
       {/* Sidebar Section */}
-      <Grid2 direction="column" size={{ xs: 2, md: 2, lg: 2 }}>
+      <Grid2
+        direction="column"
+        size={{ xs: 2, md: 2, lg: 2 }}
+        sx={{ bgcolor: bgColor }}
+      >
         <Grid2
           xs={0}
           md={12}
@@ -72,28 +77,31 @@ function Pages() {
       </Grid2>
 
       {/* Main Content Section */}
+
       <Grid2 container direction="column" size={{ md: 10 }}>
         {/* Navbar Section */}
-        <Grid2 md={10} xs={12} sx={{ position: "relative", zIndex: 1000 }}>
-          <Box
-            sx={{
-              position: "fixed",
-              top: 0,
-              zIndex: 1000,
-              width: "100%",
-              boxSizing: "border-box",
-              gap: 3,
-              bgcolor: bgColor,
-              color: textColor,
-              overflow: "hidden",
-              height: "64px", // Ensure navbar height is fixed
-              flexWrap: "wrap",
-            }}
-          >
-            {" "}
-            {isProfilePage ? <PROFILE userName={userName} /> : <NAVBAR />}
-          </Box>
-        </Grid2>
+        {!isProfilePage && (
+          <Grid2 md={10} xs={12} sx={{ position: "relative", zIndex: 1000 }}>
+            <Box
+              sx={{
+                position: "fixed",
+                top: 0,
+                zIndex: 1000,
+                width: "100%",
+                boxSizing: "border-box",
+                gap: 3,
+                bgcolor: bgColor,
+                color: textColor,
+                overflow: "hidden",
+                height: "64px", // Ensure navbar height is fixed
+                flexWrap: "wrap",
+              }}
+            >
+              {" "}
+              <NAVBAR />
+            </Box>
+          </Grid2>
+        )}
 
         {/* Content Below Navbar */}
         <Grid2
@@ -118,13 +126,18 @@ function Pages() {
               p: 1,
             }}
           >
-            <Grid2 size={{ xs: 11, sm: 6, md: 10 }}>
+            <Grid2
+              size={
+                isProfilePage
+                  ? { xs: 11, sm: 12, md: 12 }
+                  : { xs: 11, sm: 10, md: 10 }
+              }
+            >
               {isProfilePage ? <PROFILE userName={userName} /> : <POSTS />}
             </Grid2>
           </Grid2>
 
           {/* List Section */}
-          {!isProfilePage && (
             <Grid2
               container
               size={{ sm: 2, md: 2, lg: 2 }}
@@ -145,7 +158,6 @@ function Pages() {
                 </Grid2>
               </Grid2>
             </Grid2>
-          )}
         </Grid2>
       </Grid2>
 

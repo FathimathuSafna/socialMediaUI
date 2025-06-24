@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import {
   Avatar,
   Box,
@@ -12,7 +12,7 @@ import { styled, alpha, useTheme } from "@mui/material/styles";
 import { getAllUsers } from "../service/userApi"; 
 import Grid2 from "@mui/material/Grid2";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
-import { followUser } from "../service/followApi";
+import { followUser,getFollowers } from "../service/followApi";
 import { useNavigate } from "react-router-dom";
 
 

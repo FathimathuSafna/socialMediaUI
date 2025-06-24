@@ -1,5 +1,5 @@
-import { Box, Grid2,IconButton } from "@mui/material";
-import React,{useState} from "react";
+import { Box, Grid2, IconButton } from "@mui/material";
+import React, { useState } from "react";
 import HomeIcon from "@mui/icons-material/Home";
 import SearchIcon from "@mui/icons-material/Search";
 import ChatIcon from "@mui/icons-material/Chat";
@@ -8,8 +8,11 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import AddPost from "../../modal/addPost";
 import SearchDialog from "../../modal/searchDialog";
+import { useNavigate } from "react-router-dom";
 
 function footerBar() {
+  const navigate = useNavigate();
+  const userName = localStorage.getItem("userName");
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
@@ -37,31 +40,30 @@ function footerBar() {
         alignItems="center"
       >
         <Box
-  sx={{
-    display: "flex",
-    justifyContent: "space-around",
-    width: "100%",
-    py: 1,
-  }}
->
-  <Box sx={{ cursor: "pointer", p: 1 }}>
-  <HomeIcon />
-  </Box>
-  
-  <Box onClick={searchHandleOpen} sx={{ cursor: "pointer", p: 1 }}>
-    <SearchIcon />
-  </Box>
-<Box sx={{ cursor: "pointer", p: 1 }}>
-  <ChatIcon />
-</Box>
-  <Box onClick={handleOpen} sx={{ cursor: "pointer", p: 1 }}>
-    <AddBoxOutlinedIcon />
-  </Box>
-<Box sx={{ cursor: "pointer", p: 1 }}>
-  <AccountCircleOutlinedIcon />
-  </Box>
-</Box>
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            width: "100%",
+            py: 1,
+          }}
+        >
+          <Box sx={{ cursor: "pointer", p: 1 }} onClick={() => navigate("/")}>
+            <HomeIcon /> 
+          </Box>
 
+          <Box onClick={searchHandleOpen} sx={{ cursor: "pointer", p: 1 }}>
+            <SearchIcon />
+          </Box>
+          <Box sx={{ cursor: "pointer", p: 1 }}>
+            <ChatIcon />
+          </Box>
+          <Box onClick={handleOpen} sx={{ cursor: "pointer", p: 1 }}>
+            <AddBoxOutlinedIcon />
+          </Box>
+          <Box sx={{ cursor: "pointer", p: 1 }} onClick={() => navigate(`/profile/${userName}`)}>
+            <AccountCircleOutlinedIcon />
+          </Box>
+        </Box>
       </Grid2>
 
       <AddPost open={open} handleClose={handleClose} />

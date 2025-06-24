@@ -51,6 +51,8 @@ const setupInterceptors = (instance) => {
 
 export const USER_INSTANCE = createAxiosInstance(
 `${baseURL}/user/` );
+setupInterceptors(USER_INSTANCE);
+
 
 
 export const POST_INSTANCE = createAxiosInstance(
