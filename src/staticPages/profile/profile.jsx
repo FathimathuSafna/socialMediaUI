@@ -4,6 +4,8 @@ import { getUserDetails } from "../../service/userApi";
 import { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import { Grid2, Divider } from "@mui/material";
+import FOLLOWERMODAL from "../../modal/followersModal"; 
+import FOLLOWEDMODAL from "../../modal/followedModal";
 
 function Profile() {
   const { userName } = useParams();
@@ -12,6 +14,12 @@ function Profile() {
   const [postCount, setpostCount] = useState(0);
   const [followedUserCount, setFollowedUserCount] = useState(0);
   const [followerCount, setFollowerCount] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [followedOpen, setfollowedOpen] = useState(false)
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false); 
+  const followHandleOpen = () => setOpen(true);
+  const followHandleClose = () => setOpen(false);
 
   useEffect(() => {
     if (!userName) return;
@@ -56,30 +64,29 @@ function Profile() {
               <h1>{user.userName}</h1>
               <Grid2 container direction="row" spacing={2}>
                 <Grid2 item>
-                {postCount >= 0 && (
-                <h5>
-                  {postCount} {postCount === 1 ? "post" : "posts"}
-                </h5>
-              )}
-              </Grid2>
-              <Grid2 item>
-               {followerCount >= 0 && (
-                <h5>
-                  {followerCount}
-                  {" "}
-                  {followerCount === 1 ? "follower" : "followers"}
-                </h5>
-              )}
-              </Grid2>
-              <Grid2 item>
-               {followedUserCount >= 0 && (
-                <h5>
-                  {followedUserCount}{" "}
-                  {followedUserCount === 1 ? "following" : "followings"}
-                </h5>
-              )}
-              </Grid2>
+                  {postCount >= 0 && (
+                    <h5>
+                      {postCount} {postCount === 1 ? "post" : "posts"}
+                    </h5>
+                  )}
                 </Grid2>
+                <Grid2 item onClick={handleOpen} style={{ cursor: "pointer" }}>
+                  {followerCount >= 0 && (
+                    <h5>
+                      {followerCount}{" "}
+                      {followerCount === 1 ? "follower" : "followers"}
+                    </h5>
+                  )}
+                </Grid2>
+                <Grid2 item onClick={followHandleOpen} style={{ cursor: "pointer" }}>
+                  {followedUserCount >= 0 && (
+                    <h5>
+                      {followedUserCount}{" "}
+                      {followedUserCount === 1 ? "following" : "followings"}
+                    </h5>
+                  )}
+                </Grid2>
+              </Grid2>
               <h5>{user.bio}</h5>
             </Grid2>
           </Grid2>
@@ -91,7 +98,7 @@ function Profile() {
                   <div
                     style={{
                       backgroundImage: `url(${post.postImageUrl})`,
-                      height:270,
+                      height: 270,
                       aspectRatio: "1 / 1",
                       backgroundSize: "cover",
                       backgroundPosition: "center",
@@ -106,10 +113,20 @@ function Profile() {
               <h3>No posts to show.</h3>
             </Grid2>
           )}
+          <FOLLOWERMODAL
+        open={open}
+        handleClose={handleClose}
+      
+      />
+      <FOLLOWEDMODAL
+        open={followedOpen}
+        handleClose={followHandleClose}
+        />
         </>
       )}
     </Grid2>
   );
 }
+
 
 export default Profile;

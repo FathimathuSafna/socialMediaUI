@@ -32,7 +32,6 @@ export const verify = async (data) => {
 
 export const getAllUsers = async (data) => {
   try {
-    console.log("Fetching all users...",data);
     const response = await USER_INSTANCE.get("/", data);
     return response.data;
   } catch (error) {
@@ -44,6 +43,7 @@ export const getAllUsers = async (data) => {
 export const getUserDetails = async (userName) =>{
   try{
     const response = await USER_INSTANCE.get(`/${userName}`)
+    console.log("Response from getUserDetails:", response.data)
     return response.data
   } catch (error){
     console.log("error during fetching users:",error)

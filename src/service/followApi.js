@@ -1,3 +1,4 @@
+import { data } from "react-router-dom";
 import { FOLLOW_INSTANCE } from "./axiosInstance";
 
 export const getFollowers = async () => {
@@ -22,4 +23,14 @@ export const followUser = async (data) => {
     console.error("Error following user:", error);
     throw error;
     }
+}
+
+export const getUserFollowers = async(data) => {
+  try {
+    const response = await FOLLOW_INSTANCE.get(`/`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user followers:", error);
+    throw error;
+  }
 }

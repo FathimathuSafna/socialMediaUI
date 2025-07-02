@@ -9,12 +9,26 @@ import * as Yup from "yup";
 import Axios from "axios";
 import { createPost } from "../service/postAPI";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
+import Cropper from "react-easy-crop";
+import Slider from "@mui/material/Slider";
+import getCroppedImg from "../utils/cropImage";
+import Paper from "@mui/material/Paper";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
 
 // Custom Formik-compatible FileInput
 const FileInput = ({ field, form }) => {
   const { name, value } = field;
   const { setFieldValue } = form;
   const [preview, setPreview] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [croppedPreview, setCroppedPreview] = useState(null);
+  const { darkMode } = useCustomTheme();
+  const bgColor = darkMode ? "#121212" : "#ffffff";
+  const textColor = darkMode ? "#ffffff" : "#000000";
 
   const handleFileChange = (file) => {
     setFieldValue(name, file);
@@ -29,6 +43,22 @@ const FileInput = ({ field, form }) => {
     }
   };
 
+  const onCropComplete = (croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
+
+  const showCroppedImage = async () => {
+    try {
+      const croppedImage = await getCroppedImg(preview, croppedAreaPixels);
+      setFieldValue(name, croppedImage); // For Formik
+      // Show the cropped image as preview
+      setCroppedPreview(URL.createObjectURL(croppedImage));
+      setPreview(null); // Hide cropper
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <MuiFileInput
@@ -39,10 +69,123 @@ const FileInput = ({ field, form }) => {
       />
 
       {/* Show preview outside the input */}
-      {preview && (
-        <Box sx={{ mt: 2 }}>
-          <img src={preview} alt="Preview" style={{ maxWidth: 80 }} />
-        </Box>
+
+      {croppedPreview ? (
+        <Card
+          sx={{
+            mt: 2,
+            width: { xs: 250, sm: 300 },
+            mx: "auto",
+            boxShadow: 3,
+            borderRadius: 2,
+            background: bgColor,
+            position: "relative",
+          }}
+        >
+          <CardContent sx={{ p: 0 }}>
+            <Box
+              sx={{
+                width: "100%",
+                height: { xs: 250, sm: 300 },
+                position: "relative",
+                background: bgColor,
+                borderRadius: 2,
+                overflow: "hidden",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <img
+                src={croppedPreview}
+                alt="Cropped Preview"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  borderRadius: 8,
+                }}
+              />
+            </Box>
+          </CardContent>
+          <CardActions sx={{ justifyContent: "flex-end", px: 2, pb: 2 }}>
+            <Button
+              color="secondary"
+              onClick={() => {
+                setCroppedPreview(null);
+                setPreview(null);
+                setFieldValue(name, null);
+              }}
+              size="small"
+            >
+              Remove
+            </Button>
+          </CardActions>
+        </Card>
+      ) : (
+        preview && (
+          <Card
+            sx={{
+              mt: 2,
+              width: { xs: 250, sm: 300 },
+              mx: "auto",
+              boxShadow: 3,
+              borderRadius: 2,
+              background: bgColor,
+              position: "relative",
+            }}
+          >
+            <CardContent sx={{ p: 0 }}>
+              <Box
+                sx={{
+                  width: "100%",
+                  height: { xs: 250, sm: 300 },
+                  position: "relative",
+                  background: bgColor,
+                  borderRadius: 2,
+                  overflow: "hidden",
+                }}
+              >
+                <Cropper
+                  image={preview}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                />
+              </Box>
+              <Slider
+                value={zoom}
+                min={1}
+                max={3}
+                step={0.1}
+                aria-labelledby="Zoom"
+                onChange={(e, zoom) => setZoom(zoom)}
+                sx={{ mt: 2, mx: 2 }}
+              />
+            </CardContent>
+            <CardActions sx={{ justifyContent: "flex-end", px: 2, pb: 2 }}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => setPreview(null)}
+                size="small"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                onClick={showCroppedImage}
+                size="small"
+                sx={{ ml: 1 }}
+              >
+                Crop & Use
+              </Button>
+            </CardActions>
+          </Card>
+        )
       )}
     </Box>
   );
@@ -121,7 +264,12 @@ const AddPost = ({ open, handleClose }) => {
           backgroundColor: bgColor,
         }}
       >
-        <Typography variant="h6" sx={{fontStyle:'inherit'}} component="h2" gutterBottom>
+        <Typography
+          variant="h6"
+          sx={{ fontStyle: "inherit" }}
+          component="h2"
+          gutterBottom
+        >
           Create New Post
         </Typography>
 

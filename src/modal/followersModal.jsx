@@ -12,7 +12,7 @@ import { styled, alpha, useTheme } from "@mui/material/styles";
 import { getAllUsers } from "../service/userApi"; 
 import Grid2 from "@mui/material/Grid2";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
-import { followUser,getFollowers } from "../service/followApi";
+import { followUser,getUserFollowers } from "../service/followApi";
 import { useNavigate } from "react-router-dom";
 
 
@@ -65,7 +65,7 @@ export default function ResponsiveDialog({ open, handleClose }) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await getAllUsers(); // Fetch all users
+        const response = await getUserFollowers(); // Fetch all users
         setAllUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);

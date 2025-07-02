@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   Avatar,
   Box,
@@ -9,13 +9,11 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha, useTheme } from "@mui/material/styles";
-import { getAllUsers } from "../service/userApi"; 
+import { getAllUsers } from "../service/userApi";
 import Grid2 from "@mui/material/Grid2";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
-import { followUser,getFollowers } from "../service/followApi";
+import { followUser, getFollowers } from "../service/followApi";
 import { useNavigate } from "react-router-dom";
-
-
 
 // Styled Components
 const Search = styled("div")(({ theme }) => ({
@@ -58,14 +56,13 @@ export default function ResponsiveDialog({ open, handleClose }) {
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
-    const navigate = useNavigate();
-
+  const navigate = useNavigate();
 
   // Fetch all users once when dialog opens
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await getAllUsers(); // Fetch all users
+        const response = await getFollowers();
         setAllUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -97,16 +94,6 @@ export default function ResponsiveDialog({ open, handleClose }) {
     setSearchResults(filtered);
   };
 
-  const handleFollow = (userId) => {
-      followUser({followedUserId: userId })
-        .then((response) => {
-          getAllFollowers()
-        })
-        .catch((error) => {
-          console.error("Error following user:", error);
-        });
-    };
-
   return (
     <Dialog
       fullScreen={fullScreen}
@@ -118,8 +105,8 @@ export default function ResponsiveDialog({ open, handleClose }) {
           width: { xs: "80%", sm: "500px", lg: "500px" }, // wider width
           height: { xs: "60%", sm: "55vh", md: "65vh" }, // taller height
           maxWidth: "none", // disable default max-width
-          backgroundColor:bgColor,
-          color:textColor,
+          backgroundColor: bgColor,
+          color: textColor,
           scrollbarWidth: "none",
         },
       }}
@@ -133,7 +120,7 @@ export default function ResponsiveDialog({ open, handleClose }) {
             bgcolor: "#fff",
             p: 2,
             borderBottom: "1px solid #ddd",
-            backgroundColor:bgColor
+            backgroundColor: bgColor,
           }}
         >
           <Search>
@@ -159,8 +146,26 @@ export default function ResponsiveDialog({ open, handleClose }) {
             maxWidth: "calc(100vh-10px)",
           }}
         >
-          {searchResults.length > 0 ? (
-            searchResults.map((user) => (
+          {(searchKey.trim()
+            ? allUsers.filter(
+                (user) =>
+                  user.userName
+                    ?.toLowerCase()
+                    .includes(searchKey.toLowerCase()) ||
+                  user.name?.toLowerCase().includes(searchKey.toLowerCase())
+              )
+            : allUsers
+          ).length > 0 ? (
+            (searchKey.trim()
+              ? allUsers.filter(
+                  (user) =>
+                    user.userName
+                      ?.toLowerCase()
+                      .includes(searchKey.toLowerCase()) ||
+                    user.name?.toLowerCase().includes(searchKey.toLowerCase())
+                )
+              : allUsers
+            ).map((user) => (
               <Box
                 key={user._id}
                 sx={{
