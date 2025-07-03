@@ -18,8 +18,8 @@ function Profile() {
   const [followedOpen, setfollowedOpen] = useState(false)
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false); 
-  const followHandleOpen = () => setOpen(true);
-  const followHandleClose = () => setOpen(false);
+  const followHandleOpen = () => setfollowedOpen(true);
+  const followHandleClose = () => setfollowedOpen(false);
 
   useEffect(() => {
     if (!userName) return;

@@ -25,12 +25,23 @@ export const followUser = async (data) => {
     }
 }
 
-export const getUserFollowers = async(data) => {
+export const getUserFollowers = async() => {
   try {
-    const response = await FOLLOW_INSTANCE.get(`/`, data);
+    const response = await FOLLOW_INSTANCE.get(`/follower`);
+    console.log("Response from getUserFollowers:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching user followers:", error);
+    throw error;
+  }
+}
+
+export const getUserFollowings = async() => {
+  try {
+    const response = await FOLLOW_INSTANCE.get(`/following`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user followings:", error);
     throw error;
   }
 }

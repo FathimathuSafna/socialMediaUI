@@ -43,7 +43,6 @@ export const getAllUsers = async (data) => {
 export const getUserDetails = async (userName) =>{
   try{
     const response = await USER_INSTANCE.get(`/${userName}`)
-    console.log("Response from getUserDetails:", response.data)
     return response.data
   } catch (error){
     console.log("error during fetching users:",error)
