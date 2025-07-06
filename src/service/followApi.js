@@ -28,7 +28,6 @@ export const followUser = async (data) => {
 export const getUserFollowers = async() => {
   try {
     const response = await FOLLOW_INSTANCE.get(`/follower`);
-    console.log("Response from getUserFollowers:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching user followers:", error);

@@ -3,9 +3,11 @@ import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import { getUserDetails } from "../../service/userApi";
 import { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
-import { Grid2, Divider } from "@mui/material";
-import FOLLOWERMODAL from "../../modal/followersModal"; 
+import { Grid2, Box } from "@mui/material";
+import FOLLOWERMODAL from "../../modal/followersModal";
 import FOLLOWEDMODAL from "../../modal/followedModal";
+import { Button } from "@mui/joy";
+import EditProfileModal from "../../modal/editProfile";
 
 function Profile() {
   const { userName } = useParams();
@@ -15,18 +17,21 @@ function Profile() {
   const [followedUserCount, setFollowedUserCount] = useState(0);
   const [followerCount, setFollowerCount] = useState(0);
   const [open, setOpen] = useState(false);
-  const [followedOpen, setfollowedOpen] = useState(false)
+  const [followedOpen, setfollowedOpen] = useState(false);
+  const [editProfile, seteditProfile] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false); 
+  const handleClose = () => setOpen(false);
   const followHandleOpen = () => setfollowedOpen(true);
   const followHandleClose = () => setfollowedOpen(false);
+  const editHandleOpen = () => seteditProfile(true);
+  const editHandleClose = () => seteditProfile(false); 
+  
 
   useEffect(() => {
     if (!userName) return;
 
     getUserDetails(userName)
       .then((response) => {
-        console.log("fetch poast", response.data.followersCount);
         setuser(response.data.getUser);
         setpost(response.data.posts);
         setpostCount(response.data.postCount);
@@ -48,9 +53,9 @@ function Profile() {
             alignItems="center"
           >
             <Grid2 sx={{ width: "100px", height: "100px" }}>
-              {user.profileImageUrl ? (
+              {user.profilePictureUrl ? (
                 <Avatar
-                  src={user.profileImageUrl}
+                  src={user.profilePictureUrl}
                   sx={{ width: "90%", height: "90%" }}
                 />
               ) : (
@@ -60,8 +65,12 @@ function Profile() {
                 />
               )}
             </Grid2>
-            <Grid2 direction="column" pl={2}>
-              <h1>{user.userName}</h1>
+            <Grid2 direction="column" pl={2} >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 ,pb: 1}}>
+                <h1 style={{ margin: 0 }}>{user.userName}</h1>
+                <Button onClick={editHandleOpen}>Edit Profile</Button>
+              </Box>
+
               <Grid2 container direction="row" spacing={2}>
                 <Grid2 item>
                   {postCount >= 0 && (
@@ -78,7 +87,11 @@ function Profile() {
                     </h5>
                   )}
                 </Grid2>
-                <Grid2 item onClick={followHandleOpen} style={{ cursor: "pointer" }}>
+                <Grid2
+                  item
+                  onClick={followHandleOpen}
+                  style={{ cursor: "pointer" }}
+                >
                   {followedUserCount >= 0 && (
                     <h5>
                       {followedUserCount}{" "}
@@ -113,20 +126,13 @@ function Profile() {
               <h3>No posts to show.</h3>
             </Grid2>
           )}
-          <FOLLOWERMODAL
-        open={open}
-        handleClose={handleClose}
-      
-      />
-      <FOLLOWEDMODAL
-        open={followedOpen}
-        handleClose={followHandleClose}
-        />
+          <FOLLOWERMODAL open={open} handleClose={handleClose} />
+          <FOLLOWEDMODAL open={followedOpen} handleClose={followHandleClose} />
+          <EditProfileModal open={editProfile} handleClose={editHandleClose} user={user} />
         </>
       )}
     </Grid2>
   );
 }
-
 
 export default Profile;

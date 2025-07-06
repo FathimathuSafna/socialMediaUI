@@ -49,3 +49,15 @@ export const getUserDetails = async (userName) =>{
     throw error
   }
 }
+
+export const updateUserDetails = async (data) => {
+  try {
+    console.log("Data being sent to updateUserDetails:", data);
+    const response = await USER_INSTANCE.put("/", data);
+    console.log("Response from updateUserDetails:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error during updating user details:", error);
+    throw error;
+  }
+};
