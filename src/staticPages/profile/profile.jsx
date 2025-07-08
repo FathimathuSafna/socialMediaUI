@@ -68,10 +68,10 @@ function Profile() {
             <Grid2 direction="column" pl={2} >
               <Box sx={{ display: "flex", alignItems: "center", gap: 2 ,pb: 1}}>
                 <h1 style={{ margin: 0 }}>{user.userName}</h1>
-                <Button onClick={editHandleOpen}>Edit Profile</Button>
+                <Button size="sm" sx={{ backgroundColor: '#8e8e8e', '&:hover': { backgroundColor: '#7a7a7a' } }} onClick={editHandleOpen}>Edit Profile</Button>
               </Box>
 
-              <Grid2 container direction="row" spacing={2}>
+              <Grid2 container direction="row" spacing={1}>
                 <Grid2 item>
                   {postCount >= 0 && (
                     <h5>
@@ -105,14 +105,15 @@ function Profile() {
           </Grid2>
 
           {Array.isArray(posts) && posts.length > 0 ? (
-            <Grid2 container spacing={2} pt={3}>
+            <Grid2 container spacing={1} pt={2} pb={3}>
               {posts.map((post, idx) => (
-                <Grid2 item xs={12} sm={6} md={4} key={idx}>
+                <Grid2 item key={idx}>
                   <div
                     style={{
                       backgroundImage: `url(${post.postImageUrl})`,
-                      height: 270,
-                      aspectRatio: "1 / 1",
+                      height: 190,
+                      
+                      aspectRatio: "1 / 2",
                       backgroundSize: "cover",
                       backgroundPosition: "center",
                       borderRadius: 8,

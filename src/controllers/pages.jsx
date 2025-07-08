@@ -38,11 +38,12 @@ function Pages() {
       {/* Sidebar Section */}
       <Grid2
         direction="column"
-        size={{ xs: 2, md: 2, lg: 2 }}
+        size={{ xs: 2, sm: 2, md: 2, lg: 2 }}
         sx={{ bgcolor: bgColor }}
       >
         <Grid2
           xs={0}
+          sm={12}
           md={12}
           lg={12}
           sx={{
@@ -54,7 +55,7 @@ function Pages() {
             paddingTop: "15px",
             position: "fixed",
             top: "20px",
-            display: { xs: "none", md: "flex" },
+            display: { xs: "none", sm: "flex", md: "flex" },
           }}
         >
           APPMOSPHERE
@@ -69,6 +70,7 @@ function Pages() {
         </Grid2>
         <Grid2
           xs={0}
+          sm={12}
           md={0}
           sx={{ display: { xs: "none", sm: "flex", md: "none" } }}
         >
@@ -78,10 +80,20 @@ function Pages() {
 
       {/* Main Content Section */}
 
-      <Grid2 container direction="column" size={{ md: 10 }}>
+      <Grid2
+        container
+        direction="column"
+        size={{ xs: 12, sm: 10, md: 10, lg: 10 }}
+      >
         {/* Navbar Section */}
         {!isProfilePage && (
-          <Grid2 md={10} xs={12} sx={{ position: "relative", zIndex: 1000 }}>
+          <Grid2
+          
+            md={10}
+            sm={10}
+            xs={0}
+            sx={{ position: "relative", zIndex: 1000 }}
+          >
             <Box
               sx={{
                 position: "fixed",
@@ -106,9 +118,13 @@ function Pages() {
         {/* Content Below Navbar */}
         <Grid2
           container
-          size={{ xs: 12, md: 10, lg: 10 }}
+          size={
+            isProfilePage
+              ? { xs: 12, sm: 12, md: 10 }
+              : { xs: 12, sm: 10, md: 10 }
+          }
           sx={{
-            marginTop: "16px", // Adjust for navbar height
+            marginTop: "16px", 
             paddingTop: "2px",
             flexDirection: "row",
             flexWrap: "wrap",
@@ -138,26 +154,28 @@ function Pages() {
           </Grid2>
 
           {/* List Section */}
+          <Grid2
+            container
+            size={{ sm: 2, md: 2, lg: 2 }}
+            sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
+          >
             <Grid2
-              container
-              size={{ sm: 2, md: 2, lg: 2 }}
-              sx={{ display: { xs: "none", sm: "flex", md: "flex" } }}
+              direction="column"
+              sx={{
+                color: textColor,
+                position: {  md: "fixed" },
+                paddingLeft: 1,
+                pt: 8,
+                pb: 3,
+                width: "100%",
+              }}
+              size={{ xs: 12, sm: 2, md: 2, lg: 2 }}
+              pt={8}
+              pb={3}
             >
-              <Grid2
-                direction="column"
-                position="fixed"
-                size={{ xs: 12, sm: 2, md: 2, lg: 2 }}
-                offset={{ xs: 0, sm: 1, md: 0, lg: 0 }}
-                paddingLeft={1}
-                pt={8}
-                pb={3}
-                sx={{ color: textColor }}
-              >
-                <Grid2 size={{ sm: 2, md: 2 }} pb={1}>
-                  <LIST />
-                </Grid2>
-              </Grid2>
+              <LIST />
             </Grid2>
+          </Grid2>
         </Grid2>
       </Grid2>
 

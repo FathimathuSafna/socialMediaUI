@@ -9,6 +9,7 @@ import {
   MoreVert,
 } from "@mui/icons-material";
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
+import Avatar from "@mui/material/Avatar";
 import { getPosts } from "../../service/postAPI";
 import { likePost } from "../../service/likeAPI";
 import COMMANTMODAL from "../../modal/commentModal"; // Assuming you have a comment modal component

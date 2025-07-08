@@ -70,8 +70,8 @@ export default function BottomActionsCard() {
             </Grid>
             <Grid item sx={{ width: 50 }}>
               <Button
+              sx={{ backgroundColor: '#8e8e8e', '&:hover': { backgroundColor: '#7a7a7a' } }}
                 variant="solid"
-                color="primary"
                 onClick={() => handleFollow(user._id)}
               >
                 Follow
