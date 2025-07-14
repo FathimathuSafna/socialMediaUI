@@ -4,12 +4,12 @@ import {
   Box,
   Dialog,
   InputBase,
+  Typography,
   useMediaQuery,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha, useTheme } from "@mui/material/styles";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
-import { getUserFollowings } from "../service/followApi";
 import { useNavigate } from "react-router-dom";
 
 // Styled Components
@@ -43,72 +43,59 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function ResponsiveDialog({open,handleClose} ) {
+export default function FOLLOWINGMODAL({ open, handleClose, followedUsers = []}) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [searchKey, setSearchKey] = useState("");
-  const [allUsers, setAllUsers] = useState([]);
   const { darkMode } = useCustomTheme();
-  const bgColor = darkMode ? "#121212" : "#ffffff";
-  const textColor = darkMode ? "#ffffff" : "#000000";
   const navigate = useNavigate();
 
-  // Fetch all followings when dialog opens
+  const bgColor = darkMode ? "#121212" : "#ffffff";
+  const textColor = darkMode ? "#ffffff" : "#000000";
+
+  // Reset search input on open
   useEffect(() => {
-      fetchUsers();
-      setSearchKey("");
-    // eslint-disable-next-line
-  }, []);
+    if (open) setSearchKey("");
+  }, [open]);
 
-  const fetchUsers = async () => {
-    try {
-      const response = await getUserFollowings();
-      setAllUsers(response.data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
+  // Filter followings
+  const filteredFollowings = followedUsers.filter((item) => {
+    const user = item?.followedUserId;
+    if (!user) return false;
 
-  // Filter users based on searchKey
-  const filteredUsers = searchKey.trim()
-    ? allUsers.filter(
-        (item) =>
-          item.followedUserId.userName
-            ?.toLowerCase()
-            .includes(searchKey.toLowerCase()) ||
-          item.followedUserId.name
-            ?.toLowerCase()
-            .includes(searchKey.toLowerCase())
-      )
-    : allUsers;
+    const search = searchKey.trim().toLowerCase();
+    return (
+      user.userName?.toLowerCase().includes(search) ||
+      user.name?.toLowerCase().includes(search)
+    );
+  });
 
   return (
     <Dialog
       fullScreen={fullScreen}
       open={open}
       onClose={handleClose}
-      aria-labelledby="responsive-dialog-title"
+      aria-labelledby="following-dialog-title"
       PaperProps={{
         sx: {
-          width: { xs: "80%", sm: "500px", lg: "500px" },
+          width: { xs: "90%", sm: "500px" },
           height: { xs: "60%", sm: "55vh", md: "65vh" },
           maxWidth: "none",
           backgroundColor: bgColor,
           color: textColor,
-          scrollbarWidth: "none",
         },
       }}
     >
-      <Box sx={{ height: "100%", position: "relative" }}>
+      <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+        {/* Search Bar */}
         <Box
           sx={{
             position: "sticky",
             top: 0,
             zIndex: 10,
-            bgcolor: "#fff",
+            bgcolor: bgColor,
             p: 2,
             borderBottom: "1px solid #ddd",
-            backgroundColor: bgColor,
           }}
         >
           <Search>
@@ -116,26 +103,26 @@ export default function ResponsiveDialog({open,handleClose} ) {
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search by name…"
+              placeholder="Search followings…"
               inputProps={{ "aria-label": "search" }}
               value={searchKey}
-              onChange={e => setSearchKey(e.target.value)}
+              onChange={(e) => setSearchKey(e.target.value)}
               autoFocus
             />
           </Search>
         </Box>
 
+        {/* Following List */}
         <Box
           sx={{
             px: 2,
             pt: 1,
             overflowY: "auto",
-            maxHeight: "calc(100vh - 80px)",
-            maxWidth: "calc(100vh-10px)",
+            flexGrow: 1,
           }}
         >
-          {filteredUsers.length > 0 ? (
-            filteredUsers.map((item) => {
+          {filteredFollowings.length > 0 ? (
+            filteredFollowings.map((item) => {
               const user = item.followedUserId;
               return (
                 <Box
@@ -146,26 +133,34 @@ export default function ResponsiveDialog({open,handleClose} ) {
                     p: 1,
                     borderBottom: "1px solid #eee",
                     gap: 2,
+                    cursor: "pointer",
+                    "&:hover": {
+                      backgroundColor: alpha(theme.palette.action.hover, 0.1),
+                    },
                   }}
-                  onClick={() => navigate(`/profile/${user.userName}`)}
+                  onClick={() => {
+                    handleClose();
+                    navigate(`/profile/${user.userName}`);
+                  }}
                 >
                   <Avatar
                     src={user.profileImageUrl || "/static/images/avatar/1.jpg"}
                     sx={{ width: 40, height: 40 }}
                   />
                   <Box>
-                    <strong>{user.userName}</strong>
-                    <br />
-                    <span style={{ fontSize: 12, color: "#888" }}>
-                      {user.name}
-                    </span>
+                    <Typography variant="subtitle1">{user.userName}</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {user.name || ""}
+                    </Typography>
                   </Box>
                 </Box>
               );
             })
           ) : (
-            <Box sx={{ textAlign: "center", mt: 2, color: "#999" }}>
-              No users found.
+            <Box sx={{ textAlign: "center", mt: 4 }}>
+              <Typography variant="body2" color="text.secondary">
+                No followings found.
+              </Typography>
             </Box>
           )}
         </Box>

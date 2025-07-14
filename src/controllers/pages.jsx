@@ -85,7 +85,7 @@ function Pages() {
             size={
               isProfilePage
                 ? { xs: 0, sm: 0, md: 0 }
-                : { xs: 0, sm: 10, md: 10 }
+                : { xs: 12, sm: 10, md: 10 }
             }
             sx={{
               position: "relative",
@@ -125,8 +125,8 @@ function Pages() {
               : { xs: 12, sm: 10, md: 10 }
           }
           sx={{
-            marginTop: isProfilePage
-              ? { xs: 0, sm: 2 }
+            marginTop: isProfilePage // <--- THIS IS THE PRIMARY SUSPECT
+              ? { xs: 0, sm: 2 } // This is adding margin-top on sm
               : { xs: "10px", sm: "13px" },
             paddingTop: "2px",
             flexDirection: "row",

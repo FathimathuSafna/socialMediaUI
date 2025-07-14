@@ -24,6 +24,16 @@ export const followUser = async (data) => {
     throw error;
     }
 }
+ export const unFollowUser = async (data) => {
+  try {
+    console.log("Data to unfollow user:", data);
+    const response = await FOLLOW_INSTANCE.delete(`/`, { data });
+    return response.data;
+  } catch (error) {
+    console.error("Error unfollowing user:", error);
+    throw error;
+  }
+}
 
 export const getUserFollowers = async() => {
   try {
