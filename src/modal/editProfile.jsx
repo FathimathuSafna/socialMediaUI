@@ -13,6 +13,7 @@ import getCroppedImg from "../utils/cropImage";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 // Custom Formik-compatible FileInput
 const FileInput = ({ field, form }) => {
@@ -24,7 +25,7 @@ const FileInput = ({ field, form }) => {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedPreview, setCroppedPreview] = useState(null);
   const { darkMode } = useCustomTheme();
-    const bgColor = darkMode ? "#121212" : "#ffffff";
+  const bgColor = darkMode ? "#121212" : "#ffffff";
 
   const handleFileChange = (file) => {
     setFieldValue(name, file);
@@ -62,6 +63,9 @@ const FileInput = ({ field, form }) => {
         onChange={handleFileChange}
         placeholder="Click to upload"
         fullWidth
+        InputProps={{
+          startAdornment: <CloudUploadIcon sx={{ mr: 1, color: "#8e8e8e" }} />,
+        }}
       />
 
       {/* Show preview outside the input */}
@@ -123,7 +127,7 @@ const FileInput = ({ field, form }) => {
           <Card
             sx={{
               mt: 2,
-              width: { xs: 250, sm: 300 },
+              width: { xs: 200, sm: 300 },
               mx: "auto",
               boxShadow: 3,
               borderRadius: 2,
@@ -131,15 +135,20 @@ const FileInput = ({ field, form }) => {
               position: "relative",
             }}
           >
-            <CardContent sx={{ p: 0 }}>
+            <CardContent sx={{ p: 0, mt: 1 }}>
               <Box
                 sx={{
-                  width: "100%",
-                  height: { xs: 250, sm: 300 },
+                  width: {
+                    xs: "50%",
+                    sm: "100%",
+                  },
+                  aspectRatio: "1",
                   position: "relative",
                   background: bgColor,
                   borderRadius: 2,
                   overflow: "hidden",
+                  flexShrink: 1,
+                  minHeight: 0,
                 }}
               >
                 <Cropper
@@ -159,7 +168,7 @@ const FileInput = ({ field, form }) => {
                 step={0.1}
                 aria-labelledby="Zoom"
                 onChange={(e, zoom) => setZoom(zoom)}
-                sx={{ mt: 2, mx: 2 }}
+                sx={{ mt: 2, mx: 2, color: "#8e8e8e" }}
               />
             </CardContent>
             <CardActions sx={{ justifyContent: "flex-end", px: 2, pb: 2 }}>
@@ -168,6 +177,7 @@ const FileInput = ({ field, form }) => {
                 color="secondary"
                 onClick={() => setPreview(null)}
                 size="small"
+                sx={{ borderColor: "#8e8e8e", color: "#8e8e8e" }}
               >
                 Cancel
               </Button>
@@ -175,7 +185,11 @@ const FileInput = ({ field, form }) => {
                 variant="contained"
                 onClick={showCroppedImage}
                 size="small"
-                sx={{ ml: 1 }}
+                sx={{
+                  ml: 1,
+                  backgroundColor: "rgba(0, 0, 0, 0.65)",
+                  color: "#ffffff",
+                }}
               >
                 Crop & Use
               </Button>
@@ -199,7 +213,7 @@ const EditProfile = ({ open, handleClose }) => {
   const textColor = darkMode ? "#ffffff" : "#000000";
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    const {  name, file, bio } = values;
+    const { name, file, bio } = values;
 
     try {
       // 1. Upload image to Supabase Storage
@@ -250,19 +264,25 @@ const EditProfile = ({ open, handleClose }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 400,
-          height:520,
+          width: { xs: "75vw", sm: "70vw", md: "600px" },
+          overflow: "hidden",
           borderRadius: 2,
           boxShadow: 24,
-          p: 4,
-          color: textColor,
+          p: { xs: 1, sm: 3 },
           backgroundColor: bgColor,
-          overflowY: "auto",
+          color: textColor,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
         }}
       >
         <Typography
           variant="h6"
-          sx={{ fontStyle: "inherit" }}
+          sx={{
+            fontStyle: "inherit",
+            fontSize: { xs: "1rem", sm: "1.25rem" },
+            textAlign: "center",
+          }}
           component="h2"
           gutterBottom
         >
@@ -270,76 +290,112 @@ const EditProfile = ({ open, handleClose }) => {
         </Typography>
 
         <Formik
-          initialValues={{  name: "", file: null, bio: "" }}
+          initialValues={{ name: "", file: null, bio: "" }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting, errors, touched }) => (
             <Form>
-              <Field name="name">
-                {({ field }) => (
-                  <TextField
-                    {...field}
-                    label="name"
-                    fullWidth
-                    variant="outlined"
-                    margin="normal"
-                    error={Boolean(touched.name && errors.name)}
-                    helperText={touched.name && errors.name}
-                    sx={{
-                      "& .MuiInputBase-input": {
-                        color: "#8e8e8e",
-                      },
-                      "& .MuiInputLabel-root": {
-                        color: "#8e8e8e",
-                      },
-                    }}
-                  />
-                )}
-              </Field>
-              <Field name="file">
-                {({ field, form }) => <FileInput field={field} form={form} />}
-              </Field>
-
-              <Field name="bio">
-                {({ field }) => (
-                  <TextField
-                    {...field}
-                    label="bio"
-                    fullWidth
-                    variant="outlined"
-                    margin="normal"
-                    error={Boolean(touched.bio && errors.bio)}
-                    helperText={touched.bio && errors.bio}
-                    sx={{
-                      "& .MuiInputBase-input": {
-                        color: "#8e8e8e",
-                      },
-                      "& .MuiInputLabel-root": {
-                        color: "#8e8e8e",
-                      },
-                    }}
-                  />
-                )}
-              </Field>
-
               <Box
-                sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
+                  gap: { xs: 1, sm: 3 },
+                  alignItems: "stretch",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
               >
-                <Button
-                  variant="outlined"
-                  onClick={handleClose}
-                  disabled={isSubmitting}
+                <Box
+                  sx={{
+                    width: "100%",
+                    maxWidth: { xs: "100%", sm: "50%" },
+                    pt: { xs: 1, sm: 2 },
+                  }}
                 >
-                  Close
-                </Button>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  disabled={isSubmitting}
+                  <Field name="file">
+                    {({ field, form }) => (
+                      <FileInput field={field} form={form} />
+                    )}
+                  </Field>
+                </Box>
+                <Box
+                  sx={{
+                    width: "100%",
+                    maxWidth: { xs: "100%", sm: "50%" },
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
                 >
-                  Edit
-                </Button>
+                  <Field name="name">
+                    {({ field }) => (
+                      <TextField
+                        {...field}
+                        label="name"
+                        fullWidth
+                        variant="outlined"
+                        margin="dense"
+                        error={Boolean(touched.name && errors.name)}
+                        helperText={touched.name && errors.name}
+                        sx={{
+                          "& .MuiInputBase-input": {
+                            color: "#8e8e8e",
+                          },
+                          "& .MuiInputLabel-root": {
+                            color: "#8e8e8e",
+                          },
+                        }}
+                      />
+                    )}
+                  </Field>
+
+                  <Field name="bio">
+                    {({ field }) => (
+                      <TextField
+                        {...field}
+                        label="bio"
+                        fullWidth
+                        variant="outlined"
+                        margin="dense"
+                        error={Boolean(touched.bio && errors.bio)}
+                        helperText={touched.bio && errors.bio}
+                        sx={{
+                          "& .MuiInputBase-input": {
+                            color: "#8e8e8e",
+                          },
+                          "& .MuiInputLabel-root": {
+                            color: "#8e8e8e",
+                          },
+                        }}
+                      />
+                    )}
+                  </Field>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mt: 2,
+                    }}
+                  >
+                    <Button
+                      variant="outlined"
+                      onClick={handleClose}
+                      disabled={isSubmitting}
+                      sx={{ borderColor: "#8e8e8e", color: "#8e8e8e", py: 0.5 }}
+                    >
+                      Close
+                    </Button>
+                    <Button
+                      variant="contained"
+                      type="submit"
+                      disabled={isSubmitting}
+                    >
+                      Edit
+                    </Button>
+                  </Box>
+                </Box>
               </Box>
             </Form>
           )}

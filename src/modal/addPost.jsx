@@ -1,21 +1,15 @@
 import React, { useState } from "react";
-import { Typography, Box, Button, Modal, TextField } from "@mui/material";
+import { Typography, Box, Button, Modal, TextField, Paper, Card, CardContent, CardActions, Slider } from "@mui/material";
 import { MuiFileInput } from "mui-file-input";
-import AddIcon from "@mui/icons-material/Add";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import { supabase } from "../store/supabaseClient";
 import * as Yup from "yup";
-import Axios from "axios";
 import { createPost } from "../service/postAPI";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
 import Cropper from "react-easy-crop";
-import Slider from "@mui/material/Slider";
 import getCroppedImg from "../utils/cropImage";
-import Paper from "@mui/material/Paper";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
 
 // Custom Formik-compatible FileInput
 const FileInput = ({ field, form }) => {
@@ -25,10 +19,9 @@ const FileInput = ({ field, form }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [croppedPreview, setCroppedPreview] = useState(null);
+  const [croppedPreviewUrl, setCroppedPreviewUrl] = useState(null);
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
-  const textColor = darkMode ? "#ffffff" : "#000000";
 
   const handleFileChange = (file) => {
     setFieldValue(name, file);
@@ -36,10 +29,12 @@ const FileInput = ({ field, form }) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
+        setCroppedPreviewUrl(null);
       };
       reader.readAsDataURL(file);
     } else {
       setPreview(null);
+      setCroppedPreviewUrl(null);
     }
   };
 
@@ -49,47 +44,51 @@ const FileInput = ({ field, form }) => {
 
   const showCroppedImage = async () => {
     try {
-      const croppedImage = await getCroppedImg(preview, croppedAreaPixels);
-      setFieldValue(name, croppedImage); // For Formik
-      // Show the cropped image as preview
-      setCroppedPreview(URL.createObjectURL(croppedImage));
-      setPreview(null); // Hide cropper
+      const croppedImageBlob = await getCroppedImg(preview, croppedAreaPixels);
+      const croppedImageFile = new File([croppedImageBlob], "cropped-image.jpeg", { type: "image/jpeg" });
+      setFieldValue(name, croppedImageFile);
+      setCroppedPreviewUrl(URL.createObjectURL(croppedImageFile));
+      setPreview(null);
     } catch (e) {
       console.error(e);
     }
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", display: "flex", flexDirection: "column", gap: { xs: 0.5, sm: 1 } }}>
       <MuiFileInput
         value={value}
         onChange={handleFileChange}
         placeholder="Click to upload"
         fullWidth
+        InputProps={{
+          startAdornment: <CloudUploadIcon sx={{ mr: 1, color: "#8e8e8e" }} />,
+        }}
+        size="small"
       />
 
-      {/* Show preview outside the input */}
-
-      {croppedPreview ? (
+      {/* Cropped Image Preview */}
+      {croppedPreviewUrl && (
         <Card
           sx={{
-            mt: 2,
-            width: { xs: 250, sm: 300 },
+            mt: { xs: 0.5, sm: 1 },
+            width: "100%",
+            maxWidth: { xs: 150, sm: 120 }, // Increased maxWidth for xs to 100px
             mx: "auto",
-            boxShadow: 3,
-            borderRadius: 2,
+            boxShadow: 2,
+            borderRadius: 1,
             background: bgColor,
             position: "relative",
           }}
         >
-          <CardContent sx={{ p: 0 }}>
+          <CardContent sx={{ p: { xs: 0.2, sm: 0 } }}>
             <Box
               sx={{
                 width: "100%",
-                height: { xs: 250, sm: 300 },
+                aspectRatio: "1",
                 position: "relative",
                 background: bgColor,
-                borderRadius: 2,
+                borderRadius: 1,
                 overflow: "hidden",
                 display: "flex",
                 alignItems: "center",
@@ -97,101 +96,113 @@ const FileInput = ({ field, form }) => {
               }}
             >
               <img
-                src={croppedPreview}
+                src={croppedPreviewUrl}
                 alt="Cropped Preview"
                 style={{
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  borderRadius: 8,
+                  borderRadius: 4,
                 }}
               />
             </Box>
           </CardContent>
-          <CardActions sx={{ justifyContent: "flex-end", px: 2, pb: 2 }}>
+          <CardActions sx={{ justifyContent: "center", px: { xs: 0.2, sm: 0.5 }, pb: { xs: 0.2, sm: 0.5 } }}>
             <Button
               color="secondary"
               onClick={() => {
-                setCroppedPreview(null);
-                setPreview(null);
+                setCroppedPreviewUrl(null);
                 setFieldValue(name, null);
               }}
               size="small"
+              sx={{ fontSize: '0.6rem', minWidth: 'auto', px: 0.5 }}
             >
               Remove
             </Button>
           </CardActions>
         </Card>
-      ) : (
-        preview && (
-          <Card
-            sx={{
-              mt: 2,
-              width: { xs: 250, sm: 300 },
-              mx: "auto",
-              boxShadow: 3,
-              borderRadius: 2,
-              background: bgColor,
-              position: "relative",
-            }}
-          >
-            <CardContent sx={{ p: 0 }}>
-              <Box
-                sx={{
-                  width: "100%",
-                  height: { xs: 250, sm: 300 },
-                  position: "relative",
-                  background: bgColor,
-                  borderRadius: 2,
-                  overflow: "hidden",
-                }}
-              >
-                <Cropper
-                  image={preview}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={1}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                />
-              </Box>
-              <Slider
-                value={zoom}
-                min={1}
-                max={3}
-                step={0.1}
-                aria-labelledby="Zoom"
-                onChange={(e, zoom) => setZoom(zoom)}
-                sx={{ mt: 2, mx: 2 }}
+      )}
+
+      {/* Cropper Component */}
+      {preview && !croppedPreviewUrl && (
+        <Card
+          sx={{
+            mt: { xs: 0.5, sm: 1 },
+            width: "100%",
+            maxWidth: { xs: 130, sm: 120 }, // Increased maxWidth for xs to 100px
+            mx: "auto",
+            boxShadow: 2,
+            borderRadius: 1,
+            background: bgColor,
+            position: "relative",
+          }}
+        >
+          <CardContent sx={{ p: { xs: 0.2, sm: 0 }, mt: { xs: 0.2, sm: 0.5 } }}>
+            <Box
+              sx={{
+                width: "100%",
+                aspectRatio: "1",
+                position: "relative",
+                background: bgColor,
+                borderRadius: 1,
+                overflow: "hidden",
+              }}
+            >
+              <Cropper
+                image={preview}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
               />
-            </CardContent>
-            <CardActions sx={{ justifyContent: "flex-end", px: 2, pb: 2 }}>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={() => setPreview(null)}
-                size="small"
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="contained"
-                onClick={showCroppedImage}
-                size="small"
-                sx={{ ml: 1 }}
-              >
-                Crop & Use
-              </Button>
-            </CardActions>
-          </Card>
-        )
+            </Box>
+            <Slider
+              value={zoom}
+              min={1}
+              max={3}
+              step={0.1}
+              aria-labelledby="Zoom"
+              onChange={(e, newZoom) => setZoom(newZoom)}
+              sx={{ mt: { xs: 0.2, sm: 0.5 }, mx: { xs: 0.2, sm: 0.5 },ml:1, color: "#8e8e8e" }}
+            />
+          </CardContent>
+          <CardActions sx={{ justifyContent: "flex-end", px: { xs: 0.2, sm: 0.5 }, pb: { xs: 0.2, sm: 0.5 } }}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => {
+                setPreview(null);
+                setFieldValue(name, null);
+              }}
+              size="small"
+              sx={{ borderColor: "#8e8e8e", color: "#8e8e8e", fontSize: '0.55rem', minWidth: 'auto', px: 0.4 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={showCroppedImage}
+              size="small"
+              sx={{
+                ml: { xs: 0.2, sm: 0.5 },
+                backgroundColor: "rgba(0, 0, 0, 0.65)",
+                color: "#ffffff",
+                fontSize: '0.55rem',
+                minWidth: 'auto', px: 0.4
+              }}
+            >
+              Crop & Use
+            </Button>
+          </CardActions>
+        </Card>
       )}
     </Box>
   );
 };
 
-// Validation Schema
+// Validation Schema (remains the same)
 const validationSchema = Yup.object().shape({
   description: Yup.string().required("Description is required"),
   location: Yup.string().required("Location is required"),
@@ -207,43 +218,54 @@ const AddPost = ({ open, handleClose }) => {
   const handleSubmit = async (values, { setSubmitting }) => {
     const { location, file, description } = values;
 
+    if (!file) {
+      console.error("No file to upload.");
+      setSubmitting(false);
+      return;
+    }
+
     try {
-      // 1. Upload image to Supabase Storage
-      const fileExt = file.name.split(".").pop();
+      let fileToUpload = file;
+      if (typeof file === 'string' && file.startsWith('blob:')) {
+        const response = await fetch(file);
+        fileToUpload = await response.blob();
+        fileToUpload = new File([fileToUpload], "cropped-image.jpeg", { type: "image/jpeg" });
+      } else if (!(file instanceof File)) {
+        const response = await fetch(file);
+        const blob = await response.blob();
+        fileToUpload = new File([blob], "image.jpeg", { type: blob.type });
+      }
+
+      const fileExt = fileToUpload.name.split(".").pop();
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `uploads/${fileName}`;
 
       const { data, error: uploadError } = await supabase.storage
         .from("posts")
-        .upload(filePath, file);
+        .upload(filePath, fileToUpload, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
       if (uploadError) throw uploadError;
 
-      // 2. Get the public URL
       const { data: publicUrlData } = supabase.storage
         .from("posts")
         .getPublicUrl(filePath);
 
       const imageUrl = publicUrlData.publicUrl;
 
-      createPost({
+      await createPost({
         location,
         postImageUrl: imageUrl,
         description,
-      })
-        .then((response) => {
-          console.log(response.data);
-          setSubmitting(false);
-          handleClose();
-          navigate("/");
-        })
+      });
 
-        .catch((error) => {
-          console.error("Error during creating post:", error);
-          setSubmitting(false);
-        });
+      setSubmitting(false);
+      handleClose();
+      navigate("/");
     } catch (error) {
-      console.error("Error during file upload:", error);
+      console.error("Error during post creation:", error);
       setSubmitting(false);
     }
   };
@@ -256,17 +278,25 @@ const AddPost = ({ open, handleClose }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 300,
+          width: { xs: "89vw", sm: "70vw", md: "600px" }, // **Reduced xs width to 85vw**
+          p: { xs: 0.9, sm: 2 },
           borderRadius: 2,
           boxShadow: 24,
-          p: 4,
-          color: textColor,
           backgroundColor: bgColor,
+          color: textColor,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
         }}
       >
         <Typography
           variant="h6"
-          sx={{ fontStyle: "inherit" }}
+          sx={{
+            fontStyle: "inherit",
+            fontSize: { xs: "0.85rem", sm: "1.25rem" },
+            textAlign: "center",
+            mb: { xs: 1, sm: 2 },
+          }}
           component="h2"
           gutterBottom
         >
@@ -280,70 +310,126 @@ const AddPost = ({ open, handleClose }) => {
         >
           {({ isSubmitting, errors, touched }) => (
             <Form>
-              <Field name="location">
-                {({ field }) => (
-                  <TextField
-                    {...field}
-                    label="location"
-                    fullWidth
-                    variant="outlined"
-                    margin="normal"
-                    error={Boolean(touched.location && errors.location)}
-                    helperText={touched.location && errors.location}
-                    sx={{
-                      "& .MuiInputBase-input": {
-                        color: "#8e8e8e",
-                      },
-                      "& .MuiInputLabel-root": {
-                        color: "#8e8e8e",
-                      },
-                    }}
-                  />
-                )}
-              </Field>
-              <Field name="file">
-                {({ field, form }) => <FileInput field={field} form={form} />}
-              </Field>
-
-              <Field name="description">
-                {({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Description"
-                    fullWidth
-                    variant="outlined"
-                    margin="normal"
-                    error={Boolean(touched.description && errors.description)}
-                    helperText={touched.description && errors.description}
-                    sx={{
-                      "& .MuiInputBase-input": {
-                        color: "#8e8e8e",
-                      },
-                      "& .MuiInputLabel-root": {
-                        color: "#8e8e8e",
-                      },
-                    }}
-                  />
-                )}
-              </Field>
-
               <Box
-                sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
+                  gap: { xs: 0.9, sm: 3 },
+                  alignItems: "flex-start",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
               >
-                <Button
-                  variant="outlined"
-                  onClick={handleClose}
-                  disabled={isSubmitting}
+                {/* Left: Image Upload & Preview */}
+                <Box
+                  sx={{
+                    width: "100%",
+                    maxWidth: { xs: "100%", sm: "50%" },
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    flexShrink: 0,
+                    mt: { xs: 0, sm: 1 },
+                  }}
                 >
-                  Close
-                </Button>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  disabled={isSubmitting}
+                  <Field name="file">
+                    {({ field, form }) => (
+                      <FileInput field={field} form={form} />
+                    )}
+                  </Field>
+                  {touched.file && errors.file && (
+                    <Typography color="error" variant="caption" sx={{ mt: 0.1, fontSize: '0.65rem' }}>
+                      {errors.file}
+                    </Typography>
+                  )}
+                </Box>
+
+                {/* Right: Form Inputs */}
+                <Box
+                  sx={{
+                    width: "100%",
+                    maxWidth: { xs: "100%", sm: "50%" },
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+
+                    flexGrow: 1,
+                    // Added horizontal padding for text fields
+                    px: { xs: 0, sm: 0 } ,// **Added 1 unit of padding on left/right for xs**
+                  }}
                 >
-                  Post
-                </Button>
+                  <Field name="location">
+                    {({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Location"
+                        fullWidth
+                        variant="outlined"
+                        margin="dense"
+                        size="small"
+                        error={Boolean(touched.location && errors.location)}
+                        helperText={touched.location && errors.location}
+                        sx={{
+                          "& .MuiInputBase-input": { color: "#8e8e8e" },
+                          "& .MuiInputLabel-root": { color: "#8e8e8e" },
+                        }}
+                      />
+                    )}
+                  </Field>
+
+                  <Field name="description">
+                    {({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Description"
+                        fullWidth
+                        variant="outlined"
+                        margin="dense"
+                        multiline
+                        rows={1}
+                        size="small"
+                        error={Boolean(
+                          touched.description && errors.description
+                        )}
+                        helperText={touched.description && errors.description}
+                        sx={{
+                          "& .MuiInputBase-input": { color: "#8e8e8e" },
+                          "& .MuiInputLabel-root": { color: "#8e8e8e" },
+                        }}
+                      />
+                    )}
+                  </Field>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mt: { xs: 0.8, sm: 2 },
+                    }}
+                  >
+                    <Button
+                      variant="outlined"
+                      onClick={handleClose}
+                      disabled={isSubmitting}
+                      sx={{ borderColor: "#8e8e8e", color: "#8e8e8e", py: 0.4, fontSize: '0.65rem' }}
+                    >
+                      Close
+                    </Button>
+                    <Button
+                      sx={{
+                        color: "#ffffff",
+                        backgroundColor: "rgba(0, 0, 0, 0.65)",
+                        py: 0.4, fontSize: '0.65rem'
+                      }}
+                      variant="contained"
+                      type="submit"
+                      disabled={isSubmitting}
+                      size="small"
+                    >
+                      Post
+                    </Button>
+                  </Box>
+                </Box>
               </Box>
             </Form>
           )}

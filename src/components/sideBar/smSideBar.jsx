@@ -29,11 +29,15 @@ function SmSideBar() {
   const userName = localStorage.getItem("userName");
 
   const menuItems = [
-    { icon: <HomeIcon />,action: () => navigate("/") },
-    { icon: <SearchIcon />, action: searchHandleOpen },
-    { icon: <ChatIcon /> },
-    { icon: <AddBoxOutlinedIcon />, action: handleOpen },
-    { icon: <AccountCircleOutlinedIcon />,action: () => navigate(`/profile/${userName}`) },
+    { icon: <HomeIcon />, label: "Home", action: () => navigate("/") },
+    { icon: <SearchIcon />, label: "Search", action: searchHandleOpen },
+    { icon: <ChatIcon />, label: "Messages" },
+    { icon: <AddBoxOutlinedIcon />, label: "create", action: handleOpen },
+    {
+      icon: <AccountCircleOutlinedIcon />,
+      label: "Profile",
+      action: () => navigate(`/profile/${userName}`),
+    },
   ];
 
   return (
@@ -90,6 +94,18 @@ function SmSideBar() {
                         onClick={item.action}
                       >
                         {item.icon}
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            fontSize: {  sm: "0.9rem" }, 
+                            lineHeight: 1, 
+                            textAlign: "center",
+                            color: textColor,
+                            marginLeft: "14px", 
+                          }}
+                        >
+                          {item.label}
+                        </Typography>
                       </Button>
                     </Grid2>
                   </Grid2>

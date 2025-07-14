@@ -61,19 +61,13 @@ function Pages() {
           APPMOSPHERE
         </Grid2>
         <Grid2
-          xs={0}
           md={12}
           lg={12}
           sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
         >
           <SIDEBAR />
         </Grid2>
-        <Grid2
-          xs={0}
-          sm={12}
-          md={0}
-          sx={{ display: { xs: "none", sm: "flex", md: "none" } }}
-        >
+        <Grid2 sm={12} sx={{ display: { xs: "none", sm: "flex", md: "none" } }}>
           <SMALLBAR />
         </Grid2>
       </Grid2>
@@ -88,11 +82,18 @@ function Pages() {
         {/* Navbar Section */}
         {!isProfilePage && (
           <Grid2
-          
-            md={10}
-            sm={10}
-            xs={0}
-            sx={{ position: "relative", zIndex: 1000 }}
+            size={
+              isProfilePage
+                ? { xs: 0, sm: 0, md: 0 }
+                : { xs: 0, sm: 10, md: 10 }
+            }
+            sx={{
+              position: "relative",
+              zIndex: 1000,
+              display: isProfilePage
+                ? "none"
+                : { xs: "flex", sm: "flex", md: "flex" },
+            }}
           >
             <Box
               sx={{
@@ -124,7 +125,9 @@ function Pages() {
               : { xs: 12, sm: 10, md: 10 }
           }
           sx={{
-            marginTop: "16px", 
+            marginTop: isProfilePage
+              ? { xs: 0, sm: 2 }
+              : { xs: "10px", sm: "13px" },
             paddingTop: "2px",
             flexDirection: "row",
             flexWrap: "wrap",
@@ -145,7 +148,7 @@ function Pages() {
             <Grid2
               size={
                 isProfilePage
-                  ? { xs: 11, sm: 12, md: 12 }
+                  ? { xs: 12, sm: 12, md: 12 }
                   : { xs: 11, sm: 10, md: 10 }
               }
             >
@@ -163,7 +166,7 @@ function Pages() {
               direction="column"
               sx={{
                 color: textColor,
-                position: {  md: "fixed" },
+                position: { md: "fixed" },
                 paddingLeft: 1,
                 pt: 8,
                 pb: 3,
