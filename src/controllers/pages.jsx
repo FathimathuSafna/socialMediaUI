@@ -125,21 +125,18 @@ function Pages() {
               : { xs: 12, sm: 10, md: 10 }
           }
           sx={{
-            marginTop: isProfilePage // <--- THIS IS THE PRIMARY SUSPECT
-              ? { xs: 0, sm: 2 } // This is adding margin-top on sm
+            marginTop: isProfilePage
+              ? { xs: 0, sm: 2 }
               : { xs: "10px", sm: "13px" },
-            paddingTop: "2px",
             flexDirection: "row",
-            flexWrap: "wrap",
           }}
         >
           <Grid2
             container
             size={{ xs: 12, sm: 12, md: 12, lg: 10 }}
-            offset={{ xs: 0, sm: 1, md: 1, lg: 0 }}
+            
             sx={{
-              display: { xs: "flex", md: "flex" },
-              justifyContent: { xs: "center" },
+              display: { md: "flex" },
               bgcolor: bgColor,
               color: textColor,
               p: 1,
@@ -149,7 +146,7 @@ function Pages() {
               size={
                 isProfilePage
                   ? { xs: 12, sm: 12, md: 12 }
-                  : { xs: 11, sm: 10, md: 10 }
+                  : { xs: 12, sm: 10, md: 10 }
               }
             >
               {isProfilePage ? <PROFILE userName={userName} /> : <POSTS />}

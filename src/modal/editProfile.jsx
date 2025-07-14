@@ -291,7 +291,7 @@ const EditProfile = ({ open, handleClose }) => {
           overflow: "hidden",
           borderRadius: 2,
           boxShadow: 24,
-          p: { xs: 0.9, sm: 3 }, // **Reduced overall padding for xs to 0.8**
+          p: { xs: 1, sm: 3 }, // **Reduced overall padding for xs to 0.8**
           backgroundColor: bgColor,
           color: textColor,
           display: "flex",
@@ -303,9 +303,9 @@ const EditProfile = ({ open, handleClose }) => {
           variant="h6"
           sx={{
             fontStyle: "inherit",
-            fontSize: { xs: "0.85rem", sm: "1.25rem" }, // **Reduced title font size for xs to 0.9rem**
+            fontSize: { xs: "0.85rem", sm: "1.25rem" }, 
             textAlign: "center",
-            mb: { xs: 1, sm: 2 }, // Added a little bottom margin for xs
+            mb: { xs: 1, sm: 2 }, 
           }}
           component="h2"
           gutterBottom
@@ -358,12 +358,12 @@ const EditProfile = ({ open, handleClose }) => {
                 <Box
                   sx={{
                     width: "100%",
-                    maxWidth: { xs: "100%", sm: "50%" }, // Let inner padding handle the "narrower" effect
+                    maxWidth: { xs: "100%", sm: "50%" },
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
                     flexGrow: 1,
-                    px: { xs: 0, sm: 0 }, // **Added horizontal padding for xs to create left/right gap and effectively narrow text fields**
+                    px: { xs: 0, sm: 0 }, 
                   }}
                 >
                   <Field name="name">
@@ -393,13 +393,13 @@ const EditProfile = ({ open, handleClose }) => {
                     {({ field }) => (
                       <TextField
                         {...field}
-                        label="Bio" // Changed label to "Bio"
+                        label="Bio" 
                         fullWidth
                         variant="outlined"
                         margin="dense"
-                        multiline // Kept multiline
-                        rows={1} // Set to 1 row initially for compactness
-                        size="small" // Added size small for compactness
+                        multiline 
+                        rows={1} 
+                        size="small"
                         error={Boolean(touched.bio && errors.bio)}
                         helperText={touched.bio && errors.bio}
                         sx={{
