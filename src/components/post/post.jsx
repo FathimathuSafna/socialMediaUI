@@ -110,6 +110,7 @@ const InstagramPost = () => {
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 cursor: "pointer",
+                
               }}
               onDoubleClick={() => handleLike(post._id)}
             />

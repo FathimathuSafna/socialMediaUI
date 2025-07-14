@@ -87,7 +87,11 @@ function Profile() {
         m: 0,
         pb: 4,
         width: "100%",
-        height: "100vh",
+        height:{
+          xs: "100vh",
+          sm: "100%",
+          md: "100%",
+        },
       }}
     >
       {user ? (
@@ -96,8 +100,9 @@ function Profile() {
           <Grid2
             container
             flexDirection={{ xs: "row", sm: "row" }}
-            alignItems={{ sm: "flex-start" }}
-            display={{ sm: "flex" }}
+            alignItems={{ xs: "flex-start", sm: "flex-start" }}
+            justifyContent={{ xs: "flex-start", sm: "flex-start" }}
+            display={{ xs: "flex", sm: "flex" }}
             sx={{
               width: "100%",
               py: { xs: 2, sm: 4 },
@@ -114,6 +119,8 @@ function Profile() {
               sm={3}
               md={2}
               sx={{
+                display: "flex",
+                justifyContent: "center",
                 p: 0,
                 m: 0,
               }}
@@ -131,7 +138,7 @@ function Profile() {
 
             <Grid2
               item
-              xs={8}
+              xs={9}
               sm={9}
               md={10}
               sx={{
@@ -144,8 +151,10 @@ function Profile() {
               <Box
                 sx={{
                   display: "flex",
-                  justifyContent: { sm: "flex-start" },
+                  alignItems: "center",
+                  justifyContent: { xs: "flex-start", sm: "flex-start" },
                   gap: { xs: 1, sm: 3 },
+                  flexWrap: "wrap",
                   mb: { xs: 1.5, sm: 2 },
                   p: 0,
                   m: 0,
@@ -191,7 +200,8 @@ function Profile() {
                 sx={{
                   display: "flex",
                   gap: { xs: 1, sm: 4 },
-                  justifyContent: { sm: "flex-start" },
+                  flexWrap: "wrap",
+                  justifyContent: { xs: "flex-start", sm: "flex-start" },
                   mb: { xs: 1.5, sm: 2 },
                   p: 0, // No padding
                   m: 0, // No margin
@@ -242,15 +252,15 @@ function Profile() {
             </Grid2>
           </Grid2>
 
-          <Divider sx={{ mb: { xs: 2, sm: 3 }, width: "100%", p: 0, m: 8 }} />
+          <Divider sx={{ mb: { xs: 2, sm: 3 }, width: "100%", p: 0, m: 0 }} />
 
           <Grid2
             container
-            spacing={{ xs: 0.1, sm: 1, md: 2 }}
+            spacing={{ xs: 0.5, sm: 1, md: 2 }}
             sx={{
-              mx: {  sm: -0.5, md: -1 }, // Counteract spacing on container for edge alignment
+              mx: { sm: -0.5, md: -1 }, // Counteract spacing on container for edge alignment
               width: {
-                xs: "calc(100% + 8px)",
+                xs: "calc(100% + 4px)",
                 sm: "calc(100% + 8px)",
                 md: "calc(100% + 16px)",
               },
@@ -268,7 +278,7 @@ function Profile() {
                   md={4}
                   sx={{
                     display: "flex-start",
-                    p: { xs: 0.5, sm: 0.5, md: 0.5 }, // Padding around each image
+                    p: { xs: 0.1, sm: 0.5, md: 0.5 }, // Padding around each image
                     m: 0, // Ensure no margin on image grid items
                     pt: 3,
                     pb: 3,
@@ -286,10 +296,9 @@ function Profile() {
                         md: "200px",
                       },
                       objectFit: "cover",
-                      aspectRatio: "1 / 1.1",
+                      aspectRatio: "1 / 1",
                       borderRadius: 1,
                       cursor: "pointer",
-                     
                     }}
                   />
                 </Grid2>
