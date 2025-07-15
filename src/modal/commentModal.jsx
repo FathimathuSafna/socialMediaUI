@@ -129,15 +129,20 @@ export default function SlideUpModal({
             component="form"
             onSubmit={formik.handleSubmit}
             sx={{
-              top: "20%",
-              left: "27%",
+              top: {xs:"40%",md:"20%"},
+              left: {xs:"4%",
+                md:"27%"},
               transform: "translate(-50%, -50%)",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
               bottom: 0,
               position: "absolute",
-              width: "40%",
+              width:{
+                xs:"75%",
+                sm:"70%",
+                md:"40%"
+              } ,
               bgcolor: bgColor,
               textColor: textColor,
               p: 4,
@@ -168,7 +173,7 @@ export default function SlideUpModal({
                 xs={4}
                 sx={{
                   textAlign: "left",
-                  fontSize: "15px",
+                  fontSize: {md:"15px"},
                   color: textColor,
                   fontWeight: "bold",
                   fontFamily: "Arial", // Make sure the font is available
@@ -182,7 +187,7 @@ export default function SlideUpModal({
                 <Typography
                   sx={{
                     textAlign: "left",
-                    fontSize: 14,
+                    fontSize: {xs:12,md:14},
                     color: textColor,
                     fontWeight: "light",
                     fontFamily: "Georgia",
@@ -257,7 +262,7 @@ export default function SlideUpModal({
                             >
                               {comment.userName}:
                             </span>{" "}
-                            <span style={{ fontSize: 16, color: textColor }}>
+                            <span style={{ fontSize: {xs:12,md:16},mb:2, color: textColor }}>
                               {comment.commentText}
                             </span>
                           </Box>
@@ -311,7 +316,7 @@ export default function SlideUpModal({
                     );
                   })
                 ) : (
-                  <Box sx={{ color: textColor, fontSize: 14 }}>
+                  <Box sx={{ color: "#8e8e8e", fontSize: 14 }}>
                     No comments yet.
                   </Box>
                 )}
@@ -384,7 +389,7 @@ export default function SlideUpModal({
             left: "50%",
             transform: "translate(-50%, -50%)",
             position: "absolute",
-            width: "30%",
+            width: {xs:"50%",md:"30%"},
             bgcolor: "background.paper",
             p: 4,
             borderRadius: 2,
