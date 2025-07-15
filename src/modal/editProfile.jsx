@@ -50,7 +50,11 @@ const FileInput = ({ field, form }) => {
     try {
       const croppedImageBlob = await getCroppedImg(preview, croppedAreaPixels);
       // Convert Blob back to File for Formik, if necessary for your backend
-      const croppedImageFile = new File([croppedImageBlob], "cropped-profile.jpeg", { type: "image/jpeg" });
+      const croppedImageFile = new File(
+        [croppedImageBlob],
+        "cropped-profile.jpeg",
+        { type: "image/jpeg" }
+      );
 
       setFieldValue(name, croppedImageFile); // Update Formik value with the File object
       setCroppedPreview(URL.createObjectURL(croppedImageFile)); // Show URL for image preview
@@ -61,7 +65,14 @@ const FileInput = ({ field, form }) => {
   };
 
   return (
-    <Box sx={{ width: "100%", display: "flex", flexDirection: "column", gap: { xs: 0.5, sm: 1 } }}>
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        gap: { xs: 0.5, sm: 1 },
+      }}
+    >
       <MuiFileInput
         value={value}
         onChange={handleFileChange}
@@ -87,7 +98,9 @@ const FileInput = ({ field, form }) => {
             position: "relative",
           }}
         >
-          <CardContent sx={{ p: { xs: 0.2, sm: 0 } }}> {/* Reduced padding for xs */}
+          <CardContent sx={{ p: { xs: 0.2, sm: 0 } }}>
+            {" "}
+            {/* Reduced padding for xs */}
             <Box
               sx={{
                 width: "100%",
@@ -113,7 +126,15 @@ const FileInput = ({ field, form }) => {
               />
             </Box>
           </CardContent>
-          <CardActions sx={{ justifyContent: "center", px: { xs: 0.5, sm: 2 }, pb: { xs: 0.5, sm: 2 } }}> {/* Reduced padding for xs */}
+          <CardActions
+            sx={{
+              justifyContent: "center",
+              px: { xs: 0.5, sm: 2 },
+              pb: { xs: 0.5, sm: 2 },
+            }}
+          >
+            {" "}
+            {/* Reduced padding for xs */}
             <Button
               color="secondary"
               onClick={() => {
@@ -122,7 +143,7 @@ const FileInput = ({ field, form }) => {
                 setFieldValue(name, null); // Clear Formik value
               }}
               size="small"
-              sx={{ fontSize: '0.6rem', minWidth: 'auto', px: 0.5 }} // Smaller text
+              sx={{ fontSize: "0.6rem", minWidth: "auto", px: 0.5 }} // Smaller text
             >
               Remove
             </Button>
@@ -144,7 +165,9 @@ const FileInput = ({ field, form }) => {
             position: "relative",
           }}
         >
-          <CardContent sx={{ p: { xs: 0.2, sm: 0 } }}> {/* Reduced padding for xs */}
+          <CardContent sx={{ p: { xs: 0.2, sm: 0 } }}>
+            {" "}
+            {/* Reduced padding for xs */}
             <Box
               sx={{
                 width: "100%", // **Changed from {xs: "50%", sm: "100%"} to "100%"**
@@ -172,10 +195,22 @@ const FileInput = ({ field, form }) => {
               step={0.1}
               aria-labelledby="Zoom"
               onChange={(e, newZoom) => setZoom(newZoom)} // Corrected handler parameter
-              sx={{ mt: { xs: 0.5, sm: 2 }, mx: { xs: 0.5, sm: 2 }, color: "#8e8e8e" }} // Reduced margins for xs
+              sx={{
+                mt: { xs: 0.5, sm: 2 },
+                mx: { xs: 0.5, sm: 2 },
+                color: "#8e8e8e",
+              }} // Reduced margins for xs
             />
           </CardContent>
-          <CardActions sx={{ justifyContent: "flex-end", px: { xs: 0.5, sm: 2 }, pb: { xs: 0.5, sm: 2 } }}> {/* Reduced padding for xs */}
+          <CardActions
+            sx={{
+              justifyContent: "flex-end",
+              px: { xs: 0.5, sm: 2 },
+              pb: { xs: 0.5, sm: 2 },
+            }}
+          >
+            {" "}
+            {/* Reduced padding for xs */}
             <Button
               variant="outlined"
               color="secondary"
@@ -184,7 +219,13 @@ const FileInput = ({ field, form }) => {
                 setFieldValue(name, null); // Clear Formik value if cancelled
               }}
               size="small"
-              sx={{ borderColor: "#8e8e8e", color: "#8e8e8e", fontSize: '0.55rem', minWidth: 'auto', px: 0.4 }} // Smaller text
+              sx={{
+                borderColor: "#8e8e8e",
+                color: "#8e8e8e",
+                fontSize: "0.55rem",
+                minWidth: "auto",
+                px: 0.4,
+              }} // Smaller text
             >
               Cancel
             </Button>
@@ -196,7 +237,9 @@ const FileInput = ({ field, form }) => {
                 ml: { xs: 0.5, sm: 1 }, // Reduced ml for xs
                 backgroundColor: "rgba(0, 0, 0, 0.65)",
                 color: "#ffffff",
-                fontSize: '0.55rem', minWidth: 'auto', px: 0.4 // Smaller text
+                fontSize: "0.55rem",
+                minWidth: "auto",
+                px: 0.4, // Smaller text
               }}
             >
               Crop & Use
@@ -218,6 +261,7 @@ const EditProfile = ({ open, handleClose }) => {
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     const { name, file, bio } = values;
@@ -225,19 +269,19 @@ const EditProfile = ({ open, handleClose }) => {
     try {
       // Ensure file is an actual File object, not a Blob URL
       let fileToUpload = file;
-      if (typeof file === 'string' && file.startsWith('blob:')) {
+      if (typeof file === "string" && file.startsWith("blob:")) {
         const response = await fetch(file);
         fileToUpload = await response.blob();
-        fileToUpload = new File([fileToUpload], "cropped-profile.jpeg", { type: "image/jpeg" });
+        fileToUpload = new File([fileToUpload], "cropped-profile.jpeg", {
+          type: "image/jpeg",
+        });
       } else if (!(file instanceof File)) {
-         // If it's something else that needs conversion (e.g., if you're pre-filling with a remote URL)
-         // This might not be needed if FileInput correctly returns a File or Blob.
-         console.warn("File is not a File object, attempting to convert.");
-         const response = await fetch(file);
-         const blob = await response.blob();
-         fileToUpload = new File([blob], "profile.jpeg", { type: blob.type });
+        console.warn("File is not a File object, attempting to convert.");
+        const response = await fetch(file);
+        const blob = await response.blob();
+        fileToUpload = new File([blob], "profile.jpeg", { type: blob.type });
       }
-
+      setUploadProgress(30);
       // 1. Upload image to Supabase Storage
       const fileExt = fileToUpload.name.split(".").pop();
       const fileName = `${Date.now()}.${fileExt}`;
@@ -246,11 +290,12 @@ const EditProfile = ({ open, handleClose }) => {
       const { data, error: uploadError } = await supabase.storage
         .from("profilepictures")
         .upload(filePath, fileToUpload, {
-          cacheControl: '3600',
-          upsert: false
+          cacheControl: "3600",
+          upsert: false,
         });
 
       if (uploadError) throw uploadError;
+        setUploadProgress(70);
 
       // 2. Get the public URL
       const { data: publicUrlData } = supabase.storage
@@ -260,19 +305,22 @@ const EditProfile = ({ open, handleClose }) => {
       const imageUrl = publicUrlData.publicUrl;
 
       // 3. Update user details
-      await updateUserDetails({ // Using await for updateUserDetails
+      await updateUserDetails({
+        // Using await for updateUserDetails
         name,
         profilePictureUrl: imageUrl,
         bio,
       });
+      setUploadProgress(100);
 
       setSubmitting(false);
+      setUploadProgress(0);
+
       handleClose();
       // Consider navigating to the profile page instead of home
       // const currentUserName = localStorage.getItem("userName"); // Assuming username is in local storage
       // navigate(`/profile/${currentUserName}`);
       navigate("/"); // Sticking to original navigate for now
-
     } catch (error) {
       console.error("Error during profile update:", error);
       setSubmitting(false);
@@ -303,14 +351,40 @@ const EditProfile = ({ open, handleClose }) => {
           variant="h6"
           sx={{
             fontStyle: "inherit",
-            fontSize: { xs: "0.85rem", sm: "1.25rem" }, 
+            fontSize: { xs: "0.85rem", sm: "1.25rem" },
             textAlign: "center",
-            mb: { xs: 1, sm: 2 }, 
+            mb: { xs: 1, sm: 1 },
           }}
           component="h2"
           gutterBottom
         >
           Edit Profile
+          {uploadProgress > 0 && uploadProgress < 100 && (
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="caption" sx={{ color: textColor }}>
+                Uploading... {uploadProgress}%
+              </Typography>
+              <Box
+                sx={{
+                  height: 5,
+                  width: "100%",
+                  backgroundColor: "#ccc",
+                  borderRadius: 1,
+                  mt: 0.5,
+                }}
+              >
+                <Box
+                  sx={{
+                    height: "100%",
+                    width: `${uploadProgress}%`,
+                    backgroundColor: "#8e8e8e",
+                    borderRadius: 1,
+                    transition: "width 0.4s ease-in-out",
+                  }}
+                />
+              </Box>
+            </Box>
+          )}
         </Typography>
 
         <Formik
@@ -324,8 +398,8 @@ const EditProfile = ({ open, handleClose }) => {
                 sx={{
                   display: "flex",
                   flexDirection: { xs: "column", sm: "row" },
-                  gap: { xs: 0.9, sm: 3 }, 
-                  alignItems: "flex-start", 
+                  gap: { xs: 0.9, sm: 3 },
+                  alignItems: "flex-start",
                   justifyContent: "center",
                   width: "100%",
                 }}
@@ -339,7 +413,7 @@ const EditProfile = ({ open, handleClose }) => {
                     flexDirection: "column",
                     alignItems: "center",
                     flexShrink: 0,
-                    pt: { xs: 0, sm: 2 } 
+                    pt: { xs: 0, sm: 1.1 },
                   }}
                 >
                   <Field name="file">
@@ -348,7 +422,11 @@ const EditProfile = ({ open, handleClose }) => {
                     )}
                   </Field>
                   {touched.file && errors.file && (
-                    <Typography color="error" variant="caption" sx={{ mt: 0.1, fontSize: '0.65rem' }}>
+                    <Typography
+                      color="error"
+                      variant="caption"
+                      sx={{ mt: 0.1, fontSize: "0.65rem" }}
+                    >
                       {errors.file}
                     </Typography>
                   )}
@@ -363,7 +441,7 @@ const EditProfile = ({ open, handleClose }) => {
                     flexDirection: "column",
                     justifyContent: "center",
                     flexGrow: 1,
-                    px: { xs: 0, sm: 0 }, 
+                    px: { xs: 0, sm: 0 },
                   }}
                 >
                   <Field name="name">
@@ -393,12 +471,12 @@ const EditProfile = ({ open, handleClose }) => {
                     {({ field }) => (
                       <TextField
                         {...field}
-                        label="Bio" 
+                        label="Bio"
                         fullWidth
                         variant="outlined"
                         margin="dense"
-                        multiline 
-                        rows={1} 
+                        multiline
+                        rows={1}
                         size="small"
                         error={Boolean(touched.bio && errors.bio)}
                         helperText={touched.bio && errors.bio}
@@ -426,7 +504,12 @@ const EditProfile = ({ open, handleClose }) => {
                       variant="outlined"
                       onClick={handleClose}
                       disabled={isSubmitting}
-                      sx={{ borderColor: "#8e8e8e", color: "#8e8e8e", py: 0.4, fontSize: '0.65rem' }} // **Reduced py and font size**
+                      sx={{
+                        borderColor: "#8e8e8e",
+                        color: "#8e8e8e",
+                        py: 0.4,
+                        fontSize: "0.65rem",
+                      }} // **Reduced py and font size**
                     >
                       Close
                     </Button>
@@ -438,7 +521,7 @@ const EditProfile = ({ open, handleClose }) => {
                         backgroundColor: "rgba(0, 0, 0, 0.65)",
                         color: "#ffffff",
                         py: 0.4, // **Reduced py and font size**
-                        fontSize: '0.65rem',
+                        fontSize: "0.65rem",
                       }}
                     >
                       Edit

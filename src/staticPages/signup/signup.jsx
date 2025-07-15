@@ -1,19 +1,19 @@
-import { useEffect, React } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../../store/supabaseClient";
 import Grid2 from "@mui/material/Grid2";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import "./signup.css";
-import Axios from "axios";
 import { signup } from "../../service/userApi";
 
 // Validation schema
 const SignupSchema = Yup.object().shape({
   userName: Yup.string().required("Username is required"),
   name: Yup.string().required("Name is required"),
-  phoneNumber: Yup.string().required("Phone number is required"),
+  phoneNumber: Yup.string()
+  .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
+  .required("Phone number is required"),
   email: Yup.string().email("Invalid email"),
   password: Yup.string().min(6, "Too Short!").required("Password is required"),
   bio: Yup.string(),
@@ -22,6 +22,7 @@ const SignupSchema = Yup.object().shape({
 
 function Signup() {
   const navigate = useNavigate();
+  const [serverError, setServerError] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -35,36 +36,36 @@ function Signup() {
   const handleSignup = async (values, { setSubmitting }) => {
     const { userName, name, phoneNumber, email, password, bio, dob } = values;
 
-    console.log(values);
+    setServerError("");
+
     signup({
-      userName: userName,
-      name: name,
-      phoneNumber: phoneNumber,
-      email: email,
-      password: password,
-      bio: bio,
-      dob: dob,
+      userName,
+      name,
+      phoneNumber,
+      email,
+      password,
+      bio,
+      dob,
     })
       .then((response) => {
-        console.log(response);
-        if (response.status == true) {
+        if (response.status === true) {
           alert("Signup successful! Please check your email for confirmation.");
           navigate("/verify", { state: { phoneNumber } });
         } else {
-          alert("Signup failed. Please try again.");
+          setServerError(response.message || "Signup failed. Please try again.");
         }
+        setSubmitting(false);
       })
       .catch((error) => {
-        console.error("There was an error signing up!", error);
+        console.error("Signup error:", error);
+        if (error.response && error.response.status === 409) {
+          setServerError(error.response.data.message); // Backend message
+        } else {
+          setServerError("Signup failed. Please try again.");
+        }
+        setSubmitting(false);
       });
-    setSubmitting(false);
   };
-  // if (error) {
-  //   alert(error.message);
-  // } else {
-  //   alert("Signup successful! Please check your email for confirmation.");
-  //   navigate("/login");
-  // }
 
   return (
     <Grid2
@@ -88,7 +89,7 @@ function Signup() {
           initialValues={{
             userName: "",
             name: "",
-            phoneNumberNumber: "",
+            phoneNumber: "", 
             email: "",
             password: "",
             bio: "",
@@ -112,16 +113,28 @@ function Signup() {
                   paddingBottom={"20px"}
                   fontWeight={600}
                   color={"#000000"}
+                  sx={{width: "100%", textAlign: "center"}}
                 >
                   SIGNUP
                 </Typography>
                 <Typography
-                  variant="h7"
+                  variant="body2"
                   fontStyle={"oblique"}
                   paddingBottom={"20px"}
+                  textAlign="center"
                 >
-                  Signup and Explore to see more photos and videos
+                  Signup and explore to see more photos and videos
                 </Typography>
+
+                {serverError && (
+                  <Typography
+                    color="error"
+                    variant="body2"
+                    sx={{ mb: 2, textAlign: "center" }}
+                  >
+                    {serverError}
+                  </Typography>
+                )}
 
                 {[
                   { name: "userName", label: "Username" },
@@ -130,7 +143,7 @@ function Signup() {
                   { name: "email", label: "Email" },
                   { name: "password", label: "Password", type: "password" },
                   { name: "bio", label: "Bio" },
-                  { name: "dob", label: "Date of Birth", type: "date" },
+                  { name: "dob", type: "date" },
                 ].map(({ name, label, type = "text" }) => (
                   <Field
                     key={name}
@@ -147,15 +160,31 @@ function Signup() {
                   />
                 ))}
 
-                <Grid2 sx={{ paddingTop: "20px" }}>
+                <Grid2 sx={{ paddingTop: "20px", width: "50%" }}>
                   <Button
                     variant="contained"
                     type="submit"
-                    sx={{ borderRadius: "8px", width: "100%" }}
+                    sx={{
+                      borderRadius: "8px",
+                      width: "100%",
+                      bgcolor: "#8e8e8e",
+                    }}
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? "Signing up..." : "Signup"}
                   </Button>
+                  <Typography
+                    variant="body2" 
+                    sx={{fontStyle:"italic", paddingTop: "20px", textAlign: "center" }}
+                  >
+                    Already have an account?{" "}
+                    <span
+                      style={{ color: "#8e8e8e",paddingTop:'20px', cursor: "pointer" }}
+                      onClick={() => navigate("/login")}
+                    >
+                      Login
+                    </span>
+                  </Typography>
                 </Grid2>
               </Grid2>
             </Form>

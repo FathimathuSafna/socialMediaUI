@@ -402,13 +402,14 @@ export default function SlideUpModal({
             variant="outlined"
             multiline
             rows={3}
+            sx={{color:'#8e8e8e',border:"#8e8e8e"}}
           />
-          <Box display="flex" justifyContent="flex-end" mt={2}>
-            <Button onClick={() => setEditModalOpen(false)} sx={{ mr: 1 }}>
+          <Box display="flex" justifyContent="flex-end" mt={2} >
+            <Button  onClick={() => setEditModalOpen(false)} sx={{ mr: 1,color:'#8e8e8e'}} >
               Cancel
             </Button>
-            <Box display="flex" justifyContent="flex-end" mt={2}>
-              <Button type="submit" variant="contained">
+            <Box display="flex" justifyContent="flex-end" >
+              <Button type="submit" variant="contained" sx={{backgroundColor:"#8e8e8e"}}>
                 Update
               </Button>
             </Box>

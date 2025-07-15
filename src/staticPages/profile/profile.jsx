@@ -41,6 +41,7 @@ function Profile() {
       await followUser({ followedUserId: userId });
       setisfollow(true);
       setFollowerCount((prev) => prev + 1);
+       window.dispatchEvent(new Event("userFollowChanged"));
     } catch (error) {
       console.error("Error following user:", error);
     }
@@ -51,6 +52,7 @@ function Profile() {
       await unFollowUser({ followedUserId: userId });
       setisfollow(false);
       setFollowerCount((prev) => prev - 1);
+       window.dispatchEvent(new Event("userFollowChanged"));
     } catch (error) {
       console.error("Error unfollowing user:", error);
     }

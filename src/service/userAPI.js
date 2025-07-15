@@ -11,6 +11,7 @@ export const signup = async (data) => {
   }
 };
 
+
 export const login = async (data) => {
   try {
     const response = await USER_INSTANCE.post("/login", data);

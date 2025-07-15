@@ -24,8 +24,21 @@ export default function BottomActionsCard() {
   };
 
   useEffect(() => {
-    getAllFollowers();
-  }, []);
+  getAllFollowers(); // initial fetch
+
+  const handleUserFollowChange = () => {
+    getAllFollowers(); // re-fetch when someone follows/unfollows
+  };
+
+  // Listen for the custom event
+  window.addEventListener("userFollowChanged", handleUserFollowChange);
+
+  // Cleanup the listener on unmount
+  return () => {
+    window.removeEventListener("userFollowChanged", handleUserFollowChange);
+  };
+}, []);
+
 
   const handleFollow = (userId) => {
     followUser({ followedUserId: userId })
