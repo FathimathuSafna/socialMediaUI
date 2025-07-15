@@ -158,7 +158,7 @@ export default function FOLLOWINGMODAL({ open, handleClose, followedUsers = []})
             })
           ) : (
             <Box sx={{ textAlign: "center", mt: 4 }}>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="#8e8e8e">
                 No followings found.
               </Typography>
             </Box>

@@ -85,7 +85,7 @@ function Profile() {
       sx={{
         flexGrow: 1,
         px: { xs: 0, sm: 2, md: 4 },
-        pt: { xs: 0, sm: 0 },
+        pt: { xs: 4, sm: 0 },
         m: 0,
         pb: 4,
         width: "100%",
@@ -178,6 +178,7 @@ function Profile() {
                     textTransform: "none",
                     px: 0.5,
                     py: 0.5,
+                    ml:1.5
                   }}
                   onClick={() => {
                     if (currentUser) {
@@ -254,7 +255,7 @@ function Profile() {
             </Grid2>
           </Grid2>
 
-          <Divider sx={{ mb: { xs: 2, sm: 3 }, width: "100%", p: 0, m: 0 }} />
+          <Divider sx={{ mb: { xs: 2, sm: 3 }, width: "100%", p: 0, mt:{xs:4} ,backgroundColor:"#8e8e8e" }} />
 
           <Grid2
             container
@@ -266,7 +267,9 @@ function Profile() {
                 sm: "calc(100% + 8px)",
                 md: "calc(100% + 16px)",
               },
-              mt: 0,
+              mt: {
+                xs:1
+              },
               pt: 0,
             }}
           >
@@ -281,7 +284,7 @@ function Profile() {
                   sx={{
                     display: "flex-start",
                     p: { xs: 0.1, sm: 0.5, md: 0.5 }, // Padding around each image
-                    m: 0, // Ensure no margin on image grid items
+                    m: 0,
                     pt: 3,
                     pb: 3,
                   }}
@@ -311,7 +314,7 @@ function Profile() {
                 xs={12}
                 sx={{ textAlign: "center", pt: 4, p: 0, m: 0 }}
               >
-                <Typography variant="h6" color="textSecondary">
+                <Typography variant="h6" color="#8e8e8e">
                   No posts to show.
                 </Typography>
               </Grid2>
@@ -337,7 +340,7 @@ function Profile() {
         </>
       ) : (
         <Grid2 item xs={12} sx={{ textAlign: "center", mt: 4 }}>
-          <Typography variant="h6" color="textSecondary">
+          <Typography variant="h6" color="#8e8e8e">
             Loading profile...
           </Typography>
         </Grid2>

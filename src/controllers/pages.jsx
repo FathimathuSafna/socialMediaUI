@@ -148,8 +148,10 @@ function Pages() {
                   ? { xs: 12, sm: 12, md: 12 }
                   : { xs: 12, sm: 10, md: 10 }
               }
+              offset={isProfilePage ? {md:0}:{md:1}}
               sx={{
-                mt: 2
+                mt: 2,
+                
               }}
             >
               {isProfilePage ? <PROFILE userName={userName} /> : <POSTS />}

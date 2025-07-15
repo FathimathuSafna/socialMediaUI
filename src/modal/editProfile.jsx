@@ -215,8 +215,9 @@ const FileInput = ({ field, form }) => {
               variant="outlined"
               color="secondary"
               onClick={() => {
-                setPreview(null);
-                setFieldValue(name, null); // Clear Formik value if cancelled
+                setPreview(null); 
+                setCroppedPreview(null); 
+                setFieldValue(field.name, null); 
               }}
               size="small"
               sx={{
@@ -282,7 +283,6 @@ const EditProfile = ({ open, handleClose }) => {
         fileToUpload = new File([blob], "profile.jpeg", { type: blob.type });
       }
       setUploadProgress(30);
-      // 1. Upload image to Supabase Storage
       const fileExt = fileToUpload.name.split(".").pop();
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `profilepictures/${fileName}`; // Changed path to be more specific to profiles
@@ -295,18 +295,15 @@ const EditProfile = ({ open, handleClose }) => {
         });
 
       if (uploadError) throw uploadError;
-        setUploadProgress(70);
+      setUploadProgress(70);
 
-      // 2. Get the public URL
       const { data: publicUrlData } = supabase.storage
         .from("profilepictures")
         .getPublicUrl(filePath);
 
       const imageUrl = publicUrlData.publicUrl;
 
-      // 3. Update user details
       await updateUserDetails({
-        // Using await for updateUserDetails
         name,
         profilePictureUrl: imageUrl,
         bio,
@@ -317,10 +314,7 @@ const EditProfile = ({ open, handleClose }) => {
       setUploadProgress(0);
 
       handleClose();
-      // Consider navigating to the profile page instead of home
-      // const currentUserName = localStorage.getItem("userName"); // Assuming username is in local storage
-      // navigate(`/profile/${currentUserName}`);
-      navigate("/"); // Sticking to original navigate for now
+      navigate("/");
     } catch (error) {
       console.error("Error during profile update:", error);
       setSubmitting(false);

@@ -61,9 +61,13 @@ const FileInput = ({ field, form }) => {
   const showCroppedImage = async () => {
     try {
       const croppedImageBlob = await getCroppedImg(preview, croppedAreaPixels);
-      const croppedImageFile = new File([croppedImageBlob], "cropped-image.jpeg", {
-        type: "image/jpeg",
-      });
+      const croppedImageFile = new File(
+        [croppedImageBlob],
+        "cropped-image.jpeg",
+        {
+          type: "image/jpeg",
+        }
+      );
       setFieldValue(name, croppedImageFile);
       setCroppedPreviewUrl(URL.createObjectURL(croppedImageFile));
       setPreview(null);
@@ -73,7 +77,9 @@ const FileInput = ({ field, form }) => {
   };
 
   return (
-    <Box sx={{ width: "100%", display: "flex", flexDirection: "column", gap: 1 }}>
+    <Box
+      sx={{ width: "100%", display: "flex", flexDirection: "column", gap: 1 }}
+    >
       <MuiFileInput
         value={value}
         onChange={handleFileChange}
@@ -89,14 +95,22 @@ const FileInput = ({ field, form }) => {
         <Card sx={{ mt: 1, maxWidth: 150, mx: "auto", background: bgColor }}>
           <CardContent sx={{ p: 0.2 }}>
             <Box sx={{ width: "100%", aspectRatio: "1", overflow: "hidden" }}>
-              <img src={croppedPreviewUrl} alt="Cropped Preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <img
+                src={croppedPreviewUrl}
+                alt="Cropped Preview"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
             </Box>
           </CardContent>
           <CardActions sx={{ justifyContent: "center" }}>
-            <Button onClick={() => {
-              setCroppedPreviewUrl(null);
-              setFieldValue(name, null);
-            }} size="small" sx={{ fontSize: '0.7rem' }}>
+            <Button
+              onClick={() => {
+                setCroppedPreviewUrl(null);
+                setFieldValue(name, null);
+              }}
+              size="small"
+              sx={{ fontSize: "0.7rem" }}
+            >
               Remove
             </Button>
           </CardActions>
@@ -131,10 +145,11 @@ const FileInput = ({ field, form }) => {
               variant="outlined"
               onClick={() => {
                 setPreview(null);
-                setFieldValue(name, null);
+                setCroppedPreviewUrl(null);
+                setFieldValue(field.name, null);
               }}
               size="small"
-              sx={{ fontSize: '0.65rem' }}
+              sx={{ fontSize: "0.65rem" }}
             >
               Cancel
             </Button>
@@ -146,7 +161,7 @@ const FileInput = ({ field, form }) => {
                 ml: 1,
                 backgroundColor: "rgba(0, 0, 0, 0.65)",
                 color: "#ffffff",
-                fontSize: '0.65rem'
+                fontSize: "0.65rem",
               }}
             >
               Crop & Use
@@ -272,11 +287,25 @@ const AddPost = ({ open, handleClose }) => {
         >
           {({ isSubmitting, errors, touched }) => (
             <Form>
-              <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
+                  gap: 2,
+                }}
+              >
                 {/* Left: File Upload */}
-                <Box sx={{ width: "100%", maxWidth: { xs: "100%", sm: "50%" },mt:1 }}>
+                <Box
+                  sx={{
+                    width: "100%",
+                    maxWidth: { xs: "100%", sm: "50%" },
+                    mt: 1,
+                  }}
+                >
                   <Field name="file">
-                    {({ field, form }) => <FileInput field={field} form={form} />}
+                    {({ field, form }) => (
+                      <FileInput field={field} form={form} />
+                    )}
                   </Field>
                   {touched.file && errors.file && (
                     <Typography color="error" variant="caption">
@@ -286,7 +315,9 @@ const AddPost = ({ open, handleClose }) => {
                 </Box>
 
                 {/* Right: Fields */}
-                <Box sx={{ width: "100%", maxWidth: { xs: "100%", sm: "50%" } }}>
+                <Box
+                  sx={{ width: "100%", maxWidth: { xs: "100%", sm: "50%" } }}
+                >
                   <Field name="location">
                     {({ field }) => (
                       <TextField
@@ -295,6 +326,9 @@ const AddPost = ({ open, handleClose }) => {
                         fullWidth
                         size="small"
                         margin="dense"
+                        InputLabelProps={{
+                          style: { color: "#8e8e8e" },
+                        }}
                         error={touched.location && Boolean(errors.location)}
                         helperText={touched.location && errors.location}
                       />
@@ -311,21 +345,40 @@ const AddPost = ({ open, handleClose }) => {
                         multiline
                         rows={2}
                         margin="dense"
-                        error={touched.description && Boolean(errors.description)}
+                        InputLabelProps={{
+                          style: { color: "#8e8e8e" },
+                        }}
+                        error={
+                          touched.description && Boolean(errors.description)
+                        }
                         helperText={touched.description && errors.description}
                       />
                     )}
                   </Field>
 
-                  <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-                    <Button variant="outlined" onClick={handleClose} disabled={isSubmitting} sx={{color:'#8e8e8e', borderColor: '#8e8e8e'}}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mt: 2,
+                    }}
+                  >
+                    <Button
+                      variant="outlined"
+                      onClick={handleClose}
+                      disabled={isSubmitting}
+                      sx={{ color: "#8e8e8e", borderColor: "#8e8e8e" }}
+                    >
                       Close
                     </Button>
                     <Button
                       variant="contained"
                       type="submit"
                       disabled={isSubmitting}
-                      sx={{ backgroundColor: "rgba(0, 0, 0, 0.65)", color: "#fff" }}
+                      sx={{
+                        backgroundColor: "rgba(0, 0, 0, 0.65)",
+                        color: "#fff",
+                      }}
                     >
                       Post
                     </Button>

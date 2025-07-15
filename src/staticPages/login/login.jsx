@@ -10,7 +10,7 @@ import { login } from "../../service/userApi";
 // Validation schema
 const LoginSchema = Yup.object().shape({
   phone: Yup.string()
-    .matches(/^[0-9]{10,15}$/, "Phone number must be 10 to 15 digits")
+    .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
     .required("Phone number is required"),
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
@@ -19,6 +19,7 @@ const LoginSchema = Yup.object().shape({
 
 function Login() {
   const navigate = useNavigate();
+  const [loginError, setLoginError] = React.useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -39,11 +40,14 @@ function Login() {
         .then((response) => {
           console.log(response.data);
           localStorage.setItem("token", response.data.token);
-          localStorage.setItem("userName",response.data.userName)
+          localStorage.setItem("userName", response.data.userName);
           navigate("/");
         })
         .catch((error) => {
           console.error("Error during login:", error);
+          const errorMessage =
+            error.response?.data?.msg || "Invalid username or password";
+          setLoginError(errorMessage);
         });
     } catch (error) {
       console.error("Login error:", error);
@@ -93,6 +97,11 @@ function Login() {
                 <Typography variant="h4" paddingBottom="20px" fontWeight={300}>
                   LOGIN
                 </Typography>
+                {loginError && (
+                  <Typography color="error" fontSize="0.9rem" sx={{mt:2,mb:2}}>
+                    {loginError}
+                  </Typography>
+                )}
 
                 <TextField
                   name="phone"
@@ -125,7 +134,11 @@ function Login() {
                   <Button
                     type="submit"
                     variant="contained"
-                    sx={{ borderRadius: "8px", width: "250px" }}
+                    sx={{
+                      borderRadius: "8px",
+                      width: "250px",
+                      backgroundColor: "#8e8e8e",
+                    }}
                     disabled={isSubmitting}
                   >
                     Log in
@@ -142,7 +155,7 @@ function Login() {
 
                 <Button
                   variant="outlined"
-                  sx={{ width: "250px" }}
+                  sx={{ width: "250px", border: "#8e8e8e", color: "#8e8e8e" }}
                   onClick={() => navigate("/signup")}
                 >
                   Sign Up
