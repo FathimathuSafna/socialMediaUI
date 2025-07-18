@@ -57,8 +57,7 @@ function Pages() {
             top: "20px",
             display: { xs: "none", sm: "flex", md: "flex" },
           }}
-        >
-          APPMOSPHERE
+        > aPPMoshere
         </Grid2>
         <Grid2
           md={12}
@@ -148,7 +147,7 @@ function Pages() {
                   ? { xs: 12, sm: 12, md: 12 }
                   : { xs: 12, sm: 10, md: 10 }
               }
-              offset={isProfilePage ? {md:0}:{sm:1,md:1}}
+              offset={isProfilePage ? {md:0}:{sm:2,md:1}}
               sx={{
                 mt: 2,
                 

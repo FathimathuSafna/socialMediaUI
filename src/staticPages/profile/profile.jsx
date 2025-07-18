@@ -6,16 +6,18 @@ import Avatar from "@mui/material/Avatar";
 import { Grid2, Box, Typography, Divider } from "@mui/material";
 import { Button } from "@mui/joy";
 import { followUser, unFollowUser } from "../../service/followApi";
+import { deletePost } from "../../service/postAPI";
 
 // Import your Modals
 import FOLLOWERMODAL from "../../modal/followersModal";
 import FOLLOWEDMODAL from "../../modal/followedModal";
 import EditProfileModal from "../../modal/editProfile";
+import PostDetailModal from "../../modal/postDetailModal";
 
 function Profile() {
   const { userName } = useParams();
   const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState(null);
+  const [posts, setPosts] = useState([]);
   const [postCount, setPostCount] = useState(0);
   const [followedUserCount, setFollowedUserCount] = useState(0);
   const [followerCount, setFollowerCount] = useState(0);
@@ -27,6 +29,8 @@ function Profile() {
   const [follower, setfollower] = useState([]);
   const [following, setfollowing] = useState([]);
 
+  const [openPostModal, setOpenPostModal] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
   const handleOpenFollowers = () => setOpenFollowersModal(true);
   const handleCloseFollowers = () => setOpenFollowersModal(false);
   const handleOpenFollowing = () => setOpenFollowingModal(true);
@@ -34,14 +38,39 @@ function Profile() {
   const handleOpenEditProfile = () => setOpenEditProfileModal(true);
   const handleCloseEditProfile = () => setOpenEditProfileModal(false);
 
+
+ const handleOpenPostModal = (post) => {
+    setSelectedPost(post);
+    setOpenPostModal(true);
+  };
+  const handleClosePostModal = () => {
+    setOpenPostModal(false);
+    setSelectedPost(null);
+  };
+
   const { darkMode } = useCustomTheme();
+
+  // <-- NEW: Handler to perform the deletion
+  const handleDeletePost = async (postId) => {
+    try {
+      await deletePost(postId);
+      // Update state to remove post from UI without a refresh
+      setPosts((currentPosts) => currentPosts.filter((p) => p._id !== postId));
+      setPostCount((prevCount) => prevCount - 1);
+      handleClosePostModal(); // Close the modal on success
+    } catch (error) {
+      console.error("Failed to delete post:", error);
+      // Re-throw error so the modal can handle its state (e.g., stop loading spinner)
+      throw error;
+    }
+  };
 
   const handleFollow = async (userId) => {
     try {
       await followUser({ followedUserId: userId });
       setisfollow(true);
       setFollowerCount((prev) => prev + 1);
-       window.dispatchEvent(new Event("userFollowChanged"));
+      window.dispatchEvent(new Event("userFollowChanged"));
     } catch (error) {
       console.error("Error following user:", error);
     }
@@ -52,7 +81,7 @@ function Profile() {
       await unFollowUser({ followedUserId: userId });
       setisfollow(false);
       setFollowerCount((prev) => prev - 1);
-       window.dispatchEvent(new Event("userFollowChanged"));
+      window.dispatchEvent(new Event("userFollowChanged"));
     } catch (error) {
       console.error("Error unfollowing user:", error);
     }
@@ -89,7 +118,7 @@ function Profile() {
         m: 0,
         pb: 4,
         width: "100%",
-        height:{
+        height: {
           xs: "100vh",
           sm: "100%",
           md: "100%",
@@ -178,7 +207,7 @@ function Profile() {
                     textTransform: "none",
                     px: 0.5,
                     py: 0.5,
-                    ml:1.5
+                    ml: 1.5,
                   }}
                   onClick={() => {
                     if (currentUser) {
@@ -255,7 +284,15 @@ function Profile() {
             </Grid2>
           </Grid2>
 
-          <Divider sx={{ mb: { xs: 2, sm: 3 }, width: "100%", p: 0, mt:{xs:4} ,backgroundColor:"#8e8e8e" }} />
+          <Divider
+            sx={{
+              mb: { xs: 2, sm: 3 },
+              width: "100%",
+              p: 0,
+              mt: { xs: 4 },
+              backgroundColor: "#8e8e8e",
+            }}
+          />
 
           <Grid2
             container
@@ -268,7 +305,7 @@ function Profile() {
                 md: "calc(100% + 16px)",
               },
               mt: {
-                xs:1
+                xs: 1,
               },
               pt: 0,
             }}
@@ -277,7 +314,7 @@ function Profile() {
               posts.map((post, idx) => (
                 <Grid2
                   item
-                  key={idx}
+                  key={post._id}
                   xs={4}
                   sm={4}
                   md={4}
@@ -294,16 +331,18 @@ function Profile() {
                     src={post.postImageUrl}
                     alt="post"
                     sx={{
-                      width: "100%",
-                      height: {
-                        xs: "120px",
-                        sm: "180px",
-                        md: "200px",
-                      },
-                      objectFit: "cover",
-                      aspectRatio: "1 / 1",
-                      borderRadius: 1,
-                      cursor: "pointer",
+                        width: "100%",
+                        height: { xs: "120px", sm: "180px", md: "200px" },
+                        objectFit: "cover",
+                        aspectRatio: "1 / 1",
+                        borderRadius: 1,
+                        cursor: "pointer",
+                    }}
+                    // <-- NEW: Open modal on click if it's the current user's profile
+                    onClick={() => {
+                      if (currentUser) {
+                        handleOpenPostModal(post);
+                      }
                     }}
                   />
                 </Grid2>
@@ -336,6 +375,12 @@ function Profile() {
             open={openEditProfileModal}
             handleClose={handleCloseEditProfile}
             user={user}
+          />
+          <PostDetailModal
+            open={openPostModal}
+            handleClose={handleClosePostModal}
+            post={selectedPost}
+            onDelete={handleDeletePost}
           />
         </>
       ) : (

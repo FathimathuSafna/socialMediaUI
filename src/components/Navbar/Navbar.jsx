@@ -148,10 +148,19 @@ export default function PrimarySearchAppBar({ toggleDrawer }) {
     }}>
       <AppBar position="static" sx={{ bgcolor: bgColor, color: textColor, transition: 'all 0.3s ease-in-out' }} elevation={0}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', minHeight: { xs: '56px', sm: '64px' } }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-            
+<Box
+  // component="img"
+  sx={{
+    height: { xs: '24px', sm: '40px' }, // Responsive height
+    width: 'auto', // Maintain aspect ratio
+    marginRight: 1, // Add some space between logo and text
+  }}
+  
+  // alt="Appmosphere Logo"
+  // src="/logo.png"
+>            
             <Typography variant="h6" noWrap component="div" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' }, fontWeight: 'bold' }}>
-              APPMOSPHERE
+              aPPMoshere
             </Typography>
             {/* <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
               <Search >

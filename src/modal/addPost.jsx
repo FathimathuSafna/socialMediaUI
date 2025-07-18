@@ -85,7 +85,8 @@ const FileInput = ({ field, form }) => {
         onChange={handleFileChange}
         placeholder="Click to upload"
         fullWidth
-        InputProps={{
+         InputProps={{
+          style: { color:"#8e8e8e"  }, 
           startAdornment: <CloudUploadIcon sx={{ mr: 1, color: "#8e8e8e" }} />,
         }}
         size="small"
@@ -177,7 +178,6 @@ const AddPost = ({ open, handleClose }) => {
   const navigate = useNavigate();
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
-  const textColor = darkMode ? "#ffffff" : "#000000";
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleSubmit = async (values, { setSubmitting }) => {
@@ -246,7 +246,7 @@ const AddPost = ({ open, handleClose }) => {
           borderRadius: 2,
           boxShadow: 24,
           backgroundColor: bgColor,
-          color: textColor,
+          color:"#8e8e8e"
         }}
       >
         <Typography variant="h6" textAlign="center" gutterBottom>
@@ -329,6 +329,9 @@ const AddPost = ({ open, handleClose }) => {
                         InputLabelProps={{
                           style: { color: "#8e8e8e" },
                         }}
+                        InputProps={{
+                          style: { color: "#8e8e8e" },
+                        }}
                         error={touched.location && Boolean(errors.location)}
                         helperText={touched.location && errors.location}
                       />
@@ -346,6 +349,9 @@ const AddPost = ({ open, handleClose }) => {
                         rows={2}
                         margin="dense"
                         InputLabelProps={{
+                          style: { color: "#8e8e8e" },
+                        }}
+                        InputProps={{
                           style: { color: "#8e8e8e" },
                         }}
                         error={

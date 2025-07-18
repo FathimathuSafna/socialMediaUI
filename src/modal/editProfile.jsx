@@ -49,15 +49,14 @@ const FileInput = ({ field, form }) => {
   const showCroppedImage = async () => {
     try {
       const croppedImageBlob = await getCroppedImg(preview, croppedAreaPixels);
-      // Convert Blob back to File for Formik, if necessary for your backend
       const croppedImageFile = new File(
         [croppedImageBlob],
         "cropped-profile.jpeg",
         { type: "image/jpeg" }
       );
 
-      setFieldValue(name, croppedImageFile); // Update Formik value with the File object
-      setCroppedPreview(URL.createObjectURL(croppedImageFile)); // Show URL for image preview
+      setFieldValue(name, croppedImageFile); 
+      setCroppedPreview(URL.createObjectURL(croppedImageFile)); 
       setPreview(null); // Hide the cropper
     } catch (e) {
       console.error(e);
@@ -78,7 +77,8 @@ const FileInput = ({ field, form }) => {
         onChange={handleFileChange}
         placeholder="Click to upload"
         fullWidth
-        InputProps={{
+         InputProps={{
+          style: { color:"#8e8e8e"  }, 
           startAdornment: <CloudUploadIcon sx={{ mr: 1, color: "#8e8e8e" }} />,
         }}
         size="small"
