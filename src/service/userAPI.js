@@ -11,7 +11,6 @@ export const signup = async (data) => {
   }
 };
 
-
 export const login = async (data) => {
   try {
     const response = await USER_INSTANCE.post("/login", data);
@@ -23,7 +22,7 @@ export const login = async (data) => {
 };
 export const verify = async (data) => {
   try {
-    const response = await USER_INSTANCE.post("/verify", data)
+    const response = await USER_INSTANCE.post("/verify", data);
     return response.data;
   } catch (error) {
     console.error("Error during verification:", error);
@@ -41,25 +40,32 @@ export const getAllUsers = async (data) => {
   }
 };
 
-export const getUserDetails = async (userName) =>{
-  try{
-    const response = await USER_INSTANCE.get(`/${userName}`)
-    console.log("Response from getUserDetails:", response.data);
-    return response.data
-  } catch (error){
-    console.log("error during fetching users:",error)
-    throw error
+export const getUserDetails = async (userName) => {
+  try {
+    const response = await USER_INSTANCE.get(`/${userName}`);
+    return response.data;
+  } catch (error) {
+    console.log("error during fetching users:", error);
+    throw error;
   }
-}
+};
 
 export const updateUserDetails = async (data) => {
   try {
-    console.log("Data being sent to updateUserDetails:", data);
     const response = await USER_INSTANCE.put("/", data);
-    console.log("Response from updateUserDetails:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error during updating user details:", error);
+    throw error;
+  }
+};
+
+export const getUserMessage = async (userName) => {
+  try {
+    const response = await USER_INSTANCE.get(`/${userName}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error during fetching the messages:", error);
     throw error;
   }
 };

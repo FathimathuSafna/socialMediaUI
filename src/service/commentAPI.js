@@ -14,7 +14,6 @@ export const getComments = async (postId) => {
   try {
     const response = await COMMENT_INSTANCE.get(`/${postId}`, 
     );
-    console.log("ssssssssssssss",response.data)
     return response.data;
   } catch (error) {
     console.error("Error during fetching comments:", error);
@@ -36,7 +35,6 @@ export const editComment = async (data) => {
 export const deleteComment = async (commentId) => {
   try {
     const response = await COMMENT_INSTANCE.delete(`/${commentId}`);
-    console.log("Response from deleteComment:", response);
     return response.data;
   } catch (error) {
     console.error("Error during deleting comment:", error);

@@ -7,7 +7,7 @@ import { AppContext } from "./store/Context";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import VERIFY from "./pages/verify";
-import ADD_FRIENDS from "./pages/addFriends";
+import MessageDialog from "./modal/messageDialog";
 
 const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
@@ -40,8 +40,13 @@ function App() {
           <Route path="/login" element={<LOGIN />} />
           <Route path="/signup" element={<SIGNUP />} />
           <Route path="/verify" element={<VERIFY />} />
-          <Route path="/addFriend" element={<ADD_FRIENDS />} />
           <Route path="/profile/:userName" element={<PAGES />} />
+          <Route
+            path="/message/:userName"
+            element={
+              <MessageDialog open={true} handleClose={() => navigate("/")} />
+            }
+          />
         </Routes>
       </Router>
     </>

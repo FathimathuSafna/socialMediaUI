@@ -13,6 +13,7 @@ import FOLLOWERMODAL from "../../modal/followersModal";
 import FOLLOWEDMODAL from "../../modal/followedModal";
 import EditProfileModal from "../../modal/editProfile";
 import PostDetailModal from "../../modal/postDetailModal";
+import SmallButton from "../../ButtonsAnimation/SmallButton";
 
 function Profile() {
   const { userName } = useParams();
@@ -38,8 +39,7 @@ function Profile() {
   const handleOpenEditProfile = () => setOpenEditProfileModal(true);
   const handleCloseEditProfile = () => setOpenEditProfileModal(false);
 
-
- const handleOpenPostModal = (post) => {
+  const handleOpenPostModal = (post) => {
     setSelectedPost(post);
     setOpenPostModal(true);
   };
@@ -50,17 +50,14 @@ function Profile() {
 
   const { darkMode } = useCustomTheme();
 
-  // <-- NEW: Handler to perform the deletion
   const handleDeletePost = async (postId) => {
     try {
       await deletePost(postId);
-      // Update state to remove post from UI without a refresh
       setPosts((currentPosts) => currentPosts.filter((p) => p._id !== postId));
       setPostCount((prevCount) => prevCount - 1);
       handleClosePostModal(); // Close the modal on success
     } catch (error) {
       console.error("Failed to delete post:", error);
-      // Re-throw error so the modal can handle its state (e.g., stop loading spinner)
       throw error;
     }
   };
@@ -99,7 +96,6 @@ function Profile() {
         setFollowerCount(response.data.followersCount);
         setCurrentUser(response.data.currentUser === true);
         setisfollow(response.data.isFollowing === true);
-        console.log("User data fetched:", response.data.followerUsers);
         setfollower(response.data.followerUsers);
         setfollowing(response.data.followedUsers);
       })
@@ -107,7 +103,6 @@ function Profile() {
   }, [userName]);
 
   return (
-    // Main Container for the Profile Page
     <Grid2
       container
       direction="column"
@@ -143,7 +138,6 @@ function Profile() {
               pl: { xs: 1, sm: 0 },
             }}
           >
-            {/* Avatar Section */}
             <Grid2
               item
               xs={3}
@@ -199,16 +193,7 @@ function Profile() {
                   {user.userName}
                 </Typography>
 
-                <Button
-                  size="sm"
-                  sx={{
-                    backgroundColor: "#8e8e8e",
-                    "&:hover": { backgroundColor: "#8e8e8e" },
-                    textTransform: "none",
-                    px: 0.5,
-                    py: 0.5,
-                    ml: 1.5,
-                  }}
+                <SmallButton
                   onClick={() => {
                     if (currentUser) {
                       handleOpenEditProfile();
@@ -224,7 +209,7 @@ function Profile() {
                     : isfollow
                     ? "Unfollow"
                     : "Follow"}
-                </Button>
+                </SmallButton>
               </Box>
 
               {/* Stats Row */}
@@ -331,12 +316,12 @@ function Profile() {
                     src={post.postImageUrl}
                     alt="post"
                     sx={{
-                        width: "100%",
-                        height: { xs: "120px", sm: "180px", md: "200px" },
-                        objectFit: "cover",
-                        aspectRatio: "1 / 1",
-                        borderRadius: 1,
-                        cursor: "pointer",
+                      width: "100%",
+                      height: { xs: "120px", sm: "180px", md: "200px" },
+                      objectFit: "cover",
+                      aspectRatio: "1 / 1",
+                      borderRadius: 1,
+                      cursor: "pointer",
                     }}
                     // <-- NEW: Open modal on click if it's the current user's profile
                     onClick={() => {

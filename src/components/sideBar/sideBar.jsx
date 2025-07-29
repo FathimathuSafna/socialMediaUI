@@ -11,16 +11,20 @@ import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import AddPost from "../../modal/addPost";
 import SearchDialog from "../../modal/searchDialog";
 import {  useNavigate } from "react-router-dom";
+import MESSAGEDIALOG from '../../modal/messageDialog'
 
 function Sidebar() {
   const navigate = useNavigate();
   const { darkMode } = useCustomTheme();
   const [open, setOpen] = useState(false);
+  const [messageOpen, setmessageOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false);
   const searchHandleOpen = () => setSearchOpen(true);
   const searchHandleClose = () => setSearchOpen(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const messageHandleOpen = () => setmessageOpen(true)
+  const messageHandleClose = () => setmessageOpen(false)
 
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
@@ -30,7 +34,7 @@ function Sidebar() {
   const menuItems = [
     { icon: <HomeIcon />, label: "Home", action: () => navigate("/") },
     { icon: <SearchIcon />, label: "Search", action: searchHandleOpen },
-    { icon: <ChatIcon />, label: "Messages" },
+    { icon: <ChatIcon />, label: "Messages",action:messageHandleOpen },
     { icon: <AddBoxOutlinedIcon />, label: "Create", action: handleOpen },
     {
       icon: <AccountCircleOutlinedIcon />,
@@ -104,9 +108,9 @@ function Sidebar() {
         </Grid2>
       </Box>
 
-      {/* Image Upload Modal */}
       <AddPost open={open} handleClose={handleClose} />
       <SearchDialog open={searchOpen} handleClose={searchHandleClose} />
+      <MESSAGEDIALOG open={messageOpen} handleClose={messageHandleClose}/>
     </>
   );
 }

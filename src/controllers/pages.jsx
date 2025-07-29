@@ -1,7 +1,5 @@
 import React from "react";
-import { styled } from "@mui/material/styles";
 import { useLocation } from "react-router-dom";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import NAVBAR from "../components/Navbar/Navbar";
 import SIDEBAR from "../components/sideBar/sideBar";
@@ -10,7 +8,6 @@ import LIST from "../components/list/list";
 import FOOTERBAR from "../components/sideBar/footerBar";
 import SMALLBAR from "../components/sideBar/smSideBar";
 import { Grid2 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
 import PROFILE from "../staticPages/profile/profile";
 
@@ -19,7 +16,6 @@ function Pages() {
 
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
-  const postBg = darkMode ? "#1e1e1e" : "#ffffff";
   const location = useLocation();
   const isProfilePage = location.pathname.startsWith("/profile/");
   const userName = isProfilePage ? location.pathname.split("/")[2] : null;

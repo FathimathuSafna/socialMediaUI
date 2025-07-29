@@ -20,6 +20,16 @@ export const getPosts = async (data) => {
   }
 };
 
+export const getPostLikeCount = async (postId) =>{
+  try{
+    const response = await POST_INSTANCE.get(`/${postId}`)
+    return response.data
+  } catch(error){
+    console.error("Error during fetching data:",error)
+    throw error
+  }
+}
+
 export const deletePost = async (postId) => {
   try {
     const response = await POST_INSTANCE.delete("/", {
