@@ -41,12 +41,6 @@ function App() {
           <Route path="/signup" element={<SIGNUP />} />
           <Route path="/verify" element={<VERIFY />} />
           <Route path="/profile/:userName" element={<PAGES />} />
-          <Route
-            path="/message/:userName"
-            element={
-              <MessageDialog open={true} handleClose={() => navigate("/")} />
-            }
-          />
         </Routes>
       </Router>
     </>

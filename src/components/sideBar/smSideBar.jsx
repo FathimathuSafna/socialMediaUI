@@ -12,6 +12,8 @@ import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import AddPost from "../../modal/addPost";
 import SearchDialog from "../../modal/searchDialog";
 import { useNavigate } from "react-router-dom";
+import MessageDialog from "../../modal/messageDialog";
+
 
 function SmSideBar() {
   const navigate = useNavigate();
@@ -20,8 +22,12 @@ function SmSideBar() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [messageOpen, setmessageOpen] = useState(false);
+
   const searchHandleOpen = () => setSearchOpen(true);
   const searchHandleClose = () => setSearchOpen(false);
+  const messageHandleOpen = () => setmessageOpen(true);
+  const messageHandleClose = () => setmessageOpen(false);
 
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
@@ -31,7 +37,7 @@ function SmSideBar() {
   const menuItems = [
     { icon: <HomeIcon />, label: "Home", action: () => navigate("/") },
     { icon: <SearchIcon />, label: "Search", action: searchHandleOpen },
-    { icon: <ChatIcon />, label: "Messages" },
+    { icon: <ChatIcon />, label: "Messages", action: messageHandleOpen },
     { icon: <AddBoxOutlinedIcon />, label: "create", action: handleOpen },
     {
       icon: <AccountCircleOutlinedIcon />,
@@ -97,11 +103,11 @@ function SmSideBar() {
                         <Typography
                           variant="caption"
                           sx={{
-                            fontSize: {  sm: "0.9rem" }, 
-                            lineHeight: 1, 
+                            fontSize: { sm: "0.9rem" },
+                            lineHeight: 1,
                             textAlign: "center",
                             color: textColor,
-                            marginLeft: "14px", 
+                            marginLeft: "14px",
                           }}
                         >
                           {item.label}
@@ -118,6 +124,7 @@ function SmSideBar() {
 
       <AddPost open={open} handleClose={handleClose} />
       <SearchDialog open={searchOpen} handleClose={searchHandleClose} />
+      <MessageDialog open={messageOpen} handleClose={messageHandleClose} />
     </>
   );
 }

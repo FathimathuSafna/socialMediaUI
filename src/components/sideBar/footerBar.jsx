@@ -8,7 +8,9 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import AddPost from "../../modal/addPost";
 import SearchDialog from "../../modal/searchDialog";
+import MessageDialog from '../../modal/messageDialog'
 import { useNavigate } from "react-router-dom";
+
 
 function footerBar() {
   const navigate = useNavigate();
@@ -18,10 +20,13 @@ function footerBar() {
   const textColor = darkMode ? "#ffffff" : "#000000";
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [messageOpen, setmessageOpen] = useState(false);
   const searchHandleOpen = () => setSearchOpen(true);
   const searchHandleClose = () => setSearchOpen(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const messageHandleOpen = () => setmessageOpen(true);
+  const messageHandleClose = () => setmessageOpen(false);
 
   return (
     <>
@@ -48,19 +53,22 @@ function footerBar() {
           }}
         >
           <Box sx={{ cursor: "pointer", p: 1 }} onClick={() => navigate("/")}>
-            <HomeIcon /> 
+            <HomeIcon />
           </Box>
 
           <Box onClick={searchHandleOpen} sx={{ cursor: "pointer", p: 1 }}>
             <SearchIcon />
           </Box>
-          <Box sx={{ cursor: "pointer", p: 1 }}>
+          <Box onClick={messageHandleOpen} sx={{ cursor: "pointer", p: 1 }}>
             <ChatIcon />
           </Box>
           <Box onClick={handleOpen} sx={{ cursor: "pointer", p: 1 }}>
             <AddBoxOutlinedIcon />
           </Box>
-          <Box sx={{ cursor: "pointer", p: 1 }} onClick={() => navigate(`/profile/${userName}`)}>
+          <Box
+            sx={{ cursor: "pointer", p: 1 }}
+            onClick={() => navigate(`/profile/${userName}`)}
+          >
             <AccountCircleOutlinedIcon />
           </Box>
         </Box>
@@ -68,6 +76,7 @@ function footerBar() {
 
       <AddPost open={open} handleClose={handleClose} />
       <SearchDialog open={searchOpen} handleClose={searchHandleClose} />
+      <MessageDialog open={messageOpen} handleClose={messageHandleClose} />
     </>
   );
 }

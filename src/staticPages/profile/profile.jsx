@@ -8,7 +8,6 @@ import { Button } from "@mui/joy";
 import { followUser, unFollowUser } from "../../service/followApi";
 import { deletePost } from "../../service/postAPI";
 
-// Import your Modals
 import FOLLOWERMODAL from "../../modal/followersModal";
 import FOLLOWEDMODAL from "../../modal/followedModal";
 import EditProfileModal from "../../modal/editProfile";
