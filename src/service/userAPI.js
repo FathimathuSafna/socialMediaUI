@@ -60,7 +60,7 @@ export const updateUserDetails = async (data) => {
   }
 };
 
-export const getUserMessage = async (userName) => {
+export const getUser = async (userName) => {
   try {
     const response = await USER_INSTANCE.get(`/${userName}`);
     return response.data;

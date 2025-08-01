@@ -76,6 +76,11 @@ export const LIKE_INSTANCE = createAxiosInstance(
 );
 setupInterceptors(LIKE_INSTANCE);
 
+export const MESSAGE_INSTANCE = createAxiosInstance(
+  `${baseURL}/message/`
+)
+setupInterceptors(MESSAGE_INSTANCE)
+
 
 
 

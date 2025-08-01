@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { getUserMessage } from "../service/userApi";
 import {
-  Grid2,
   Box,
   Avatar,
   TextField,
@@ -13,132 +11,111 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
+import { socket } from "../socket";
+import { createMessage, getMessage } from "../service/messageAPI";
 
 export default function Messages({ userName, onBack }) {
+  const currentUserName = localStorage.getItem("userName");
+
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down("sm"));
+  const { darkMode } = useCustomTheme();
 
   const [userMsgData, setUserMsgData] = useState(null);
-  const { darkMode } = useCustomTheme();
+  const [newMessage, setNewMessage] = useState("");
   const bottomRef = useRef(null);
 
   const bgColor = darkMode ? "#3a3a3a" : "#f5f5f5";
   const textColor = darkMode ? "#ffffff" : "#000000";
   const background = darkMode ? "#121212" : "#ffffff";
 
+  // Load conversation
   useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [userMsgData]);
-
-  useEffect(() => {
-    if (userName) {
-      getUserMessage(userName)
-        .then((res) => {
-          setUserMsgData(res.data.getUser);
-        })
-        .catch((err) => {
-          console.error("Error fetching user message:", err);
+    const loadConversation = async () => {
+      if (!userName) return;
+      try {
+        const res = await getMessage(userName);
+        setUserMsgData({
+          _id: res.recipient._id,
+          userName: res.recipient.userName,
+          name: res.recipient.name,
+          profileImageUrl: res.recipient.profileImageUrl,
+          conversationId: res.conversationId,
+          messages: res.messages || [],
+          sender: res.sender,
+          recipient: res.recipient,
         });
-    }
+        socket.emit("join", res.conversationId);
+      } catch (err) {
+        console.error("Error loading conversation:", err);
+      }
+    };
+    loadConversation();
   }, [userName]);
 
+  // Join room on conversation change
+  useEffect(() => {
+    if (userMsgData?.conversationId) {
+      socket.emit("join", userMsgData.conversationId);
+    }
+  }, [userMsgData?.conversationId]);
+
+  // Listen for incoming messages
+  useEffect(() => {
+    const handleReceiveMessage = (msg) => {
+      if (msg.conversationId === userMsgData?.conversationId) {
+        setUserMsgData((prev) => ({
+          ...prev,
+          messages: [...(prev.messages || []), msg],
+        }));
+      }
+    };
+    socket.on("receive_message", handleReceiveMessage);
+    return () => socket.off("receive_message", handleReceiveMessage);
+  }, [userMsgData?.conversationId]);
+
+  // Auto scroll to bottom
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [userMsgData?.messages]);
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+
+    const messagePayload = {
+      receiverId: userMsgData._id,
+      message: newMessage.trim(),
+    };
+
+    socket.emit("send_message", messagePayload);
+    setNewMessage("");
+
+    // try {
+    //   await createMessage(messagePayload);
+    // } catch (err) {
+    //   console.error("Failed to save message:", err);
+    // }
+  };
+
   if (!userName) {
-    return (
-      <Box sx={{ p: 4, textAlign: "center", color: "#888" }}>
-        Select a user to start messaging.
-      </Box>
-    );
+    return <Box p={4} textAlign="center" color="#888">Select a user to start messaging.</Box>;
   }
 
   if (!userMsgData) {
-    return (
-      <Box sx={{ p: 4, textAlign: "center", color: "#888" }}>
-        Loading messages...
-      </Box>
-    );
+    return <Box p={4} textAlign="center" color="#888">Loading messages...</Box>;
   }
 
-  const messages = [
-    { text: "Hey, how's it going?", isSender: false },
-    {
-      text: "Pretty good! I'm working on a React demo with Material-UI. How about you?",
-      isSender: true,
-    },
-    {
-      text: "Nice! I'm just checking it out. What does your component do?",
-      isSender: false,
-    },
-    {
-      text: "It's a simple message bubble for a chat interface. It changes alignment and color based on who the sender is. This makes the conversation easy to follow.",
-      isSender: true,
-    },
-    {
-      text: "Looks fantastic! It's very clear and stylish. ✨",
-      isSender: false,
-    },
-    {
-      text: "Nice! I'm just checking it out. What does your component do?",
-      isSender: false,
-    },
-    {
-      text: "It's a simple message bubble for a chat interface. It changes alignment and color based on who the sender is. This makes the conversation easy to follow.",
-      isSender: true,
-    },
-    {
-      text: "Looks fantastic! It's very clear and stylish. ✨",
-      isSender: false,
-    },
-    {
-      text: "Nice! I'm just checking it out. What does your component do?",
-      isSender: false,
-    },
-    {
-      text: "It's a simple message bubble for a chat interface. It changes alignment and color based on who the sender is. This makes the conversation easy to follow.",
-      isSender: true,
-    },
-    {
-      text: "Looks fantastic! It's very clear and stylish. ✨",
-      isSender: false,
-    },
-    {
-      text: "Nice! I'm just checking it out. What does your component do?",
-      isSender: false,
-    },
-    {
-      text: "It's a simple message bubble for a chat interface. It changes alignment and color based on who the sender is. This makes the conversation easy to follow.",
-      isSender: true,
-    },
-    {
-      text: "Looks fantastic! It's very clear and stylish. ✨",
-      isSender: false,
-    },
-  ];
+  const messages = userMsgData.messages || [];
 
   return (
-    <Box
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        gap: 2,
-      }}
-    >
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column", gap: 2 }}>
       {isXs && onBack && (
-        <Button
-          onClick={onBack}
-          sx={{
-            alignSelf: "flex-start",
-            mb: 1,
-            textTransform: "none",
-            color: textColor,
-          }}
-          size="small"
-        >
+        <Button onClick={onBack} sx={{ alignSelf: "flex-start", mb: 1, color: textColor }} size="small">
           ← Back to users
         </Button>
       )}
+
       <Box display="flex" alignItems="center" gap={2}>
         <Avatar src={userMsgData.profileImageUrl} />
         <Box>
@@ -155,42 +132,46 @@ export default function Messages({ userName, onBack }) {
           backgroundColor: bgColor,
           color: textColor,
           borderRadius: 2,
-          scrollbarWidth: "none",
         }}
       >
-        {messages.map((msg, index) => (
-          <Box
-            key={index}
-            sx={{
-              display: "flex",
-              justifyContent: msg.isSender ? "flex-end" : "flex-start",
-              mb: 1,
-            }}
-          >
-            <Paper
-              elevation={1}
+        {messages.map((msg, index) => {
+          const isCurrentUserSender =
+            msg.senderId === userMsgData.sender._id &&
+            userMsgData.sender.userName === currentUserName;
+
+          return (
+            <Box
+              key={msg._id || index}
               sx={{
-                p: 1,
-                bgcolor: msg.isSender ? "primary.main" : "grey.300",
-                color: msg.isSender ? "#fff" : "#000",
-                borderRadius: msg.isSender
-                  ? "12px 12px 0 12px"
-                  : "12px 12px 12px 0",
-                maxWidth: "75%",
+                display: "flex",
+                justifyContent: isCurrentUserSender ? "flex-end" : "flex-start",
+                mb: 1,
               }}
             >
-              <Typography variant="body2">{msg.text}</Typography>
-            </Paper>
-          </Box>
-        ))}
+              <Paper
+                elevation={1}
+                sx={{
+                  p: 1,
+                  bgcolor: isCurrentUserSender ? "primary.main" : "grey.300",
+                  color: isCurrentUserSender ? "#fff" : "#000",
+                  borderRadius: isCurrentUserSender ? "12px 12px 0 12px" : "12px 12px 12px 0",
+                  maxWidth: "75%",
+                }}
+              >
+                <Typography variant="body2">{msg.message}</Typography>
+                <Typography variant="caption" sx={{ display: "block", mt: 0.5, opacity: 0.6 }}>
+                  {new Date(msg.timestamp).toLocaleTimeString()}
+                </Typography>
+              </Paper>
+            </Box>
+          );
+        })}
         <div ref={bottomRef} />
       </Box>
 
       <Box
         component="form"
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
+        onSubmit={handleSendMessage}
         sx={{
           display: "flex",
           alignItems: "center",
@@ -202,6 +183,8 @@ export default function Messages({ userName, onBack }) {
         }}
       >
         <TextField
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type your message..."
           fullWidth
           size="small"
@@ -210,15 +193,9 @@ export default function Messages({ userName, onBack }) {
               color: textColor,
               backgroundColor: background,
               borderRadius: 2,
-              "& fieldset": {
-                borderColor: "#888",
-              },
-              "&:hover fieldset": {
-                borderColor: textColor,
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: textColor,
-              },
+              "& fieldset": { borderColor: "#888" },
+              "&:hover fieldset": { borderColor: textColor },
+              "&.Mui-focused fieldset": { borderColor: textColor },
             },
           }}
         />
