@@ -3,11 +3,9 @@ import React, { useState, useEffect } from "react";
 import PAGES from "./controllers/pages";
 import LOGIN from "./pages/login";
 import SIGNUP from "./pages/signup";
-import { AppContext } from "./store/Context";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import VERIFY from "./pages/verify";
-import MessageDialog from "./modal/messageDialog";
 
 const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
@@ -23,7 +21,6 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
-  const [state, setstate] = useState(10);
 
   return (
     <>

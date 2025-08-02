@@ -29,7 +29,6 @@ export default function Messages({ userName, onBack }) {
   const textColor = darkMode ? "#ffffff" : "#000000";
   const background = darkMode ? "#121212" : "#ffffff";
 
-  // Load conversation
   useEffect(() => {
     const loadConversation = async () => {
       if (!userName) return;
@@ -53,14 +52,12 @@ export default function Messages({ userName, onBack }) {
     loadConversation();
   }, [userName]);
 
-  // Join room on conversation change
   useEffect(() => {
     if (userMsgData?.conversationId) {
       socket.emit("join", userMsgData.conversationId);
     }
   }, [userMsgData?.conversationId]);
 
-  // Listen for incoming messages
   useEffect(() => {
     const handleReceiveMessage = (msg) => {
       if (msg.conversationId === userMsgData?.conversationId) {
@@ -74,7 +71,7 @@ export default function Messages({ userName, onBack }) {
     return () => socket.off("receive_message", handleReceiveMessage);
   }, [userMsgData?.conversationId]);
 
-  // Auto scroll to bottom
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [userMsgData?.messages]);
