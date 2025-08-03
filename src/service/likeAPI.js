@@ -15,4 +15,15 @@ export const likePost = async (data) => {
   }
 }
 
+export const likeUsers = async (postId) =>{
+  try{
+    const response = await LIKE_INSTANCE.get(`/${postId}`)
+    console.log("response,",response.data)
+    return response.data
+  } catch(error){
+    console.error("error during fetching users:",error)
+    throw error
+  }
+}
+
 

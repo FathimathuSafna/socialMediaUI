@@ -12,8 +12,8 @@ const SignupSchema = Yup.object().shape({
   userName: Yup.string().required("Username is required"),
   name: Yup.string().required("Name is required"),
   phoneNumber: Yup.string()
-  .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
-  .required("Phone number is required"),
+    .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
+    .required("Phone number is required"),
   email: Yup.string().email("Invalid email"),
   password: Yup.string().min(6, "Too Short!").required("Password is required"),
   bio: Yup.string(),
@@ -48,11 +48,16 @@ function Signup() {
       dob,
     })
       .then((response) => {
+
+        console.log("response ",response)
         if (response.status === true) {
           alert("Signup successful! Please check your email for confirmation.");
+          localStorage.setItem("userName", response.userName);
           navigate("/verify", { state: { phoneNumber } });
         } else {
-          setServerError(response.message || "Signup failed. Please try again.");
+          setServerError(
+            response.message || "Signup failed. Please try again."
+          );
         }
         setSubmitting(false);
       })
@@ -89,7 +94,7 @@ function Signup() {
           initialValues={{
             userName: "",
             name: "",
-            phoneNumber: "", 
+            phoneNumber: "",
             email: "",
             password: "",
             bio: "",
@@ -113,7 +118,7 @@ function Signup() {
                   paddingBottom={"20px"}
                   fontWeight={600}
                   color={"#000000"}
-                  sx={{width: "100%", textAlign: "center"}}
+                  sx={{ width: "100%", textAlign: "center" }}
                 >
                   SIGNUP
                 </Typography>
@@ -174,12 +179,20 @@ function Signup() {
                     {isSubmitting ? "Signing up..." : "Signup"}
                   </Button>
                   <Typography
-                    variant="body2" 
-                    sx={{fontStyle:"italic", paddingTop: "20px", textAlign: "center" }}
+                    variant="body2"
+                    sx={{
+                      fontStyle: "italic",
+                      paddingTop: "20px",
+                      textAlign: "center",
+                    }}
                   >
                     Already have an account?{" "}
                     <span
-                      style={{ color: "#8e8e8e",paddingTop:'20px', cursor: "pointer" }}
+                      style={{
+                        color: "#8e8e8e",
+                        paddingTop: "20px",
+                        cursor: "pointer",
+                      }}
                       onClick={() => navigate("/login")}
                     >
                       Login

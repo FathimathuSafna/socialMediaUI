@@ -1,10 +1,10 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import Box from "@mui/material/Box";
 import NAVBAR from "../components/Navbar/Navbar";
 import SIDEBAR from "../components/sideBar/sideBar";
 import POSTS from "../components/post/post";
 import LIST from "../components/list/list";
+import { Box, Typography } from "@mui/material";
 import FOOTERBAR from "../components/sideBar/footerBar";
 import SMALLBAR from "../components/sideBar/smSideBar";
 import { Grid2 } from "@mui/material";
@@ -50,10 +50,22 @@ function Pages() {
             padding: "10px",
             paddingTop: "15px",
             position: "fixed",
-            top: "20px",
+            top: "9px",
+            left:'5px',
             display: { xs: "none", sm: "flex", md: "flex" },
           }}
-        > aPPMoshere
+        >
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{
+              fontSize: { xs: "1rem", sm: "1.25rem" },
+              fontWeight: "bold",
+            }}
+          >
+            aPPMoshere
+          </Typography>
         </Grid2>
         <Grid2
           md={12}
@@ -75,41 +87,21 @@ function Pages() {
         size={{ xs: 12, sm: 10, md: 10, lg: 10 }}
       >
         {/* Navbar Section */}
-        {!isProfilePage && (
+       
           <Grid2
-            size={
-              isProfilePage
-                ? { xs: 0, sm: 0, md: 0 }
-                : { xs: 12, sm: 10, md: 10 }
-            }
+            size={{ xs: 12, sm: 10, md: 10 }}
             sx={{
-              position: "relative",
-              zIndex: 1000,
-              display: isProfilePage
-                ? "none"
-                : { xs: "flex", sm: "flex", md: "flex" },
+              position: "fixed",
+              display:'flex',
+              justifyContent: "center",
+              width: "100%",
+              px: 2,
             }}
           >
-            <Box
-              sx={{
-                position: "fixed",
-                top: 0,
-                zIndex: 1000,
-                width: "100%",
-                boxSizing: "border-box",
-                gap: 3,
-                bgcolor: bgColor,
-                color: textColor,
-                overflow: "hidden",
-                height: "64px", // Ensure navbar height is fixed
-                flexWrap: "wrap",
-              }}
-            >
-              {" "}
+            <Box sx={{ width: "100%", maxWidth: "100%" }}>
               <NAVBAR />
             </Box>
           </Grid2>
-        )}
 
         {/* Content Below Navbar */}
         <Grid2
@@ -129,7 +121,6 @@ function Pages() {
           <Grid2
             container
             size={{ xs: 12, sm: 12, md: 12, lg: 10 }}
-            
             sx={{
               display: { md: "flex" },
               bgcolor: bgColor,
@@ -143,10 +134,9 @@ function Pages() {
                   ? { xs: 12, sm: 12, md: 12 }
                   : { xs: 12, sm: 10, md: 10 }
               }
-              offset={isProfilePage ? {md:0}:{sm:2,md:1}}
+              offset={isProfilePage ? { md: 0 } : { sm: 2, md: 1 }}
               sx={{
                 mt: 2,
-                
               }}
             >
               {isProfilePage ? <PROFILE userName={userName} /> : <POSTS />}

@@ -14,7 +14,7 @@ import { useTheme as useCustomTheme } from "../store/ThemeContext";
 import { FavoriteBorder, ChatBubbleOutline } from "@mui/icons-material";
 import { getPostLikeCount } from "../service/postAPI";
 import COMMANTMODAL from "../modal/commentModal";
-
+import LIKEDMODAL from "../modal/likedUsersModal";
 
 function PostDetailModal({ open, handleClose, post, onDelete }) {
   const [isDeleting, setIsDeleting] = React.useState(false);
@@ -25,8 +25,14 @@ function PostDetailModal({ open, handleClose, post, onDelete }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openMenu = Boolean(anchorEl);
   const [opened, setOpen] = useState(false);
+  const [openLikeModal, setOpenLikeModal] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
 
+  const handleLikeOpenModal = (postId) => {
+    setSelectedPostId(postId)
+    setOpenLikeModal(true)
+  }
+  const handleLikeCloseModal = () => setOpenLikeModal(false)
   const handleOpenModal = (postId) => {
     setSelectedPostId(postId);
     setOpen(true);
@@ -129,7 +135,7 @@ function PostDetailModal({ open, handleClose, post, onDelete }) {
               <MoreVertIcon />
             </IconButton>
             <Box display="flex" alignItems="center" gap={1} padding="4px 8px">
-              <IconButton size="small" sx={{ color: "#8e8e8e" }}>
+              <IconButton size="small" sx={{ color: "#8e8e8e" }} onClick={() => handleLikeOpenModal(post._id)}>
                 <FavoriteBorder sx={{ fontSize: 24 }} />
               </IconButton>
               <IconButton
@@ -158,7 +164,7 @@ function PostDetailModal({ open, handleClose, post, onDelete }) {
             >
               {likeCount} likes
             </Box>
-            <Box sx={{ bgcolor: bgColor,pl:1 }}>
+            <Box sx={{ bgcolor: bgColor, pl: 1 }}>
               <Typography>{post.description}</Typography>
             </Box>
           </Box>
@@ -183,6 +189,13 @@ function PostDetailModal({ open, handleClose, post, onDelete }) {
           userName={post.userId.userName}
           profilePicture={post.userId.profilePictureUrl}
         />
+      )}
+      {openLikeModal && selectedPostId === post._id && (
+      <LIKEDMODAL
+        open={openLikeModal}
+        handleClose={handleLikeCloseModal}
+        postId={selectedPostId}
+      />
       )}
     </>
   );

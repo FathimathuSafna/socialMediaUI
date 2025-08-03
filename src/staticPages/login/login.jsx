@@ -1,11 +1,20 @@
 import React, { useEffect } from "react";
 import "./login.css";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Grid2, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid2,
+  TextField,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import Axios from "axios";
 import { login } from "../../service/userApi";
+import "@fontsource/playfair-display";
 
 // Validation schema
 const LoginSchema = Yup.object().shape({
@@ -20,6 +29,8 @@ const LoginSchema = Yup.object().shape({
 function Login() {
   const navigate = useNavigate();
   const [loginError, setLoginError] = React.useState("");
+   const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down("md"));
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -61,16 +72,55 @@ function Login() {
       container
       alignItems="center"
       justifyContent="center"
-      gap={3}
-      sx={{ padding: "20px" }}
+      sx={{ padding: "20px", paddingTop: 14, borderRadius: "19px" }}
     >
+      {!isXs ? (
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: "400px",
+          height: { md: 316 },
+          padding: "20px",
+          boxShadow: 1,
+          backgroundColor: "#d8d8d8",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Box sx={{ alignSelf: "center" }}>
+          <Typography
+            sx={{
+              fontStyle: "italic",
+              alignSelf: "center",
+              fontSize: 24,
+              mb: 2,
+            }}
+          >
+            <span style={{ color: "blue" }}>APP</span>mosphere!
+          </Typography>
+        </Box>
+        <Typography
+          sx={{
+            fontStyle: "italic",
+            textAlign: "center",
+            fontSize: 14,
+            color: "#454444",
+          }}
+        >
+          <span style={{ color: "blue", marginRight: 3 }}>Log in</span>to
+          continue sharing your moments and stay connected with your world.
+        </Typography>
+      </Box>
+      ) : null}
       <Box
         sx={{
           width: "100%",
           maxWidth: "400px",
           padding: "20px",
-          borderRadius: "8px",
           boxShadow: 1,
+          gap: 3,
         }}
       >
         <Formik
@@ -94,11 +144,33 @@ function Login() {
                 direction="column"
                 gap={1}
               >
-                <Typography variant="h4" paddingBottom="20px" fontWeight={300}>
-                  LOGIN
-                </Typography>
+                <Box sx={{ alignSelf: "flex-start", width: "100%" }}>
+                  <Typography
+                    sx={{
+                      fontSize: 20,
+                      fontFamily: "'Playfair Display', serif",
+                      fontWeight: 300,
+                      pb: 2,
+                    }}
+                  >
+                    Welcome Back
+                  </Typography>
+                </Box>
+                <Box sx={{ alignSelf: "flex-start" }}>
+                  <Typography
+                    fontStyle={"italic"}
+                    sx={{ mb: 2, fontSize: "0.85rem" }}
+                  >
+                    Please enter your details to login.
+                  </Typography>
+                </Box>
+
                 {loginError && (
-                  <Typography color="error" fontSize="0.9rem" sx={{mt:2,mb:2}}>
+                  <Typography
+                    color="error"
+                    fontSize="0.9rem"
+                    sx={{ mt: 2, mb: 2 }}
+                  >
                     {loginError}
                   </Typography>
                 )}
@@ -149,13 +221,19 @@ function Login() {
                   variant="body2"
                   fontStyle="oblique"
                   paddingBottom="20px"
+                  sx={{ pb: 0 }}
                 >
                   Not a member? Please signup
                 </Typography>
 
                 <Button
                   variant="outlined"
-                  sx={{ width: "250px", border: "#8e8e8e", color: "#8e8e8e" }}
+                  sx={{
+                    pt: 0,
+                    width: "250px",
+                    border: "#8e8e8e",
+                    color: "#8e8e8e",
+                  }}
                   onClick={() => navigate("/signup")}
                 >
                   Sign Up

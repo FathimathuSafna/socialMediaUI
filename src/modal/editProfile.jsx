@@ -55,8 +55,8 @@ const FileInput = ({ field, form }) => {
         { type: "image/jpeg" }
       );
 
-      setFieldValue(name, croppedImageFile); 
-      setCroppedPreview(URL.createObjectURL(croppedImageFile)); 
+      setFieldValue(name, croppedImageFile);
+      setCroppedPreview(URL.createObjectURL(croppedImageFile));
       setPreview(null); // Hide the cropper
     } catch (e) {
       console.error(e);
@@ -72,17 +72,31 @@ const FileInput = ({ field, form }) => {
         gap: { xs: 0.5, sm: 1 },
       }}
     >
-      <MuiFileInput
-        value={value}
-        onChange={handleFileChange}
-        placeholder="Click to upload"
-        fullWidth
-         InputProps={{
-          style: { color:"#8e8e8e"  }, 
-          startAdornment: <CloudUploadIcon sx={{ mr: 1, color: "#8e8e8e" }} />,
-        }}
-        size="small"
-      />
+      {!croppedPreview && !preview && (
+        <MuiFileInput
+          value={value}
+          onChange={handleFileChange}
+          placeholder="Click to upload"
+          fullWidth
+          InputProps={{
+            style: { color: "#8e8e8e" },
+            startAdornment: (
+              <CloudUploadIcon sx={{ mr: 1, color: "#8e8e8e" }} />
+            ),
+          }}
+          sx={{
+            "& .MuiInputBase-root": {
+              height: { xs: 40, md: 90 },
+              alignItems: "center",
+            },
+            "& input": {
+              height: "100%",
+              padding: 0,
+            },
+          }}
+          // size="small"
+        />
+      )}
 
       {/* Cropped Image Preview */}
       {croppedPreview && (
@@ -90,9 +104,9 @@ const FileInput = ({ field, form }) => {
           sx={{
             mt: { xs: 0.5, sm: 2 },
             width: "100%",
-            maxWidth: { xs: 110, sm: 300 }, // **Increased maxWidth for xs to 110px**
+            maxWidth: { xs: 110, sm: 180 },
             mx: "auto",
-            boxShadow: 2, // Slightly reduced shadow
+            boxShadow: 2,
             borderRadius: 1,
             background: bgColor,
             position: "relative",
@@ -215,9 +229,9 @@ const FileInput = ({ field, form }) => {
               variant="outlined"
               color="secondary"
               onClick={() => {
-                setPreview(null); 
-                setCroppedPreview(null); 
-                setFieldValue(field.name, null); 
+                setPreview(null);
+                setCroppedPreview(null);
+                setFieldValue(field.name, null);
               }}
               size="small"
               sx={{
@@ -226,7 +240,7 @@ const FileInput = ({ field, form }) => {
                 fontSize: "0.55rem",
                 minWidth: "auto",
                 px: 0.4,
-              }} // Smaller text
+              }}
             >
               Cancel
             </Button>
@@ -257,7 +271,8 @@ const validationSchema = Yup.object().shape({
   file: Yup.mixed().required("Profile picture is required"), // Changed message for clarity
 });
 
-const EditProfile = ({ open, handleClose }) => {
+const EditProfile = ({ open, handleClose,user }) => {
+  console.log("EEEEEEEEEEEEEEEEEEEEE",user)
   const navigate = useNavigate();
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
@@ -285,7 +300,7 @@ const EditProfile = ({ open, handleClose }) => {
       setUploadProgress(30);
       const fileExt = fileToUpload.name.split(".").pop();
       const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `profilepictures/${fileName}`; // Changed path to be more specific to profiles
+      const filePath = `profilepictures/${fileName}`;
 
       const { data, error: uploadError } = await supabase.storage
         .from("profilepictures")
@@ -322,7 +337,7 @@ const EditProfile = ({ open, handleClose }) => {
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal open={open} onClose={handleClose} userDetails={user}>
       <Box
         sx={{
           position: "absolute",
@@ -333,7 +348,7 @@ const EditProfile = ({ open, handleClose }) => {
           overflow: "hidden",
           borderRadius: 2,
           boxShadow: 24,
-          p: { xs: 1, sm: 3 }, // **Reduced overall padding for xs to 0.8**
+          p: { xs: 1, sm: 3 },
           backgroundColor: bgColor,
           color: textColor,
           display: "flex",
@@ -399,32 +414,6 @@ const EditProfile = ({ open, handleClose }) => {
                 }}
               >
                 {/* Left: Image Upload & Preview */}
-                <Box
-                  sx={{
-                    width: "100%",
-                    maxWidth: { xs: "100%", sm: "50%" },
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    flexShrink: 0,
-                    pt: { xs: 0, sm: 1.1 },
-                  }}
-                >
-                  <Field name="file">
-                    {({ field, form }) => (
-                      <FileInput field={field} form={form} />
-                    )}
-                  </Field>
-                  {touched.file && errors.file && (
-                    <Typography
-                      color="error"
-                      variant="caption"
-                      sx={{ mt: 0.1, fontSize: "0.65rem" }}
-                    >
-                      {errors.file}
-                    </Typography>
-                  )}
-                </Box>
 
                 {/* Right: Form Inputs (Name, Bio) */}
                 <Box
@@ -442,19 +431,18 @@ const EditProfile = ({ open, handleClose }) => {
                     {({ field }) => (
                       <TextField
                         {...field}
-                        label="Name" // Changed label to "Name"
+                        placeholder={user.name ? user.name : "Name"}
                         fullWidth
-                        variant="outlined"
                         margin="dense"
                         size="small" // Added size small for compactness
                         error={Boolean(touched.name && errors.name)}
                         helperText={touched.name && errors.name}
                         sx={{
                           "& .MuiInputBase-input": {
-                            color: "#8e8e8e",
+                            color: textColor,
                           },
                           "& .MuiInputLabel-root": {
-                            color: "#8e8e8e",
+                            color: textColor,
                           },
                         }}
                       />
@@ -465,7 +453,7 @@ const EditProfile = ({ open, handleClose }) => {
                     {({ field }) => (
                       <TextField
                         {...field}
-                        label="Bio"
+                        placeholder={user.bio ? user.bio : "bio"}
                         fullWidth
                         variant="outlined"
                         margin="dense"
@@ -476,22 +464,47 @@ const EditProfile = ({ open, handleClose }) => {
                         helperText={touched.bio && errors.bio}
                         sx={{
                           "& .MuiInputBase-input": {
-                            color: "#8e8e8e",
+                            color: textColor,
                           },
                           "& .MuiInputLabel-root": {
-                            color: "#8e8e8e",
+                            color: textColor,
                           },
                         }}
                       />
                     )}
                   </Field>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      maxWidth: { xs: "100%", sm: "50%" },
+                      display: { xs: "block", sm: "none", md: "none" },
+                      flexDirection: "column",
+                      alignItems: "center",
+                      flexShrink: 0,
+                      pt: { xs: 0, sm: 1.1 },
+                    }}
+                  >
+                    <Field name="file">
+                      {({ field, form }) => (
+                        <FileInput field={field} form={form} />
+                      )}
+                    </Field>
+                    {touched.file && errors.file && (
+                      <Typography
+                        color="error"
+                        variant="caption"
+                        sx={{ mt: 0.1, fontSize: "0.65rem" }}
+                      >
+                        {errors.file}
+                      </Typography>
+                    )}
+                  </Box>
 
                   <Box
                     sx={{
                       display: "flex",
-                      justifyContent: "space-between",
-                      mt: { xs: 1, sm: 2 }, // **Reduced mt for xs to 1**
-                      px: { xs: 1.5, sm: 0 }, // **Apply same horizontal padding to buttons for consistency**
+                      mt: { xs: 1, sm: 2 },
+                      gap: 0.6,
                     }}
                   >
                     <Button
@@ -514,13 +527,39 @@ const EditProfile = ({ open, handleClose }) => {
                       sx={{
                         backgroundColor: "rgba(0, 0, 0, 0.65)",
                         color: "#ffffff",
-                        py: 0.4, // **Reduced py and font size**
+                        py: 0.4,
                         fontSize: "0.65rem",
                       }}
                     >
                       Edit
                     </Button>
                   </Box>
+                </Box>
+                <Box
+                  sx={{
+                    width: "100%",
+                    maxWidth: { xs: "100%", sm: "50%" },
+                    display: { xs: "none", sm: "block", md: "block" },
+                    flexDirection: "column",
+                    alignItems: "center",
+                    flexShrink: 0,
+                    pt: { xs: 0, sm: 1.1 },
+                  }}
+                >
+                  <Field name="file">
+                    {({ field, form }) => (
+                      <FileInput field={field} form={form} />
+                    )}
+                  </Field>
+                  {touched.file && errors.file && (
+                    <Typography
+                      color="error"
+                      variant="caption"
+                      sx={{ mt: 0.1, fontSize: "0.65rem" }}
+                    >
+                      {errors.file}
+                    </Typography>
+                  )}
                 </Box>
               </Box>
             </Form>

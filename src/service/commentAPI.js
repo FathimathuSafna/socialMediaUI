@@ -41,3 +41,4 @@ export const deleteComment = async (commentId) => {
     throw error;
   }
 }
+

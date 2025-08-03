@@ -15,7 +15,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
-import { getAllUsers } from "../service/userApi";
+import { getMsgUser } from "../service/messageAPI";
 import { useParams } from "react-router-dom";
 import Messages from "../staticPages/messages";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
@@ -75,7 +75,7 @@ export default function MessageDialog({ open, handleClose }) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await getAllUsers();
+        const response = await getMsgUser();
         setAllUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);

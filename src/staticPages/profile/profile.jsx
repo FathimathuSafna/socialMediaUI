@@ -13,6 +13,7 @@ import FOLLOWEDMODAL from "../../modal/followedModal";
 import EditProfileModal from "../../modal/editProfile";
 import PostDetailModal from "../../modal/postDetailModal";
 import SmallButton from "../../ButtonsAnimation/SmallButton";
+import MESSAGEDIALOG from "../../modal/messageDialog";
 
 function Profile() {
   const { userName } = useParams();
@@ -31,12 +32,15 @@ function Profile() {
 
   const [openPostModal, setOpenPostModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [messageOpen, setmessageOpen] = useState(false);
   const handleOpenFollowers = () => setOpenFollowersModal(true);
   const handleCloseFollowers = () => setOpenFollowersModal(false);
   const handleOpenFollowing = () => setOpenFollowingModal(true);
   const handleCloseFollowing = () => setOpenFollowingModal(false);
   const handleOpenEditProfile = () => setOpenEditProfileModal(true);
   const handleCloseEditProfile = () => setOpenEditProfileModal(false);
+  const messageHandleOpen = () => setmessageOpen(true);
+  const messageHandleClose = () => setmessageOpen(false);
 
   const handleOpenPostModal = (post) => {
     setSelectedPost(post);
@@ -54,7 +58,7 @@ function Profile() {
       await deletePost(postId);
       setPosts((currentPosts) => currentPosts.filter((p) => p._id !== postId));
       setPostCount((prevCount) => prevCount - 1);
-      handleClosePostModal(); // Close the modal on success
+      handleClosePostModal();
     } catch (error) {
       console.error("Failed to delete post:", error);
       throw error;
@@ -189,7 +193,7 @@ function Profile() {
                   component="h1"
                   sx={{ m: 0, fontWeight: "bold" }}
                 >
-                  {user.userName}
+                  {user.name}
                 </Typography>
 
                 <SmallButton
@@ -247,7 +251,7 @@ function Profile() {
                   <Box component="span" sx={{ fontWeight: "bold" }}>
                     {followedUserCount}
                   </Box>{" "}
-                  {followedUserCount === 1 ? "following" : "followings"}
+                  {followedUserCount === 1 ? "following" : "following"}
                 </Typography>
               </Box>
 
@@ -265,6 +269,16 @@ function Profile() {
                   {user.bio}
                 </Typography>
               )}
+              {!currentUser ? (
+                <Box sx={{ pt: 3 }}>
+                  <Button
+                    sx={{ backgroundColor: "#8e8e8e", width: "100%" }}
+                    onClick={messageHandleOpen}
+                  >
+                    Message
+                  </Button>
+                </Box>
+              ) : null}
             </Grid2>
           </Grid2>
 
@@ -374,6 +388,7 @@ function Profile() {
           </Typography>
         </Grid2>
       )}
+      <MESSAGEDIALOG open={messageOpen} handleClose={messageHandleClose} />
     </Grid2>
   );
 }

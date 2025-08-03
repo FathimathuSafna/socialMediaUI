@@ -11,12 +11,14 @@ import {
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import { getPosts } from "../../service/postAPI";
 import { likePost } from "../../service/likeAPI";
-import COMMANTMODAL from "../../modal/commentModal"; // Comment modal
+import COMMANTMODAL from "../../modal/commentModal";
+import { useNavigate } from "react-router-dom";
 
 const InstagramPost = () => {
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
@@ -72,7 +74,10 @@ const InstagramPost = () => {
               padding: "14px 8px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center" }}>
+            <div
+              style={{ display: "flex", alignItems: "center" }}
+              onClick={() => navigate(`/profile/${post.userId.userName}`)}
+            >
               <Avatar
                 src={post.userId.profilePictureUrl}
                 alt={post.userId.userName || "User"}
@@ -129,7 +134,9 @@ const InstagramPost = () => {
                 {post.isLiked ? (
                   <Favorite style={{ color: "#ed4956", fontSize: "24px" }} />
                 ) : (
-                  <FavoriteBorder style={{ fontSize: "24px", color: "#8e8e8e" }} />
+                  <FavoriteBorder
+                    style={{ fontSize: "24px", color: "#8e8e8e" }}
+                  />
                 )}
               </button>
               <button
@@ -143,7 +150,9 @@ const InstagramPost = () => {
                   )
                 }
               >
-                <ChatBubbleOutline style={{ fontSize: "24px", color: "#8e8e8e" }} />
+                <ChatBubbleOutline
+                  style={{ fontSize: "24px", color: "#8e8e8e" }}
+                />
               </button>
               <button style={btnStyle}>
                 <Send style={{ fontSize: "24px", color: "#8e8e8e" }} />
@@ -191,7 +200,7 @@ const InstagramPost = () => {
               cursor: "pointer",
             }}
           >
-            View all 142 comments
+            View all {post.commentCount} comments
           </div>
 
           {/* Timestamp */}

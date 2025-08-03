@@ -33,6 +33,7 @@ function Verify() {
       const response = await verify({ otp: values.otp });
 
       localStorage.setItem("token", response.data); // Save token
+      
       navigate("/login");
     } catch (error) {
       console.error("Error during OTP verification:", error);
