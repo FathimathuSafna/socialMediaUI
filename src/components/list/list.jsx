@@ -59,7 +59,6 @@ export default function BottomActionsCard() {
             border: 0,
             backgroundColor: bgColor,
             color: textColor,
-            marginBottom: 2,
           }}
         >
           <Grid container alignItems="center" spacing={2}>
@@ -74,20 +73,23 @@ export default function BottomActionsCard() {
               >
                 <Avatar
                   src={user.profileImageUrl || "/static/images/avatar/1.jpg"}
-                  sx={{ width: 40, height: 40, mr: 1 }}
+                  sx={{ width: 40, height: 40, mr: 3.8 }}
                 />
-                <Typography level="title">{user.userName}</Typography>
+                <Typography sx={{fontSize:14}}>{user.userName}</Typography>
               </Box>
             </Grid>
-            <Grid item sx={{ width: 50 }}>
-              <Button
-              sx={{ backgroundColor: '#8e8e8e', '&:hover': { backgroundColor: '#7a7a7a' } }}
-                variant="solid"
-                onClick={() => handleFollow(user._id)}
-              >
-                Follow
-              </Button>
-            </Grid>
+               <Button
+                    variant="outlined"
+                    sx={{
+                      width: "auto",
+                      border: "#8e8e8e",
+                      fontSize: 12,
+                    }}
+                    onClick={() => navigate("/signup")}
+                  >
+                     Follow
+                  </Button>
+             
           </Grid>
         </Card>
       ))}

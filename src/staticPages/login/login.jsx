@@ -7,14 +7,13 @@ import {
   Grid2,
   TextField,
   Typography,
-  useMediaQuery,
-  useTheme,
+  Divider,
 } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import Axios from "axios";
 import { login } from "../../service/userApi";
-import "@fontsource/playfair-display";
+import '@fontsource/pacifico';
+
 
 // Validation schema
 const LoginSchema = Yup.object().shape({
@@ -29,8 +28,6 @@ const LoginSchema = Yup.object().shape({
 function Login() {
   const navigate = useNavigate();
   const [loginError, setLoginError] = React.useState("");
-   const theme = useTheme();
-  const isXs = useMediaQuery(theme.breakpoints.down("md"));
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -72,55 +69,17 @@ function Login() {
       container
       alignItems="center"
       justifyContent="center"
-      sx={{ padding: "20px", paddingTop: 14, borderRadius: "19px" }}
+      sx={{  height: "100vh" }}
     >
-      {!isXs ? (
       <Box
         sx={{
           width: "100%",
-          maxWidth: "400px",
-          height: { md: 316 },
+          maxWidth: "300px",
+          height: { md: 500 },
           padding: "20px",
+          borderRadius: "8px",
           boxShadow: 1,
-          backgroundColor: "#d8d8d8",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Box sx={{ alignSelf: "center" }}>
-          <Typography
-            sx={{
-              fontStyle: "italic",
-              alignSelf: "center",
-              fontSize: 24,
-              mb: 2,
-            }}
-          >
-            <span style={{ color: "blue" }}>APP</span>mosphere!
-          </Typography>
-        </Box>
-        <Typography
-          sx={{
-            fontStyle: "italic",
-            textAlign: "center",
-            fontSize: 14,
-            color: "#454444",
-          }}
-        >
-          <span style={{ color: "blue", marginRight: 3 }}>Log in</span>to
-          continue sharing your moments and stay connected with your world.
-        </Typography>
-      </Box>
-      ) : null}
-      <Box
-        sx={{
-          width: "100%",
-          maxWidth: "400px",
-          padding: "20px",
-          boxShadow: 1,
-          gap: 3,
+          backgroundColor: "white",
         }}
       >
         <Formik
@@ -144,26 +103,17 @@ function Login() {
                 direction="column"
                 gap={1}
               >
-                <Box sx={{ alignSelf: "flex-start", width: "100%" }}>
-                  <Typography
-                    sx={{
-                      fontSize: 20,
-                      fontFamily: "'Playfair Display', serif",
-                      fontWeight: 300,
-                      pb: 2,
-                    }}
-                  >
-                    Welcome Back
-                  </Typography>
-                </Box>
-                <Box sx={{ alignSelf: "flex-start" }}>
-                  <Typography
-                    fontStyle={"italic"}
-                    sx={{ mb: 2, fontSize: "0.85rem" }}
-                  >
-                    Please enter your details to login.
-                  </Typography>
-                </Box>
+                <Typography
+                  sx={{
+                    fontSize: 24,
+                    fontFamily: "'Pacifico', cursive",
+                    paddingTop: 4,
+                    paddingBottom: 4,
+                    color: "#000", 
+                  }}
+                >
+                  Appmosphere
+                </Typography>
 
                 {loginError && (
                   <Typography
@@ -202,42 +152,59 @@ function Login() {
                   helperText={touched.password && errors.password}
                 />
 
-                <Grid2 sx={{ paddingTop: "20px" }}>
+                <Grid2 sx={{ paddingTop: "30px" }}>
                   <Button
                     type="submit"
                     variant="contained"
                     sx={{
                       borderRadius: "8px",
                       width: "250px",
-                      backgroundColor: "#8e8e8e",
                     }}
                     disabled={isSubmitting}
                   >
                     Log in
                   </Button>
                 </Grid2>
-
-                <Typography
-                  variant="body2"
-                  fontStyle="oblique"
-                  paddingBottom="20px"
-                  sx={{ pb: 0 }}
-                >
-                  Not a member? Please signup
-                </Typography>
-
-                <Button
-                  variant="outlined"
+                <Divider
                   sx={{
-                    pt: 0,
-                    width: "250px",
-                    border: "#8e8e8e",
-                    color: "#8e8e8e",
+                    width: "100%",
+                    p: 0,
+                    mt: { xs: 4, md: 5 },
+                    backgroundColor: "#8e8e8e",
                   }}
-                  onClick={() => navigate("/signup")}
+                />
+
+                <Grid2
+                  container
+                  direction="row"
+                  alignItems="center"
+                  sx={{ display: "flex", flexWrap: "wrap" }}
                 >
-                  Sign Up
-                </Button>
+                  <Typography
+                    fontStyle="oblique"
+                    sx={{
+                      pr: 0,
+                      fontSize: 12,
+                      lineHeight: 1.2,
+                      color: "#8e8e8e",
+                    }}
+                  >
+                    Not a member? Please signup
+                  </Typography>
+
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      pt: 1,
+                      width: "auto",
+                      border: "#8e8e8e",
+                      fontSize: 10,
+                    }}
+                    onClick={() => navigate("/signup")}
+                  >
+                    Sign Up
+                  </Button>
+                </Grid2>
               </Grid2>
             </Form>
           )}

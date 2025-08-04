@@ -268,11 +268,10 @@ const FileInput = ({ field, form }) => {
 
 // Validation Schema
 const validationSchema = Yup.object().shape({
-  file: Yup.mixed().required("Profile picture is required"), // Changed message for clarity
+  file: Yup.mixed().required("Profile picture is required"), 
 });
 
 const EditProfile = ({ open, handleClose,user }) => {
-  console.log("EEEEEEEEEEEEEEEEEEEEE",user)
   const navigate = useNavigate();
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";

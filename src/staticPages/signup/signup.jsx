@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Grid2 from "@mui/material/Grid2";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography, Divider } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import "./signup.css";
 import { signup } from "../../service/userApi";
+import "@fontsource/pacifico";
 
 // Validation schema
 const SignupSchema = Yup.object().shape({
@@ -48,8 +49,7 @@ function Signup() {
       dob,
     })
       .then((response) => {
-
-        console.log("response ",response)
+        console.log("response ", response);
         if (response.status === true) {
           alert("Signup successful! Please check your email for confirmation.");
           localStorage.setItem("userName", response.userName);
@@ -78,12 +78,12 @@ function Signup() {
       alignItems="center"
       justifyContent="center"
       gap={3}
-      sx={{ padding: "20px" }}
+      sx={{ padding: "20px", }}
     >
       <Box
         sx={{
           width: "100%",
-          maxWidth: "400px",
+          maxWidth: "300px",
           height: "90vh",
           padding: "20px",
           borderRadius: "8px",
@@ -113,20 +113,26 @@ function Signup() {
                 gap={1}
               >
                 <Typography
-                  variant="h4"
-                  component="h1"
-                  paddingBottom={"20px"}
-                  fontWeight={600}
-                  color={"#000000"}
-                  sx={{ width: "100%", textAlign: "center" }}
+                  sx={{
+                    fontSize: 24,
+                    fontFamily: "'Pacifico', cursive",
+                    paddingTop: 3,
+                    paddingBottom: 3,
+                    color: "#000",
+                  }}
                 >
-                  SIGNUP
+                  Appmosphere
                 </Typography>
+
                 <Typography
-                  variant="body2"
-                  fontStyle={"oblique"}
-                  paddingBottom={"20px"}
-                  textAlign="center"
+                  fontStyle="oblique"
+                  sx={{
+                    pr: 0,
+                    fontSize: 12,
+                    lineHeight: 1.2,
+                    color: "#8e8e8e",
+                    pb: 3,
+                  }}
                 >
                   Signup and explore to see more photos and videos
                 </Typography>
@@ -165,41 +171,58 @@ function Signup() {
                   />
                 ))}
 
-                <Grid2 sx={{ paddingTop: "20px", width: "50%" }}>
+                <Grid2 sx={{ paddingTop: "25px", width: "50%" }}>
                   <Button
                     variant="contained"
                     type="submit"
                     sx={{
                       borderRadius: "8px",
                       width: "100%",
-                      bgcolor: "#8e8e8e",
                     }}
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? "Signing up..." : "Signup"}
                   </Button>
-                  <Typography
-                    variant="body2"
+                 </Grid2>
+                  <Divider
                     sx={{
-                      fontStyle: "italic",
-                      paddingTop: "20px",
-                      textAlign: "center",
+                      mb: { xs: 2, sm: 3 },
+                      width: "100%",
+                      p: 0,
+                      mt: { xs: 4 },
+                      backgroundColor: "#8e8e8e",
                     }}
+                  />
+
+                  <Grid2
+                    container
+                    direction="row"
+                    sx={{ display: "flex", flexWrap: "wrap" }}
                   >
-                    Already have an account?{" "}
-                    <span
-                      style={{
-                        color: "#8e8e8e",
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontStyle: "italic",
                         paddingTop: "20px",
-                        cursor: "pointer",
+                        color: "#8e8e8e",
+                      }}
+                    >
+                      Already have an account?
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        pt: 2.2,
+                        width: "auto",
+                        border: "#8e8e8e",
+                        fontSize: 14,
                       }}
                       onClick={() => navigate("/login")}
                     >
                       Login
-                    </span>
-                  </Typography>
+                    </Button>
+                  </Grid2>
                 </Grid2>
-              </Grid2>
             </Form>
           )}
         </Formik>

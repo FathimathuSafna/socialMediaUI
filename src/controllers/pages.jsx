@@ -10,6 +10,7 @@ import SMALLBAR from "../components/sideBar/smSideBar";
 import { Grid2 } from "@mui/material";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
 import PROFILE from "../staticPages/profile/profile";
+import "@fontsource/pacifico";
 
 function Pages() {
   const { darkMode } = useCustomTheme(); // Custom dark mode toggle
@@ -34,7 +35,7 @@ function Pages() {
       {/* Sidebar Section */}
       <Grid2
         direction="column"
-        size={{ xs: 2, sm: 2, md: 2, lg: 2 }}
+        size={{ xs: 2, sm: 3, md: 2, lg: 2 }}
         sx={{ bgcolor: bgColor }}
       >
         <Grid2
@@ -50,21 +51,19 @@ function Pages() {
             padding: "10px",
             paddingTop: "15px",
             position: "fixed",
-            top: "9px",
-            left:'5px',
+            left: "5px",
             display: { xs: "none", sm: "flex", md: "flex" },
           }}
         >
           <Typography
-            variant="h6"
-            noWrap
-            component="div"
             sx={{
-              fontSize: { xs: "1rem", sm: "1.25rem" },
-              fontWeight: "bold",
+              fontSize: 24,
+              fontFamily: "'Pacifico', cursive",
+              paddingBottom: 3,
+              color: darkMode ? textColor : '#C21E7A'              
             }}
           >
-            aPPMoshere
+            Appmosphere
           </Typography>
         </Grid2>
         <Grid2
@@ -84,24 +83,23 @@ function Pages() {
       <Grid2
         container
         direction="column"
-        size={{ xs: 12, sm: 10, md: 10, lg: 10 }}
+        size={{ xs: 12, sm: 9, md: 10, lg: 10 }}
       >
         {/* Navbar Section */}
-       
-          <Grid2
-            size={{ xs: 12, sm: 10, md: 10 }}
-            sx={{
-              position: "fixed",
-              display:'flex',
-              justifyContent: "center",
-              width: "100%",
-              px: 2,
-            }}
-          >
-            <Box sx={{ width: "100%", maxWidth: "100%" }}>
-              <NAVBAR />
-            </Box>
-          </Grid2>
+
+        <Grid2
+          size={{ xs: 12, sm: 9, md: 10 }}
+          sx={{
+            position: "fixed",
+            display: "flex",
+            justifyContent: "center",
+            width: "100%",
+          }}
+        >
+          <Box sx={{ width: "100%", maxWidth: "100%" }}>
+            <NAVBAR />
+          </Box>
+        </Grid2>
 
         {/* Content Below Navbar */}
         <Grid2
@@ -136,7 +134,7 @@ function Pages() {
               }
               offset={isProfilePage ? { md: 0 } : { sm: 2, md: 1 }}
               sx={{
-                mt: 2,
+                mt: 1,
               }}
             >
               {isProfilePage ? <PROFILE userName={userName} /> : <POSTS />}
