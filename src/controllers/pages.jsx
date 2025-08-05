@@ -4,13 +4,15 @@ import NAVBAR from "../components/Navbar/Navbar";
 import SIDEBAR from "../components/sideBar/sideBar";
 import POSTS from "../components/post/post";
 import LIST from "../components/list/list";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Divider } from "@mui/material";
 import FOOTERBAR from "../components/sideBar/footerBar";
 import SMALLBAR from "../components/sideBar/smSideBar";
 import { Grid2 } from "@mui/material";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
 import PROFILE from "../staticPages/profile/profile";
 import "@fontsource/pacifico";
+import { useParams } from "react-router-dom";
+
 
 function Pages() {
   const { darkMode } = useCustomTheme(); // Custom dark mode toggle
@@ -18,8 +20,11 @@ function Pages() {
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
   const location = useLocation();
-  const isProfilePage = location.pathname.startsWith("/profile/");
-  const userName = isProfilePage ? location.pathname.split("/")[2] : null;
+    const { userName } = useParams(); 
+    console.log(userName)
+    
+  const isProfilePage = !!userName;
+const isNotProfilePage = !userName;  
 
   return (
     <Grid2
@@ -29,6 +34,8 @@ function Pages() {
         color: textColor,
         minHeight: "100vh",
         transition: "all 0.3s ease-in-out",
+        mt: 0,
+        ml: 0,
       }}
       direction="row"
     >
@@ -36,7 +43,7 @@ function Pages() {
       <Grid2
         direction="column"
         size={{ xs: 2, sm: 3, md: 2, lg: 2 }}
-        sx={{ bgcolor: bgColor }}
+        sx={{ bgcolor: bgColor, mt: 0, borderRight: "1px solid #ccc" }}
       >
         <Grid2
           xs={0}
@@ -59,8 +66,10 @@ function Pages() {
             sx={{
               fontSize: 24,
               fontFamily: "'Pacifico', cursive",
-              paddingBottom: 3,
-              color: darkMode ? textColor : '#C21E7A'              
+              paddingTop: 0,
+              paddingLeft:{md:2,sm:0},
+              paddingBottom: 4,
+              color: darkMode ? textColor :"#075E54",
             }}
           >
             Appmosphere
@@ -69,7 +78,11 @@ function Pages() {
         <Grid2
           md={12}
           lg={12}
-          sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
+          sx={{
+            display: { xs: "none", sm: "none", md: "flex" },
+            pl: { xs: 0, md: 10 }, // shorthand for paddingLeft
+            width: "100%",
+          }}
         >
           <SIDEBAR />
         </Grid2>
@@ -84,22 +97,11 @@ function Pages() {
         container
         direction="column"
         size={{ xs: 12, sm: 9, md: 10, lg: 10 }}
+        sx={{ bgcolor: bgColor }}
       >
         {/* Navbar Section */}
 
-        <Grid2
-          size={{ xs: 12, sm: 9, md: 10 }}
-          sx={{
-            position: "fixed",
-            display: "flex",
-            justifyContent: "center",
-            width: "100%",
-          }}
-        >
-          <Box sx={{ width: "100%", maxWidth: "100%" }}>
-            <NAVBAR />
-          </Box>
-        </Grid2>
+        <NAVBAR />
 
         {/* Content Below Navbar */}
         <Grid2
@@ -114,6 +116,7 @@ function Pages() {
               ? { xs: 0, sm: 2 }
               : { xs: "10px", sm: "13px" },
             flexDirection: "row",
+            bgcolor: bgColor,
           }}
         >
           <Grid2
@@ -122,7 +125,6 @@ function Pages() {
             sx={{
               display: { md: "flex" },
               bgcolor: bgColor,
-              color: textColor,
               p: 1,
             }}
           >
@@ -134,7 +136,7 @@ function Pages() {
               }
               offset={isProfilePage ? { md: 0 } : { sm: 2, md: 1 }}
               sx={{
-                mt: 1,
+                mt: 2,
               }}
             >
               {isProfilePage ? <PROFILE userName={userName} /> : <POSTS />}
@@ -142,6 +144,7 @@ function Pages() {
           </Grid2>
 
           {/* List Section */}
+           
           <Grid2
             container
             size={{ sm: 2, md: 2, lg: 2 }}
@@ -150,7 +153,6 @@ function Pages() {
             <Grid2
               direction="column"
               sx={{
-                color: textColor,
                 position: { md: "fixed" },
                 paddingLeft: 1,
                 pt: 8,
@@ -161,7 +163,7 @@ function Pages() {
               pt={8}
               pb={3}
             >
-              <LIST />
+             <LIST  userName={userName}/>
             </Grid2>
           </Grid2>
         </Grid2>

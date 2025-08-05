@@ -216,17 +216,7 @@ const InstagramPost = () => {
             3 HOURS AGO
           </div>
 
-          {/* Divider */}
-          <Box sx={{ paddingTop: "10px" }}>
-            <Box
-              component="hr"
-              sx={{
-                border: 0,
-                height: "1px",
-                backgroundColor: darkMode ? "#333" : "#eaeaea",
-              }}
-            />
-          </Box>
+          
 
           {/* Comment Modal */}
           {open && selectedPostId === post._id && (

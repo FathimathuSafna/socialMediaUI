@@ -3,16 +3,17 @@ import { Avatar, Button, Card, Typography, Box } from "@mui/joy";
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import Grid from "@mui/material/Grid2";
 import { getFollowers, followUser } from "../../service/followApi";
-import { useNavigate } from "react-router-dom";
+import { getUserDetails } from "../../service/userApi";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function BottomActionsCard() {
+export default function BottomActionsCard({userName}) {
+  console.log("userName:",userName)
   const [followers, setFollowers] = useState([]);
-  const [follow, setFollow] = useState(false);
+  const [user, setUser] = useState('');
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
   const navigate = useNavigate();
-
   const getAllFollowers = () => {
     getFollowers()
       .then((response) => {
@@ -23,20 +24,33 @@ export default function BottomActionsCard() {
       });
   };
 
+  const getUser =(userName)=>{
+    getUserDetails(userName)
+    .then((response) =>{
+      console.log("gggggggggggggggggggg",response.data); 
+      setUser(response.data)
+    }).catch((error) =>{
+        console.error("Error fetching followers:", error);
+    })
+  }
+
   useEffect(() => {
-  getAllFollowers(); // initial fetch
+    if (userName) {
+    getUser(userName);
+  }
+    getAllFollowers(); 
+    
 
-  const handleUserFollowChange = () => {
-    getAllFollowers(); // re-fetch when someone follows/unfollows
-  };
+    const handleUserFollowChange = () => {
+      getAllFollowers(); 
+    };
 
-  window.addEventListener("userFollowChanged", handleUserFollowChange);
+    window.addEventListener("userFollowChanged", handleUserFollowChange);
 
-  return () => {
-    window.removeEventListener("userFollowChanged", handleUserFollowChange);
-  };
-}, []);
-
+    return () => {
+      window.removeEventListener("userFollowChanged", handleUserFollowChange);
+    };
+  }, []);
 
   const handleFollow = (userId) => {
     followUser({ followedUserId: userId })
@@ -50,6 +64,19 @@ export default function BottomActionsCard() {
 
   return (
     <>
+      <Typography
+        style={{
+          fontSize: "0.875rem",
+          fontWeight: 600,
+          color: textColor,
+          marginLeft: "1.3rem",
+          textAlign: "left",
+          paddingBottom: "0.5rem",
+        }}
+      >
+        Suggested for you
+      </Typography>
+
       {followers.map((user, index) => (
         <Card
           key={user._id}
@@ -75,21 +102,22 @@ export default function BottomActionsCard() {
                   src={user.profileImageUrl || "/static/images/avatar/1.jpg"}
                   sx={{ width: 40, height: 40, mr: 3.8 }}
                 />
-                <Typography sx={{fontSize:14}}>{user.userName}</Typography>
+                <Typography sx={{ fontSize: 14, color: textColor }}>
+                  {user.userName}
+                </Typography>
               </Box>
             </Grid>
-               <Button
-                    variant="outlined"
-                    sx={{
-                      width: "auto",
-                      border: "#8e8e8e",
-                      fontSize: 12,
-                    }}
-                    onClick={() => navigate("/signup")}
-                  >
-                     Follow
-                  </Button>
-             
+            <Button
+              variant="outlined"
+              sx={{
+                width: "auto",
+                border: "#8e8e8e",
+                fontSize: 12,
+              }}
+              onClick={() => handleFollow(user._id)}
+            >
+              Follow
+            </Button>
           </Grid>
         </Card>
       ))}

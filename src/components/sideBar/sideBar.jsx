@@ -56,7 +56,7 @@ function Sidebar() {
             padding: "10px",
             position: "fixed",
             top: 0,
-            left: 0,
+            left: 6,
             width: "100%",
             zIndex: 1,
           }}
@@ -67,7 +67,7 @@ function Sidebar() {
                 height: "100vh",
                 position: "fixed",
                 top: "4.5rem",
-                left: 0,
+                left: 25,
                 zIndex: 1,
                 padding: "1rem",
               }}

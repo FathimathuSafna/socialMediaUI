@@ -8,6 +8,7 @@ import { Button } from "@mui/joy";
 import { followUser, unFollowUser } from "../../service/followApi";
 import { deletePost } from "../../service/postAPI";
 
+
 import FOLLOWERMODAL from "../../modal/followersModal";
 import FOLLOWEDMODAL from "../../modal/followedModal";
 import EditProfileModal from "../../modal/editProfile";
@@ -15,7 +16,9 @@ import PostDetailModal from "../../modal/postDetailModal";
 import SmallButton from "../../ButtonsAnimation/SmallButton";
 import MESSAGEDIALOG from "../../modal/messageDialog";
 
+
 function Profile() {
+    
   const { userName } = useParams();
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);

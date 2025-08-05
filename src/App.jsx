@@ -38,6 +38,7 @@ function App() {
           <Route path="/signup" element={<SIGNUP />} />
           <Route path="/verify" element={<VERIFY />} />
           <Route path="/profile/:userName" element={<PAGES />} />
+          <Route path="/:userName" element={<PAGES />} />
         </Routes>
       </Router>
     </>

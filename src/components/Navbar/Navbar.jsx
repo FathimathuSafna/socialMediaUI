@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import {
   AppBar,
@@ -54,12 +55,13 @@ export default function PrimarySearchAppBar({ toggleDrawer }) {
   // );
 
   return (
-    <Box
+     <Box
       sx={{
         position: "fixed",
         marginTop:1.4,
         top: 0,
-        right: 0,
+        right: 13,
+        zIndex: 1000,
         bgcolor: bgColor,
         color: textColor,
       }}
@@ -75,15 +77,7 @@ export default function PrimarySearchAppBar({ toggleDrawer }) {
         elevation={0}
       >
         <Box sx={{ display: "flex", alignItems: "center"}}>
-          <Box
-            // component="img"
-            sx={{
-              height: { xs: "24px", sm: "40px" }, 
-              width: "auto",
-              marginRight: 1,
-            }}
-          ></Box>
-
+        
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box
               sx={{ display: { xs: "flex", md: "flex" }, alignItems: "center" }}

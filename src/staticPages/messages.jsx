@@ -149,7 +149,7 @@ export default function Messages({ userName, onBack }) {
                 elevation={1}
                 sx={{
                   p: 1,
-                  bgcolor: isCurrentUserSender ? "primary.main" : "grey.300",
+                  bgcolor: isCurrentUserSender ? "#075E54" : "grey.300",
                   color: isCurrentUserSender ? "#fff" : "#000",
                   borderRadius: isCurrentUserSender ? "12px 12px 0 12px" : "12px 12px 12px 0",
                   maxWidth: "75%",
