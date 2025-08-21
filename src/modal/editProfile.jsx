@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import { supabase } from "../store/supabaseClient";
 import * as Yup from "yup";
-import { updateUserDetails } from "../service/userAPI";
+import { updateUserDetails } from "../service/userApi";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
 import Cropper from "react-easy-crop";
 import Slider from "@mui/material/Slider";
