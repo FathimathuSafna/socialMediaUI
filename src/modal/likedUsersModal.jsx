@@ -74,7 +74,7 @@ export default function LIKEDMODAL({ open, handleClose, postId }) {
                 // }}
               >
                 <Avatar
-                  src={user.profileImageUrl || "/static/images/avatar/1.jpg"}
+                  src={user.profilePictureUrl || "/static/images/avatar/1.jpg"}
                   sx={{ width: 40, height: 40 }}
                 />
                 <Box>

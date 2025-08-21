@@ -119,7 +119,7 @@ const FileInput = ({ field, form }) => {
         />
       )}
       {croppedPreviewUrl && (
-        <Card sx={{ mt: 1, maxWidth: 150, mx: "auto", background: bgColor }}>
+        <Card sx={{ mt: 1, maxWidth: 350, mx: "auto", background: bgColor }}>
           <CardContent sx={{ p: 0.2 }}>
             <Box sx={{ width: "100%", aspectRatio: "1", overflow: "hidden" }}>
               <img
@@ -145,9 +145,9 @@ const FileInput = ({ field, form }) => {
       )}
 
       {preview && !croppedPreviewUrl && (
-        <Card sx={{ mt: 1, maxWidth: 150, mx: "auto", background: bgColor }}>
+        <Card sx={{ mt: 1, maxWidth: 250, mx: "auto", background: bgColor }}>
           <CardContent sx={{ p: 0.2 }}>
-            <Box sx={{ width: "100%", aspectRatio: "1", position: "relative" }}>
+            <Box sx={{ height: 250, width: "100%", position: "relative" }}>
               <Cropper
                 image={preview}
                 crop={crop}

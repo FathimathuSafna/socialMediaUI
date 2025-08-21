@@ -15,6 +15,7 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
+
 // Custom Formik-compatible FileInput
 const FileInput = ({ field, form }) => {
   const { name, value } = field;
@@ -26,6 +27,8 @@ const FileInput = ({ field, form }) => {
   const [croppedPreview, setCroppedPreview] = useState(null);
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
+    const navigate = useNavigate();
+
 
   const handleFileChange = (file) => {
     setFieldValue(name, file);
@@ -153,8 +156,9 @@ const FileInput = ({ field, form }) => {
               color="secondary"
               onClick={() => {
                 setCroppedPreview(null);
-                setPreview(null); // Ensure preview is also cleared
-                setFieldValue(name, null); // Clear Formik value
+                setPreview(null); 
+                setFieldValue(name, null); 
+                navigate(`/`)
               }}
               size="small"
               sx={{ fontSize: "0.6rem", minWidth: "auto", px: 0.5 }} // Smaller text
@@ -268,10 +272,10 @@ const FileInput = ({ field, form }) => {
 
 // Validation Schema
 const validationSchema = Yup.object().shape({
-  file: Yup.mixed().required("Profile picture is required"), 
+  file: Yup.mixed().required("Profile picture is required"),
 });
 
-const EditProfile = ({ open, handleClose,user }) => {
+const EditProfile = ({ open, handleClose, user }) => {
   const navigate = useNavigate();
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
@@ -396,7 +400,12 @@ const EditProfile = ({ open, handleClose,user }) => {
         </Typography>
 
         <Formik
-          initialValues={{ name: "", file: null, bio: "" }}
+          enableReinitialize
+          initialValues={{
+            name: user.name || "",
+            file: null,
+            bio: user.bio || "",
+          }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >

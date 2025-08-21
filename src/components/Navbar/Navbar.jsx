@@ -1,11 +1,5 @@
-
 import * as React from "react";
-import {
-  AppBar,
-  Box,
-  IconButton,
-  Button,
-} from "@mui/material";
+import { AppBar, Box, IconButton, Button, Typography } from "@mui/material";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
@@ -19,89 +13,59 @@ export default function PrimarySearchAppBar({ toggleDrawer }) {
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
 
-  // const menuId = "primary-search-account-menu";
-  // const renderMenu = (
-  //   <Menu
-  //     anchorEl={anchorEl}
-  //     anchorOrigin={{ vertical: "top", horizontal: "right" }}
-  //     id={menuId}
-  //     keepMounted
-  //     transformOrigin={{ vertical: "top", horizontal: "right" }}
-  //     open={isMenuOpen}
-  //     onClose={handleMenuClose}
-  //   >
-  //     <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-  //   </Menu>
-  // );
-
-  // const mobileMenuId = "primary-search-account-menu-mobile";
-  // const renderMobileMenu = (
-  //   <Menu
-  //     anchorEl={mobileMoreAnchorEl}
-  //     anchorOrigin={{ vertical: "top", horizontal: "right" }}
-  //     id={mobileMenuId}
-  //     keepMounted
-  //     transformOrigin={{ vertical: "top", horizontal: "right" }}
-  //     open={isMobileMenuOpen}
-  //     onClose={handleMobileMenuClose}
-  //   >
-  //     <MenuItem onClick={toggleDarkMode}>
-  //       <IconButton color="inherit">
-  //         {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
-  //       </IconButton>
-  //       <p>{darkMode ? "Light" : "Dark"} Mode</p>
-  //     </MenuItem>
-  //   </Menu>
-  // );
-
   return (
-     <Box
+    <AppBar
+      position="fixed"
       sx={{
-        position: "fixed",
-        marginTop:1.4,
-        top: 0,
-        right: 13,
-        zIndex: 1000,
+        width: "100%",
+        height: 50,
         bgcolor: bgColor,
         color: textColor,
+        transition: "all 0.3s ease-in-out",
       }}
+      elevation={0}
     >
-      <AppBar
-        position="static"
+      {/* 1. Create a parent Box with flex properties */}
+      <Box
         sx={{
-          top:0,
-          bgcolor: bgColor,
-          color: textColor,
-          transition: "all 0.3s ease-in-out",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between", // This pushes items to opposite ends
+          width: "100%",
+          height: "100%",
+          px: 2, // Adds some horizontal padding
         }}
-        elevation={0}
       >
-        <Box sx={{ display: "flex", alignItems: "center"}}>
-        
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box
-              sx={{ display: { xs: "flex", md: "flex" }, alignItems: "center" }}
-            >    
-              <IconButton onClick={toggleDarkMode} color="inherit">
-                {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
-              </IconButton>
-            </Box>
-           
-            <Box >
-              <Button
-                color="inherit"
-                onClick={() => {
-                  localStorage.clear();
-                  navigate("/login");
-                }}
-              >
-                <ExitToAppTwoToneIcon  sx={{mr:0.6}}/>
-                signOut
-              </Button>
-            </Box>
-          </Box>
+        {/* 2. Your Logo */}
+        <Typography
+          sx={{
+            fontSize: 24,
+            fontFamily: "'Pacifico', cursive",
+            color: textColor,
+          }}
+        >
+          Appmosphere
+        </Typography>
+
+        {/* 3. A Box for your action buttons */}
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <IconButton onClick={toggleDarkMode} color="inherit">
+            {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
+
+          <Button
+            color="inherit"
+            onClick={() => {
+              localStorage.clear();
+              navigate("/login");
+            }}
+          >
+            <ExitToAppTwoToneIcon sx={{ mr: 0.6 }} />
+            signOut
+          </Button>
         </Box>
-      </AppBar>
-    </Box>
+      </Box>
+    </AppBar>
   );
 }

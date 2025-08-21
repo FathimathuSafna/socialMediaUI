@@ -32,7 +32,7 @@ export default function SlideUpModal({
   postId,
   description,
   userName,
-  profilePicture
+  profilePicture,
 }) {
   const [comments, setComments] = useState([]);
   const [menuAnchorEls, setMenuAnchorEls] = useState({});
@@ -100,7 +100,6 @@ export default function SlideUpModal({
   };
 
   const handleEditClick = (comment, idx) => {
-    console.log("Editing ................:", comment);
     setEditingComment(comment);
     editFormik.setFieldValue(
       "editedComment",
@@ -124,28 +123,28 @@ export default function SlideUpModal({
     <>
       {/* Main Comment Modal */}
       <Modal open={open} onClose={handleClose}>
-        <Slide direction="up" in={open} mountOnEnter unmountOnExit>
+        <Slide direction="up" in={open}>
           <Box
             component="form"
             onSubmit={formik.handleSubmit}
             sx={{
-              top: {xs:"40%",md:"20%"},
-              left: {xs:"4%",
-                md:"27%"},
+              top: { xs: "40%", md: "20%" },
+              left: { xs: "14%", md: "27%" },
               transform: "translate(-50%, -50%)",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
               bottom: 0,
               position: "absolute",
-              width:{
-                xs:"75%",
-                sm:"70%",
-                md:"40%"
-              } ,
+              width: {
+                xs: "75%",
+                sm: "70%",
+                md: "40%",
+              },
               bgcolor: bgColor,
               textColor: textColor,
-              p: 4,
+              p: 1.2,
+              mt: 2,
               boxShadow: 24,
               borderRadius: "10px 10px 0 0",
               overflowY: "hidden",
@@ -162,40 +161,36 @@ export default function SlideUpModal({
                   fontFamily: "Arial", // Make sure the font is available
                 }}
               >
-                {profilePicture ? (
-                 profilePicture
-                ) : (
-                  <Avatar src="/broken-image.jpg" />
-                )}
-
+                <Avatar
+                  src={profilePicture ? profilePicture : "/broken-image.jpg"}
+                />
               </Grid2>
-              <Grid2 direction='column'
+              <Grid2
+                direction="column"
                 xs={4}
                 sx={{
                   textAlign: "left",
-                  fontSize: {md:"15px"},
+                  fontSize: { md: "15px" },
                   color: textColor,
                   fontWeight: "bold",
                   fontFamily: "Arial", // Make sure the font is available
                 }}
               >
-                <Grid2>
-                {userName}
-              </Grid2>
+                <Grid2>{userName}</Grid2>
 
-              <Grid2 xs={6} mt={1}>
-                <Typography
-                  sx={{
-                    textAlign: "left",
-                    fontSize: {xs:12,md:14},
-                    color: textColor,
-                    fontWeight: "light",
-                    fontFamily: "Georgia",
-                  }}
-                >
-                  {description}
-                </Typography>
-              </Grid2>
+                <Grid2 xs={6} mt={1}>
+                  <Typography
+                    sx={{
+                      textAlign: "left",
+                      fontSize: { xs: 12, md: 14 },
+                      color: textColor,
+                      fontWeight: "light",
+                      fontFamily: "Georgia",
+                    }}
+                  >
+                    {description}
+                  </Typography>
+                </Grid2>
               </Grid2>
             </Grid2>
 
@@ -247,8 +242,8 @@ export default function SlideUpModal({
                         >
                           <Box display="flex" gap={2}>
                             <span style={{ fontSize: 11 }}>
-                              {comment.profileImage ? (
-                                comment.profileImage
+                              {comment.profilePicture ? (
+                                <Avatar src={comment.profilePicture} />
                               ) : (
                                 <Avatar src="/broken-image.jpg" />
                               )}
@@ -262,7 +257,13 @@ export default function SlideUpModal({
                             >
                               {comment.userName}:
                             </span>{" "}
-                            <span style={{ fontSize: {xs:12,md:16},mb:2, color: textColor }}>
+                            <span
+                              style={{
+                                fontSize: { xs: 12, md: 16 },
+                                mb: 2,
+                                color: textColor,
+                              }}
+                            >
                               {comment.commentText}
                             </span>
                           </Box>
@@ -389,7 +390,7 @@ export default function SlideUpModal({
             left: "50%",
             transform: "translate(-50%, -50%)",
             position: "absolute",
-            width: {xs:"50%",md:"30%"},
+            width: { xs: "50%", md: "30%" },
             bgcolor: "background.paper",
             p: 4,
             borderRadius: 2,
@@ -407,14 +408,21 @@ export default function SlideUpModal({
             variant="outlined"
             multiline
             rows={3}
-            sx={{color:'#8e8e8e',border:"#8e8e8e"}}
+            sx={{ color: "#8e8e8e", border: "#8e8e8e" }}
           />
-          <Box display="flex" justifyContent="flex-end" mt={2} >
-            <Button  onClick={() => setEditModalOpen(false)} sx={{ mr: 1,color:'#8e8e8e'}} >
+          <Box display="flex" justifyContent="flex-end" mt={2}>
+            <Button
+              onClick={() => setEditModalOpen(false)}
+              sx={{ mr: 1, color: "#8e8e8e" }}
+            >
               Cancel
             </Button>
-            <Box display="flex" justifyContent="flex-end" >
-              <Button type="submit" variant="contained" sx={{backgroundColor:"#8e8e8e"}}>
+            <Box display="flex" justifyContent="flex-end">
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ backgroundColor: "#8e8e8e" }}
+              >
                 Update
               </Button>
             </Box>

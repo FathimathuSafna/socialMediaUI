@@ -13,18 +13,15 @@ import PROFILE from "../staticPages/profile/profile";
 import "@fontsource/pacifico";
 import { useParams } from "react-router-dom";
 
-
 function Pages() {
   const { darkMode } = useCustomTheme(); // Custom dark mode toggle
 
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
   const location = useLocation();
-    const { userName } = useParams(); 
-    console.log(userName)
-    
-  const isProfilePage = !!userName;
-const isNotProfilePage = !userName;  
+  const pathSegments = location.pathname.split("/");
+  const userName = pathSegments.length > 2 ? pathSegments[2] : pathSegments[1];
+  const isProfilePage = location.pathname.startsWith("/profile/");
 
   return (
     <Grid2
@@ -44,6 +41,7 @@ const isNotProfilePage = !userName;
         direction="column"
         size={{ xs: 2, sm: 3, md: 2, lg: 2 }}
         sx={{ bgcolor: bgColor, mt: 0, borderRight: "1px solid #ccc" }}
+        display={{xs:'none',sm:'block',md:'block'}}
       >
         <Grid2
           xs={0}
@@ -59,21 +57,10 @@ const isNotProfilePage = !userName;
             paddingTop: "15px",
             position: "fixed",
             left: "5px",
-            display: { xs: "none", sm: "flex", md: "flex" },
+            display: { xs: "flex", sm: "flex", md: "flex" },
           }}
         >
-          <Typography
-            sx={{
-              fontSize: 24,
-              fontFamily: "'Pacifico', cursive",
-              paddingTop: 0,
-              paddingLeft:{md:2,sm:0},
-              paddingBottom: 4,
-              color: darkMode ? textColor :"#075E54",
-            }}
-          >
-            Appmosphere
-          </Typography>
+         
         </Grid2>
         <Grid2
           md={12}
@@ -100,8 +87,9 @@ const isNotProfilePage = !userName;
         sx={{ bgcolor: bgColor }}
       >
         {/* Navbar Section */}
-
-        <NAVBAR />
+        <Grid2>
+          <NAVBAR />
+        </Grid2>
 
         {/* Content Below Navbar */}
         <Grid2
@@ -113,8 +101,8 @@ const isNotProfilePage = !userName;
           }
           sx={{
             marginTop: isProfilePage
-              ? { xs: 0, sm: 2 }
-              : { xs: "10px", sm: "13px" },
+              ? { xs: 2, sm: 2 }
+              : { xs: "13px", sm: "13px" },
             flexDirection: "row",
             bgcolor: bgColor,
           }}
@@ -134,7 +122,7 @@ const isNotProfilePage = !userName;
                   ? { xs: 12, sm: 12, md: 12 }
                   : { xs: 12, sm: 10, md: 10 }
               }
-              offset={isProfilePage ? { md: 0 } : { sm: 2, md: 1 }}
+              offset={isProfilePage ? { md: 0 } : { sm: 2, md: 1, xs: 1 }}
               sx={{
                 mt: 2,
               }}
@@ -144,7 +132,7 @@ const isNotProfilePage = !userName;
           </Grid2>
 
           {/* List Section */}
-           
+
           <Grid2
             container
             size={{ sm: 2, md: 2, lg: 2 }}
@@ -163,7 +151,7 @@ const isNotProfilePage = !userName;
               pt={8}
               pb={3}
             >
-             <LIST  userName={userName}/>
+              <LIST userName={userName} />
             </Grid2>
           </Grid2>
         </Grid2>

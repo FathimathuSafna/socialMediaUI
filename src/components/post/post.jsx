@@ -75,24 +75,25 @@ const InstagramPost = () => {
             }}
           >
             <div
-              style={{ display: "flex", alignItems: "center" }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
               onClick={() => navigate(`/profile/${post.userId.userName}`)}
             >
               <Avatar
-                src={post.userId.profilePictureUrl}
-                alt={post.userId.userName || "User"}
+                src={post.userId?.profilePictureUrl || "/broken-image.jpg"}
                 sx={{
                   width: 35,
                   height: 35,
                   marginRight: "12px",
                 }}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "/broken-image.jpg";
-                }}
-              />
+               
+              /> 
+
               <span style={{ fontWeight: "600", fontSize: "14px" }}>
-                {post.userId.userName || "Unknown"}
+                 {post.userId?.userName || "Unknown"} 
               </span>
             </div>
             <button
@@ -108,9 +109,9 @@ const InstagramPost = () => {
           </div>
 
           {/* Image */}
-          <div
-            style={{
-              width: "100%",
+          <Box
+            sx={{
+              width: { sm: "100%", xs: "90%" },
               aspectRatio: "1/1",
               backgroundImage: `url(${post.postImageUrl})`,
               backgroundSize: "cover",
@@ -185,7 +186,8 @@ const InstagramPost = () => {
             }}
           >
             <span style={{ fontWeight: "600", marginRight: "4px" }}>
-              {post.userId.userName || "unknown"}
+              {post.userId?.userName || "Unknown"}
+
             </span>
             {post.description}
           </div>
@@ -215,8 +217,6 @@ const InstagramPost = () => {
           >
             3 HOURS AGO
           </div>
-
-          
 
           {/* Comment Modal */}
           {open && selectedPostId === post._id && (
