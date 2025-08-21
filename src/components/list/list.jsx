@@ -3,7 +3,7 @@ import { Avatar, Button, Card, Typography, Box } from "@mui/joy";
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import Grid from "@mui/material/Grid2";
 import { getFollowers, followUser } from "../../service/followApi";
-import { getUserDetails } from "../../service/userApi";
+import { getUserDetails } from "../../service/userAPI";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function BottomActionsCard({userName}) {
