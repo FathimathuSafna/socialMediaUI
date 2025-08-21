@@ -5,7 +5,7 @@ import { Box, Button, TextField, Typography, Divider } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import "./signup.css";
-import { signup } from "../../service/userApi";
+import { signup } from "../../service/userAPI";
 import "@fontsource/pacifico";
 
 // Validation schema

@@ -3,9 +3,14 @@ import { Avatar, Button, Card, Typography, Box } from "@mui/joy";
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import Grid from "@mui/material/Grid2";
 import { getFollowers, followUser } from "../../service/followApi";
+<<<<<<< HEAD
+import { getUserDetails } from "../../service/userAPI";
+import { useNavigate, useParams } from "react-router-dom";
+=======
 import { getUserDetails } from "../../service/userApi";
 import { useNavigate } from "react-router-dom";
 import EditProfileModal from "../../modal/editProfile";
+>>>>>>> origin
 
 export default function BottomActionsCard() {
   const userName = localStorage.getItem("userName");
