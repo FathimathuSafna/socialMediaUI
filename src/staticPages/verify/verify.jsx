@@ -8,7 +8,7 @@ import { verify } from "../../service/userAPI";
 // Validation schema
 const OtpSchema = Yup.object().shape({
   otp: Yup.string()
-    .length(6, "OTP should be 6 digits")
+    .length(5, "OTP should be 6 digits")
     .required("OTP is required"),
 });
 

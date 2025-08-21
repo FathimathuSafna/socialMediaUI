@@ -8,7 +8,6 @@ import { Button } from "@mui/joy";
 import { followUser, unFollowUser } from "../../service/followApi";
 import { deletePost } from "../../service/postAPI";
 
-
 import FOLLOWERMODAL from "../../modal/followersModal";
 import FOLLOWEDMODAL from "../../modal/followedModal";
 import EditProfileModal from "../../modal/editProfile";
@@ -16,9 +15,7 @@ import PostDetailModal from "../../modal/postDetailModal";
 import SmallButton from "../../ButtonsAnimation/SmallButton";
 import MESSAGEDIALOG from "../../modal/messageDialog";
 
-
 function Profile() {
-    
   const { userName } = useParams();
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -113,11 +110,9 @@ function Profile() {
       container
       direction="column"
       sx={{
-        flexGrow: 1,
-        px: { xs: 0, sm: 2, md: 4 },
-        pt: { xs: 4, sm: 0 },
-        m: 0,
-        pb: 4,
+        pl: { xs: 0, sm: 2, md: 3 },
+        pt: { xs: 4, sm: 3 },
+        pr: 0,
         width: "100%",
         height: {
           xs: "100vh",
@@ -128,77 +123,54 @@ function Profile() {
     >
       {user ? (
         <>
-          {/* --- PROFILE HEADER SECTION --- */}
-          <Grid2
-            container
-            flexDirection={{ xs: "row", sm: "row" }}
-            alignItems={{ xs: "flex-start", sm: "flex-start" }}
-            justifyContent={{ xs: "flex-start", sm: "flex-start" }}
-            display={{ xs: "flex", sm: "flex" }}
+          <Box
             sx={{
+              display: "flex",
+              flexDirection: "row", // Side by side on all screens
+              alignItems: "flex-start",
+              gap: { xs: 2, sm: 2,md:7 },
+              px: { xs: 2, sm: 4, md: 5 },
+              py: { xs: 3, sm: 4 },
               width: "100%",
-              py: { xs: 2, sm: 4 },
-              gap: { xs: 1, sm: 0 },
-              mb: { xs: 2, sm: 4 },
-              pr: { xs: 1, sm: 0 },
-              pl: { xs: 1, sm: 0 },
             }}
           >
-            <Grid2
-              item
-              xs={3}
-              sm={3}
-              md={2}
+            <Avatar
+              src={user.profilePictureUrl || "/broken-image.jpg"}
+              alt={`${user.userName}'s profile`}
               sx={{
-                display: "flex",
-                justifyContent: "center",
-                p: 0,
-                m: 0,
+                width: { xs: 70, sm: 110, md: 150 },
+                height: { xs: 70, sm: 110, md: 150 },
+                border: "1px solid #ccc",
               }}
-            >
-              <Avatar
-                src={user.profilePictureUrl || "/broken-image.jpg"}
-                alt={`${user.userName}'s profile`}
-                sx={{
-                  width: { xs: 80, sm: 120, md: 150 },
-                  height: { xs: 80, sm: 120, md: 150 },
-                  border: "1px solid #ccc",
-                }}
-              />
-            </Grid2>
+            />
 
-            <Grid2
-              item
-              xs={9}
-              sm={9}
-              md={10}
+            <Box
               sx={{
-                pl: { xs: 1, sm: 4, md: 8 },
-                p: 0,
-                m: 0,
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                width: "100%",
               }}
             >
-              {/* Username & Buttons Row */}
               <Box
                 sx={{
                   display: "flex",
-                  alignItems: "center",
-                  justifyContent: { xs: "flex-start", sm: "flex-start" },
-                  gap: { xs: 1, sm: 3 },
                   flexWrap: "wrap",
-                  mb: { xs: 1.5, sm: 2 },
-                  p: 0,
-                  m: 0,
+                  alignItems: "center",
+                  gap: 1.5,
+                  mb: 1.5,
                 }}
               >
                 <Typography
-                  variant="h5"
-                  component="h1"
-                  sx={{ m: 0, fontWeight: "bold" }}
+                  variant="h6"
+                  sx={{
+                    fontSize: { xs: "16px", sm: "18px", md: "20px" },
+                    fontWeight: 500,
+                  }}
                 >
-                  {user.name}
+                  {user.name || "Unknown"}
                 </Typography>
-
                 <SmallButton
                   onClick={() => {
                     if (currentUser) {
@@ -218,72 +190,62 @@ function Profile() {
                 </SmallButton>
               </Box>
 
-              {/* Stats Row */}
+              {/* Stats */}
               <Box
                 sx={{
                   display: "flex",
-                  gap: { xs: 1, sm: 4 },
+                  gap: 2,
                   flexWrap: "wrap",
-                  justifyContent: { xs: "flex-start", sm: "flex-start" },
-                  mb: { xs: 1.5, sm: 2 },
-                  p: 0, // No padding
-                  m: 0, // No margin
+                  mb: 1,
                 }}
               >
-                <Typography variant="body1">
-                  <Box component="span" sx={{ fontWeight: "bold" }}>
-                    {postCount}
-                  </Box>{" "}
-                  {postCount === 1 ? "post" : "posts"}
+                <Typography variant="body2">
+                  <b>{postCount}</b> {postCount === 1 ? "post" : "posts"}
                 </Typography>
                 <Typography
-                  variant="body1"
-                  sx={{ cursor: "pointer" }}
+                  variant="body2"
                   onClick={handleOpenFollowers}
+                  sx={{ cursor: "pointer" }}
                 >
-                  <Box component="span" sx={{ fontWeight: "bold" }}>
-                    {followerCount}
-                  </Box>{" "}
+                  <b>{followerCount}</b>{" "}
                   {followerCount === 1 ? "follower" : "followers"}
                 </Typography>
                 <Typography
-                  variant="body1"
-                  sx={{ cursor: "pointer" }}
+                  variant="body2"
                   onClick={handleOpenFollowing}
+                  sx={{ cursor: "pointer" }}
                 >
-                  <Box component="span" sx={{ fontWeight: "bold" }}>
-                    {followedUserCount}
-                  </Box>{" "}
-                  {followedUserCount === 1 ? "following" : "following"}
+                  <b>{followedUserCount}</b> following
                 </Typography>
               </Box>
 
               {/* Bio */}
               {user.bio && (
                 <Typography
-                  variant="body2"
+                  variant="body3"
                   sx={{
-                    mb: { xs: 2, sm: 0 },
-                    p: 0,
-                    m: 0,
-                    textAlign: { xs: "left", sm: "left" }, // Explicitly center the bio text on xs
+                    wordBreak: "break-word",
+                    whiteSpace: "pre-wrap",
+                    mb: 1,
                   }}
                 >
                   {user.bio}
                 </Typography>
               )}
-              {!currentUser ? (
-                <Box sx={{ pt: 3 }}>
-                  <Button
-                    sx={{ backgroundColor: "#8e8e8e", width: "100%" }}
+
+              {/* Message Button */}
+              {!currentUser && (
+                <Box sx={{ mt: 2 }}>
+                 <Button
+                    sx={{ backgroundColor: "#8e8e8e", width: "55%" }}
                     onClick={messageHandleOpen}
                   >
                     Message
                   </Button>
                 </Box>
-              ) : null}
-            </Grid2>
-          </Grid2>
+              )}
+            </Box>
+          </Box>
 
           <Divider
             sx={{
@@ -309,6 +271,8 @@ function Profile() {
                 xs: 1,
               },
               pt: 0,
+              gap: 0.4,
+              pl: { xs: 1, md: 0 },
             }}
           >
             {Array.isArray(posts) && posts.length > 0 ? (
@@ -320,7 +284,6 @@ function Profile() {
                   sm={4}
                   md={4}
                   sx={{
-                    display: "flex-start",
                     p: { xs: 0.1, sm: 0.5, md: 0.5 }, // Padding around each image
                     m: 0,
                     pt: 3,
@@ -333,7 +296,7 @@ function Profile() {
                     alt="post"
                     sx={{
                       width: "100%",
-                      height: { xs: "120px", sm: "180px", md: "200px" },
+                      height: { xs: "119px", sm: "160px", md: "260px" },
                       objectFit: "cover",
                       aspectRatio: "1 / 1",
                       borderRadius: 1,

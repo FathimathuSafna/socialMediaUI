@@ -173,7 +173,7 @@ export default function ResponsiveDialog({ open, handleClose }) {
                 onClick={() => navigate(`/profile/${user.userName}`)}
               >
                 <Avatar
-                  src={user.profileImageUrl || "/static/images/avatar/1.jpg"}
+                  src={user.profilePictureUrl || "/static/images/avatar/1.jpg"}
                   sx={{ width: 40, height: 40 }}
                 />
                 <Box>

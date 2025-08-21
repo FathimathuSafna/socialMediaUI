@@ -109,7 +109,7 @@ export default function MessageDialog({ open, handleClose }) {
 
   return (
     <Dialog fullScreen open={open} onClose={handleClose} sx={{display:'flex',flexDirection: 'column'}}>
-      <AppBar sx={{ position: "relative", backgroundColor: darkMode ? "#3a3a3a" : "#075E54"}}>
+      <AppBar sx={{ position: "relative", backgroundColor:  "#075E54"}}>
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={handleClose}>
             <CloseIcon />

@@ -29,10 +29,10 @@ function PostDetailModal({ open, handleClose, post, onDelete }) {
   const [selectedPostId, setSelectedPostId] = useState(null);
 
   const handleLikeOpenModal = (postId) => {
-    setSelectedPostId(postId)
-    setOpenLikeModal(true)
-  }
-  const handleLikeCloseModal = () => setOpenLikeModal(false)
+    setSelectedPostId(postId);
+    setOpenLikeModal(true);
+  };
+  const handleLikeCloseModal = () => setOpenLikeModal(false);
   const handleOpenModal = (postId) => {
     setSelectedPostId(postId);
     setOpen(true);
@@ -93,27 +93,27 @@ function PostDetailModal({ open, handleClose, post, onDelete }) {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: { xs: "70%", sm: "40%", md: "50%" },
-            maxWidth: { xs: "90vw", md: 300 },
-            maxHeight: "80vh",
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            backgroundColor: bgColor,
+            width: { xs: "90vw", sm: "70vw", md: "50vw" },
+            maxWidth: 300,
+            maxHeight: "65vh",
+            bgcolor: bgColor,
             color: "#8e8e8e",
-            border: 10,
-            borderColor: bgColor,
+            borderRadius: 0.1,
+            borderColor: "none",
+            overflow: "hidden",
           }}
         >
-          {/* Container for the image and the menu icon */}
-          <Box sx={{ position: "relative", flexGrow: 1, minHeight: 0 }}>
+          {/* Image + Menu */}
+          <Box sx={{ position: "relative", height: 300 }}>
             <img
               src={post.postImageUrl}
               alt="User post"
               style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "contain",
+                objectFit: "cover", // or "contain" if needed
+                display: "block",
+                borderColor: "none",
               }}
             />
             <IconButton
@@ -125,50 +125,41 @@ function PostDetailModal({ open, handleClose, post, onDelete }) {
                 position: "absolute",
                 top: 8,
                 right: 8,
-                backgroundColor: "rgba(0, 0, 0, 0.3)", // Semi-transparent background
+                backgroundColor: "rgba(0, 0, 0, 0.3)",
                 color: "white",
-                "&:hover": {
-                  backgroundColor: "rgba(0, 0, 0, 0.5)",
-                },
+                
               }}
             >
               <MoreVertIcon />
             </IconButton>
-            <Box display="flex" alignItems="center" gap={1} padding="4px 8px">
-              <IconButton size="small" sx={{ color: "#8e8e8e" }} onClick={() => handleLikeOpenModal(post._id)}>
-                <FavoriteBorder sx={{ fontSize: 24 }} />
-              </IconButton>
-              <IconButton
-                size="small"
-                onClick={() =>
-                  handleOpenModal(
-                    post._id,
-                    post.description,
-                    post.userId.userName,
-                    post.userId.profilePictureUrl
-                  )
-                }
-                sx={{ color: "#8e8e8e" }}
-              >
-                <ChatBubbleOutline sx={{ fontSize: 24 }} />
-              </IconButton>
-            </Box>
-
-            <Box
-              style={{
-                fontWeight: "600",
-                margin: "4px 0",
-                fontSize: "14px",
-                padding: "0 8px",
-              }}
-            >
-              {likeCount} likes
-            </Box>
-            <Box sx={{ bgcolor: bgColor, pl: 1 }}>
-              <Typography>{post.description}</Typography>
-            </Box>
           </Box>
 
+          {/* Icons and Description */}
+          <Box display="flex" alignItems="center" gap={1} padding="8px">
+            <IconButton
+              size="small"
+              sx={{ color: "#8e8e8e" }}
+              onClick={() => handleLikeOpenModal(post._id)}
+            >
+              <FavoriteBorder sx={{ fontSize: 24 }} />
+            </IconButton>
+            <IconButton
+              size="small"
+              onClick={() => handleOpenModal(post._id)}
+              sx={{ color: "#8e8e8e" }}
+            >
+              <ChatBubbleOutline sx={{ fontSize: 24 }} />
+            </IconButton>
+          </Box>
+
+          <Box sx={{ px: 2, fontWeight: 600, fontSize: "14px" }}>
+            {likeCount} likes
+          </Box>
+          <Box sx={{ bgcolor: bgColor, px: 2, pb: 2 }}>
+            <Typography>{post.description}</Typography>
+          </Box>
+
+          {/* Menu for delete */}
           <Menu anchorEl={anchorEl} open={openMenu} onClose={handleCloseMenu}>
             <MenuItem
               onClick={handleDelete}
@@ -180,6 +171,7 @@ function PostDetailModal({ open, handleClose, post, onDelete }) {
           </Menu>
         </Box>
       </Modal>
+
       {opened && selectedPostId === post._id && (
         <COMMANTMODAL
           open={opened}
@@ -191,11 +183,11 @@ function PostDetailModal({ open, handleClose, post, onDelete }) {
         />
       )}
       {openLikeModal && selectedPostId === post._id && (
-      <LIKEDMODAL
-        open={openLikeModal}
-        handleClose={handleLikeCloseModal}
-        postId={selectedPostId}
-      />
+        <LIKEDMODAL
+          open={openLikeModal}
+          handleClose={handleLikeCloseModal}
+          postId={selectedPostId}
+        />
       )}
     </>
   );

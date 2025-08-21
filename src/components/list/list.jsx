@@ -3,13 +3,20 @@ import { Avatar, Button, Card, Typography, Box } from "@mui/joy";
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import Grid from "@mui/material/Grid2";
 import { getFollowers, followUser } from "../../service/followApi";
+<<<<<<< HEAD
 import { getUserDetails } from "../../service/userAPI";
 import { useNavigate, useParams } from "react-router-dom";
+=======
+import { getUserDetails } from "../../service/userApi";
+import { useNavigate } from "react-router-dom";
+import EditProfileModal from "../../modal/editProfile";
+>>>>>>> origin
 
-export default function BottomActionsCard({userName}) {
-  console.log("userName:",userName)
+export default function BottomActionsCard() {
+  const userName = localStorage.getItem("userName");
   const [followers, setFollowers] = useState([]);
-  const [user, setUser] = useState('');
+  const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
+  const [user, setUser] = useState("");
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
   const textColor = darkMode ? "#ffffff" : "#000000";
@@ -24,25 +31,21 @@ export default function BottomActionsCard({userName}) {
       });
   };
 
-  const getUser =(userName)=>{
+  const getUser = (userName) => {
     getUserDetails(userName)
-    .then((response) =>{
-      console.log("gggggggggggggggggggg",response.data); 
-      setUser(response.data)
-    }).catch((error) =>{
+      .then((response) => {
+        setUser(response.data.getUser);
+      })
+      .catch((error) => {
         console.error("Error fetching followers:", error);
-    })
-  }
+      });
+  };
 
   useEffect(() => {
-    if (userName) {
-    getUser(userName);
-  }
-    getAllFollowers(); 
-    
-
+      getUser(userName);
+    getAllFollowers();
     const handleUserFollowChange = () => {
-      getAllFollowers(); 
+      getAllFollowers();
     };
 
     window.addEventListener("userFollowChanged", handleUserFollowChange);
@@ -62,13 +65,59 @@ export default function BottomActionsCard({userName}) {
       });
   };
 
+  const handleOpenEditProfile = () => setOpenEditProfileModal(true);
+  const handleCloseEditProfile = () => setOpenEditProfileModal(false);
+
   return (
     <>
+      <Card
+        key={user._id}
+        variant="outlined"
+        sx={{
+          width: 300,
+          border: 0,
+          backgroundColor: bgColor,
+          color: textColor,
+        }}
+      >
+        <Grid container alignItems="center" spacing={2}>
+          <Grid item sx={{ width: 150 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+              onClick={() => navigate(`/profile/${user.userName}`)}
+            >
+              <Avatar
+                src={user.profilePictureUrl || "/static/images/avatar/1.jpg"}
+                sx={{ width: 40, height: 40, mr: 3.8 }}
+              />
+              <Typography sx={{ fontSize: 14, color: textColor }}>
+                {user.userName}
+              </Typography>
+            </Box>
+          </Grid>
+          <Button
+            variant="outlined"
+            sx={{
+              width: "auto",
+              border: "#8e8e8e",
+              fontSize: 12,
+            }}
+            onClick={() => handleOpenEditProfile()}
+          >
+            Edit Profile
+          </Button>
+        </Grid>
+      </Card>
       <Typography
         style={{
           fontSize: "0.875rem",
           fontWeight: 600,
           color: textColor,
+          paddingTop: "1rem",
           marginLeft: "1.3rem",
           textAlign: "left",
           paddingBottom: "0.5rem",
@@ -99,7 +148,7 @@ export default function BottomActionsCard({userName}) {
                 onClick={() => navigate(`/profile/${user.userName}`)}
               >
                 <Avatar
-                  src={user.profileImageUrl || "/static/images/avatar/1.jpg"}
+                  src={user.profilePictureUrl || "/static/images/avatar/1.jpg"}
                   sx={{ width: 40, height: 40, mr: 3.8 }}
                 />
                 <Typography sx={{ fontSize: 14, color: textColor }}>
@@ -121,6 +170,11 @@ export default function BottomActionsCard({userName}) {
           </Grid>
         </Card>
       ))}
+      <EditProfileModal
+        open={openEditProfileModal}
+        handleClose={handleCloseEditProfile}
+        user={user}
+      />
     </>
   );
 }
