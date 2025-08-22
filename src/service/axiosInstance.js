@@ -1,7 +1,8 @@
 import axios from "axios";
 
 export const baseURL =
-  import.meta.env.VITE_API_URL || "https://api-appmosphere.safna.online";
+  import.meta.env.VITE_API_URL ||
+   "https://api-appmosphere.safna.online";
 
 const createAxiosInstance = (baseURL, defaultHeaders = {}) => {
   return axios.create({

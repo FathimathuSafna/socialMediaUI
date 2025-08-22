@@ -112,7 +112,7 @@ function Login() {
                     color: "#000", 
                   }}
                 >
-                  Appmosphere
+                  Appmo
                 </Typography>
 
                 {loginError && (
