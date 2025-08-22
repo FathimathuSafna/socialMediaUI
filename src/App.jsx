@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import VERIFY from "./pages/verify";
 
+console.log("VITE_API_URL is:", import.meta.env.VITE_API_URL);
+
 const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
 

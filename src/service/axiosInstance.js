@@ -1,8 +1,9 @@
 import axios from "axios";
 
 export const baseURL =
-  import.meta.env.VITE_API_URL || "https://api-appmosphere.safna.online"
-  // 'http://localhost:5000';
+  import.meta.env.VITE_API_URL || 
+  //"https://api-appmosphere.safna.online"
+   'http://localhost:5000';
 
 const createAxiosInstance = (baseURL, defaultHeaders = {}) => {
   return axios.create({
