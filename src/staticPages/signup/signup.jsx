@@ -84,7 +84,6 @@ function Signup() {
         sx={{
           width: "100%",
           maxWidth: "300px",
-          height: "90vh",
           padding: "20px",
           borderRadius: "8px",
           boxShadow: 1,
