@@ -3,8 +3,7 @@ import { io } from 'socket.io-client';
 const token = localStorage.getItem('token');
 
 
-
 export const socket = io(import.meta.env.VITE_API_URL, {
-  transports: ["websocket"],
+  withCredentials: true,
+  auth: { token: token },
 });
-
