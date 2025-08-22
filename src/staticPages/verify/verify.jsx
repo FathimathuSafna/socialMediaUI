@@ -3,7 +3,7 @@ import { Grid2, Typography, TextField, Button, Box } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
-import { verify } from "../../service/userAPI";
+import { verify } from "../../service/userApi";
 
 // Validation schema
 const OtpSchema = Yup.object().shape({
