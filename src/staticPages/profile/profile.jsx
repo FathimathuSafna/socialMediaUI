@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
-import { getUserDetails } from "../../service/userAPI";
+import { getUserDetails } from "../../service/userApi";
 import Avatar from "@mui/material/Avatar";
 import { Grid2, Box, Typography, Divider } from "@mui/material";
 import { Button } from "@mui/joy";
@@ -296,9 +296,9 @@ function Profile() {
                     alt="post"
                     sx={{
                       width: "100%",
-                      height: { xs: "119px", sm: "160px", md: "260px" },
+                      height: { xs: "180px", sm: "160px", md: "260px" },
                       objectFit: "cover",
-                      aspectRatio: "1 / 1",
+                      aspectRatio: {xs:"1.3 / 2",sm:"2/1.9",md:"1/1"},
                       borderRadius: 1,
                       cursor: "pointer",
                     }}
