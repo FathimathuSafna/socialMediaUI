@@ -298,7 +298,7 @@ function Profile() {
                       width: "100%",
                       height: { xs: "180px", sm: "160px", md: "260px" },
                       objectFit: "cover",
-                      aspectRatio: {xs:"1.3 / 2",sm:"2/1.9",md:"1/1"},
+                      aspectRatio: {xs:"1.2 / 2",sm:"2/1.9",md:"1/1"},
                       borderRadius: 1,
                       cursor: "pointer",
                     }}
