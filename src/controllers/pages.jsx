@@ -11,157 +11,98 @@ import { Grid2 } from "@mui/material";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
 import PROFILE from "../staticPages/profile/profile";
 import "@fontsource/pacifico";
-import { useParams } from "react-router-dom";
+import ChatbotWidget from "../components/chatbotWidget/chatbotWidget";
 
 function Pages() {
-  const { darkMode } = useCustomTheme(); // Custom dark mode toggle
+  const { darkMode } = useCustomTheme();
 
-  const bgColor = darkMode ? "#121212" : "#ffffff";
-  const textColor = darkMode ? "#ffffff" : "#000000";
+  const bgColor = darkMode ? "var(--bg-primary)" : "var(--bg-primary)";
+  const textColor = darkMode ? "var(--text-primary)" : "var(--text-primary)";
   const location = useLocation();
   const pathSegments = location.pathname.split("/");
   const userName = pathSegments.length > 2 ? pathSegments[2] : pathSegments[1];
   const isProfilePage = location.pathname.startsWith("/profile/");
 
   return (
-    <Grid2
-      container
+    <Box
       sx={{
         bgcolor: bgColor,
         color: textColor,
         minHeight: "100vh",
         transition: "all 0.3s ease-in-out",
-        mt: 0,
-        ml: 0,
       }}
-      direction="row"
     >
+      {/* Navbar Section */}
+      <NAVBAR />
+
       {/* Sidebar Section */}
-      <Grid2
-        direction="column"
-        size={{ xs: 2, sm: 3, md: 2, lg: 2 }}
-        sx={{ bgcolor: bgColor, mt: 0, borderRight: "1px solid #ccc" }}
-        display={{xs:'none',sm:'block',md:'block'}}
-      >
-        <Grid2
-          xs={0}
-          sm={12}
-          md={12}
-          lg={12}
-          sx={{
-            textAlign: "center",
-            fontSize: "1.2rem",
-            fontWeight: "bold",
-            color: textColor,
-            padding: "10px",
-            paddingTop: "15px",
-            position: "fixed",
-            left: "5px",
-            display: { xs: "flex", sm: "flex", md: "flex" },
-          }}
-        >
-         
-        </Grid2>
-        <Grid2
-          md={12}
-          lg={12}
-          sx={{
-            display: { xs: "none", sm: "none", md: "flex" },
-            pl: { xs: 0, md: 10 }, // shorthand for paddingLeft
-            width: "100%",
-          }}
-        >
-          <SIDEBAR />
-        </Grid2>
-        <Grid2 sm={12} sx={{ display: { xs: "none", sm: "flex", md: "none" } }}>
-          <SMALLBAR />
-        </Grid2>
-      </Grid2>
+      <SIDEBAR />
 
       {/* Main Content Section */}
-
-      <Grid2
-        container
-        direction="column"
-        size={{ xs: 12, sm: 9, md: 10, lg: 10 }}
-        sx={{ bgcolor: bgColor }}
+      <Box
+        sx={{
+          pt: "60px", // Offset for top fixed navbar
+          pl: { xs: 0, sm: "180px", md: "240px" }, // Offset for left fixed sidebar
+          minHeight: "calc(100vh - 60px)",
+          display: "flex",
+          transition: "all 0.3s ease-in-out",
+        }}
       >
-        {/* Navbar Section */}
-        <Grid2>
-          <NAVBAR />
-        </Grid2>
-
-        {/* Content Below Navbar */}
         <Grid2
           container
-          size={
-            isProfilePage
-              ? { xs: 12, sm: 12, md: 10 }
-              : { xs: 12, sm: 10, md: 10 }
-          }
+          spacing={4}
           sx={{
-            marginTop: isProfilePage
-              ? { xs: 2, sm: 2 }
-              : { xs: "13px", sm: "13px" },
-            flexDirection: "row",
-            bgcolor: bgColor,
+            width: "100%",
+            m: 0,
+            p: { xs: 2, sm: 3, md: 4 },
           }}
         >
+          {/* Main Feed or Profile Section */}
           <Grid2
-            container
-            size={{ xs: 12, sm: 12, md: 12, lg: 10 }}
+            size={isProfilePage ? { xs: 12 } : { xs: 12, md: 8, lg: 8.5 }}
             sx={{
-              display: { md: "flex" },
-              bgcolor: bgColor,
-              p: 1,
+              p: 0,
             }}
           >
-            <Grid2
-              size={
-                isProfilePage
-                  ? { xs: 12, sm: 12, md: 12 }
-                  : { xs: 12, sm: 10, md: 10 }
-              }
-              offset={isProfilePage ? { md: 0 } : { sm: 2, md: 1, xs: 1 }}
-              sx={{
-                mt: 2,
-              }}
-            >
-              {isProfilePage ? <PROFILE userName={userName} /> : <POSTS />}
-            </Grid2>
+            {isProfilePage ? (
+              <PROFILE userName={userName} />
+            ) : (
+              <Box sx={{ maxWidth: "600px", mx: "auto" }}>
+                <POSTS />
+              </Box>
+            )}
           </Grid2>
 
-          {/* List Section */}
-
-          <Grid2
-            container
-            size={{ sm: 2, md: 2, lg: 2 }}
-            sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
-          >
+          {/* Right Suggested List Column */}
+          {!isProfilePage && (
             <Grid2
-              direction="column"
+              size={{ md: 4, lg: 3.5 }}
               sx={{
-                position: { md: "fixed" },
-                paddingLeft: 1,
-                pt: 8,
-                pb: 3,
-                width: "100%",
+                display: { xs: "none", md: "block" },
+                p: 0,
               }}
-              size={{ xs: 12, sm: 2, md: 2, lg: 2 }}
-              pt={8}
-              pb={3}
             >
-              <LIST userName={userName} />
+              <Box
+                sx={{
+                  position: "sticky",
+                  top: "84px", // Navbar offset + padding
+                }}
+              >
+                <LIST userName={userName} />
+              </Box>
             </Grid2>
-          </Grid2>
+          )}
         </Grid2>
-      </Grid2>
+      </Box>
 
-      {/* Footer Section */}
-      <Grid2 sx={{ display: { xs: "flex", sm: "none", md: "none" } }}>
+      {/* Footer Section for Mobile */}
+      <Box sx={{ display: { xs: "block", sm: "none" } }}>
         <FOOTERBAR />
-      </Grid2>
-    </Grid2>
+      </Box>
+
+      {/* Global AI Chatbot Assistant */}
+      <ChatbotWidget />
+    </Box>
   );
 }
 

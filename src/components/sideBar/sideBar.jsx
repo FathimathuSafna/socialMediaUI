@@ -43,69 +43,81 @@ function Sidebar() {
     },
   ];
 
+  const currentPath = window.location.pathname;
+
+  const getIsActive = (label) => {
+    if (label === "Home" && currentPath === "/") return true;
+    if (label === "Profile" && currentPath.startsWith("/profile/")) return true;
+    return false;
+  };
+
   return (
     <>
-      <Box sx={{ flexGrow: 1 }}>
-        <Grid2
-          container
-          alignItems="center"
-          sx={{
-            bgcolor: bgColor,
-            color: textColor,
-            transition: "all 0.3s ease-in-out",
-            padding: "10px",
-            position: "fixed",
-            top: 0,
-            left: 6,
-            width: "100%",
-            zIndex: 1,
-          }}
-        >
-          <Grid2 item>
-            <Box
-              sx={{
-                height: "100vh",
-                position: "fixed",
-                top: "4.5rem",
-                left: 25,
-                zIndex: 1,
-                padding: "1rem",
-              }}
-            >
-              <Grid2 container direction="column" spacing={3}>
-                {menuItems.map((item, index) => (
-                  <Grid2
-                    key={index}
-                    container
-                    direction="row"
-                    alignItems="center"
-                    spacing={1}
-                  >
-                    <Grid2 item>{item.icon}</Grid2>
-                    <Grid2 item>
-                      <Button
-                        sx={{
-                          backgroundColor: btnColor,
-                          border: "none",
-                          fontSize: "1.1rem",
-                          cursor: "pointer",
-                          color: textColor,
-                          textTransform: "none",
-                          "&:hover": {
-                            backgroundColor: darkMode ? "#1e1e1e" : "#f0f0f0",
-                          },
-                        }}
-                        onClick={item.action}
-                      >
-                        {item.label}
-                      </Button>
-                    </Grid2>
-                  </Grid2>
-                ))}
-              </Grid2>
-            </Box>
-          </Grid2>
-        </Grid2>
+      <Box
+        sx={{
+          height: "100vh",
+          position: "fixed",
+          top: 60,
+          left: 0,
+          width: { xs: "0px", sm: "180px", md: "240px" },
+          borderRight: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
+          bgcolor: darkMode ? "rgba(9, 13, 22, 0.55)" : "rgba(255, 255, 255, 0.4)",
+          backdropFilter: "blur(28px)",
+          pt: 4,
+          px: 2,
+          display: { xs: "none", sm: "block" },
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          zIndex: 10,
+        }}
+      >
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          {menuItems.map((item, index) => {
+            const active = getIsActive(item.label);
+            return (
+              <Button
+                key={index}
+                onClick={item.action}
+                startIcon={item.icon}
+                fullWidth
+                sx={{
+                  justifyContent: "flex-start",
+                  textTransform: "none",
+                  fontSize: "0.95rem",
+                  fontWeight: active ? 700 : 500,
+                  py: 1.5,
+                  px: 2.5,
+                  borderRadius: "14px",
+                  color: active
+                    ? (darkMode ? "#ffffff" : "#0f172a")
+                    : (darkMode ? "#94a3b8" : "#64748b"),
+                  backgroundColor: active
+                    ? (darkMode ? "rgba(99, 102, 241, 0.08)" : "rgba(99, 102, 241, 0.06)")
+                    : "transparent",
+                  borderLeft: active
+                    ? `4px solid #6366f1`
+                    : "4px solid transparent",
+                  transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                  "& .MuiButton-startIcon": {
+                    color: active
+                      ? "#6366f1"
+                      : "inherit",
+                    mr: 2,
+                    "& svg": {
+                      fontSize: 22,
+                    }
+                  },
+                  "&:hover": {
+                    backgroundColor: darkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(15, 23, 42, 0.03)",
+                    transform: "translateX(4px)",
+                    color: darkMode ? "#ffffff" : "#0f172a",
+                  },
+                }}
+              >
+                {item.label}
+              </Button>
+            );
+          })}
+        </Box>
       </Box>
 
       <AddPost open={open} handleClose={handleClose} />

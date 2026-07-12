@@ -40,20 +40,42 @@ export default function LIKEDMODAL({ open, handleClose, postId }) {
   return (
     <Modal open={open} onClose={handleClose}>
       <Box
+        className="glass-panel"
         sx={{
           position: "absolute",
-          top: "40%",
+          top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: { xs: "90%", sm: 400 },
-          maxHeight: "90vh", 
-          bgcolor: bgColor,
+          maxHeight: "60vh",
+          bgcolor: darkMode ? "rgba(9, 13, 22, 0.55)" : "rgba(255, 255, 255, 0.95)",
           color: textColor,
-          borderRadius: 1,
-          p: 2,
+          borderRadius: "28px",
+          border: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
+          boxShadow: darkMode
+            ? "0 30px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)"
+            : "0 20px 40px -15px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.7)",
+          p: 3,
           overflowY: "auto",
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          }
         }}
       >
+        <Typography
+          variant="h6"
+          mb={2.5}
+          sx={{
+            fontWeight: 800,
+            fontSize: "1.1rem",
+            color: textColor,
+            letterSpacing: "-0.2px",
+            textAlign: "center",
+          }}
+        >
+          Likes
+        </Typography>
         {users.length > 0 ? (
           users.map((user, index) => {
             return (
@@ -62,24 +84,37 @@ export default function LIKEDMODAL({ open, handleClose, postId }) {
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  p: 1,
-                  borderBottom: "1px solid #eee",
+                  p: 1.5,
+                  borderRadius: "16px",
+                  mb: 1,
                   gap: 2,
-                  backgroundColor: bgColor,
-                  color: textColor,
+                  cursor: "pointer",
+                  transition: "all 0.2s ease-in-out",
+                  borderBottom: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)"}`,
+                  "&:hover": {
+                    backgroundColor: darkMode ? "rgba(99, 102, 241, 0.05)" : "rgba(99, 102, 241, 0.03)",
+                    transform: "translateX(4px)",
+                    borderColor: "transparent",
+                  }
                 }}
-                // onClick={() => {
-                //   handleClose();
-                //   navigate(`/profile/${user.userName}`);
-                // }}
+                onClick={() => {
+                  handleClose();
+                  navigate(`/profile/${user.userName}`);
+                }}
               >
                 <Avatar
                   src={user.profilePictureUrl || "/static/images/avatar/1.jpg"}
-                  sx={{ width: 40, height: 40 }}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    border: `1.5px solid ${darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`
+                  }}
                 />
                 <Box>
-                  <Typography variant="subtitle1">{user.userName}</Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography sx={{ fontWeight: 700, fontSize: "0.9rem", color: textColor }}>
+                    {user.userName}
+                  </Typography>
+                  <Typography sx={{ fontSize: "0.8rem", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: 500 }}>
                     {user.name || ""}
                   </Typography>
                 </Box>
@@ -88,8 +123,8 @@ export default function LIKEDMODAL({ open, handleClose, postId }) {
           })
         ) : (
           <Box sx={{ textAlign: "center", mt: 4 }}>
-            <Typography variant="body2" color="#8e8e8e">
-              No user liked the post .
+            <Typography sx={{ fontSize: "0.85rem", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: 500 }}>
+              No likes yet.
             </Typography>
           </Box>
         )}

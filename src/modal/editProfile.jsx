@@ -3,7 +3,8 @@ import { Typography, Box, Button, Modal, TextField } from "@mui/material";
 import { MuiFileInput } from "mui-file-input";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
-import { supabase } from "../store/supabaseClient";
+import axios from "axios";
+import { baseURL } from "../service/axiosInstance";
 import * as Yup from "yup";
 import { updateUserDetails } from "../service/userApi";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
@@ -282,6 +283,15 @@ const EditProfile = ({ open, handleClose, user }) => {
   const textColor = darkMode ? "#ffffff" : "#000000";
   const [uploadProgress, setUploadProgress] = useState(0);
 
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const handleSubmit = async (values, { setSubmitting }) => {
     const { name, file, bio } = values;
 
@@ -301,25 +311,21 @@ const EditProfile = ({ open, handleClose, user }) => {
         fileToUpload = new File([blob], "profile.jpeg", { type: blob.type });
       }
       setUploadProgress(30);
-      const fileExt = fileToUpload.name.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `profilepictures/${fileName}`;
 
-      const { data, error: uploadError } = await supabase.storage
-        .from("profilepictures")
-        .upload(filePath, fileToUpload, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+      const base64Image = await fileToBase64(fileToUpload);
+      setUploadProgress(60);
 
-      if (uploadError) throw uploadError;
-      setUploadProgress(70);
+      const uploadResponse = await axios.post(`${baseURL}/upload`, {
+        image: base64Image,
+        folder: "profilepictures"
+      });
 
-      const { data: publicUrlData } = supabase.storage
-        .from("profilepictures")
-        .getPublicUrl(filePath);
+      if (!uploadResponse.data.status) {
+        throw new Error(uploadResponse.data.message || "Failed to upload to Cloudinary");
+      }
 
-      const imageUrl = publicUrlData.publicUrl;
+      const imageUrl = uploadResponse.data.url;
+      setUploadProgress(90);
 
       await updateUserDetails({
         name,
@@ -342,18 +348,22 @@ const EditProfile = ({ open, handleClose, user }) => {
   return (
     <Modal open={open} onClose={handleClose} userDetails={user}>
       <Box
+        className="glass-panel"
         sx={{
           position: "absolute",
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: { xs: "80vw", sm: "70vw", md: "600px" }, // **Reduced xs width to 70vw**
+          width: { xs: "90vw", sm: "80vw", md: "600px" },
           overflow: "hidden",
-          borderRadius: 2,
-          boxShadow: 24,
-          p: { xs: 1, sm: 3 },
-          backgroundColor: bgColor,
-          color: textColor,
+          borderRadius: "28px",
+          backdropFilter: "blur(28px)",
+          backgroundColor: darkMode ? "rgba(9, 13, 22, 0.55)" : "rgba(255, 255, 255, 0.9)",
+          border: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
+          boxShadow: darkMode
+            ? "0 30px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)"
+            : "0 20px 40px -15px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.7)",
+          p: { xs: 4, sm: 5 },
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -362,42 +372,43 @@ const EditProfile = ({ open, handleClose, user }) => {
         <Typography
           variant="h6"
           sx={{
-            fontStyle: "inherit",
-            fontSize: { xs: "0.85rem", sm: "1.25rem" },
+            fontWeight: 700,
+            fontSize: "1.25rem",
             textAlign: "center",
-            mb: { xs: 1, sm: 1 },
+            mb: 3,
+            color: darkMode ? "#f8fafc" : "#0f172a",
           }}
           component="h2"
-          gutterBottom
         >
           Edit Profile
-          {uploadProgress > 0 && uploadProgress < 100 && (
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="caption" sx={{ color: textColor }}>
-                Uploading... {uploadProgress}%
-              </Typography>
+        </Typography>
+
+        {uploadProgress > 0 && uploadProgress < 100 && (
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="caption" sx={{ color: textColor, fontWeight: 600 }}>
+              Uploading... {uploadProgress}%
+            </Typography>
+            <Box
+              sx={{
+                height: 6,
+                width: "100%",
+                backgroundColor: darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
+                borderRadius: 99,
+                mt: 0.5,
+                overflow: "hidden",
+              }}
+            >
               <Box
                 sx={{
-                  height: 5,
-                  width: "100%",
-                  backgroundColor: "#ccc",
-                  borderRadius: 1,
-                  mt: 0.5,
+                  height: "100%",
+                  width: `${uploadProgress}%`,
+                  background: "linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)",
+                  transition: "width 0.4s ease-in-out",
                 }}
-              >
-                <Box
-                  sx={{
-                    height: "100%",
-                    width: `${uploadProgress}%`,
-                    backgroundColor: "#8e8e8e",
-                    borderRadius: 1,
-                    transition: "width 0.4s ease-in-out",
-                  }}
-                />
-              </Box>
+              />
             </Box>
-          )}
-        </Typography>
+          </Box>
+        )}
 
         <Formik
           enableReinitialize
@@ -415,43 +426,56 @@ const EditProfile = ({ open, handleClose, user }) => {
                 sx={{
                   display: "flex",
                   flexDirection: { xs: "column", sm: "row" },
-                  gap: { xs: 0.9, sm: 3 },
+                  gap: 3,
                   alignItems: "flex-start",
                   justifyContent: "center",
                   width: "100%",
                 }}
               >
-                {/* Left: Image Upload & Preview */}
-
-                {/* Right: Form Inputs (Name, Bio) */}
+                {/* Form Inputs (Name, Bio) */}
                 <Box
                   sx={{
                     width: "100%",
-                    maxWidth: { xs: "100%", sm: "50%" },
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "center",
+                    gap: 2,
                     flexGrow: 1,
-                    px: { xs: 0, sm: 0 },
                   }}
                 >
                   <Field name="name">
                     {({ field }) => (
                       <TextField
                         {...field}
-                        placeholder={user.name ? user.name : "Name"}
+                        placeholder="Full Name"
+                        label="Name"
                         fullWidth
-                        margin="dense"
-                        size="small" // Added size small for compactness
+                        size="small"
                         error={Boolean(touched.name && errors.name)}
                         helperText={touched.name && errors.name}
                         sx={{
-                          "& .MuiInputBase-input": {
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "14px",
                             color: textColor,
+                            backgroundColor: darkMode ? "rgba(0, 0, 0, 0.2)" : "rgba(255, 255, 255, 0.4)",
+                            "& fieldset": {
+                              borderColor: darkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
+                              transition: "all 0.2s ease-in-out",
+                            },
+                            "&:hover fieldset": {
+                              borderColor: darkMode ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.2)",
+                            },
+                            "&.Mui-focused fieldset": {
+                              borderColor: darkMode ? "#60a5fa" : "#2563eb",
+                              boxShadow: `0 0 0 4px ${darkMode ? "rgba(96, 165, 250, 0.15)" : "rgba(37, 99, 235, 0.08)"}`,
+                            },
                           },
                           "& .MuiInputLabel-root": {
-                            color: textColor,
-                          },
+                            color: darkMode ? "#94a3b8" : "#64748b",
+                            fontSize: "0.9rem",
+                            "&.Mui-focused": {
+                              color: darkMode ? "#60a5fa" : "#2563eb",
+                            }
+                          }
                         }}
                       />
                     )}
@@ -461,35 +485,50 @@ const EditProfile = ({ open, handleClose, user }) => {
                     {({ field }) => (
                       <TextField
                         {...field}
-                        placeholder={user.bio ? user.bio : "bio"}
+                        placeholder="Tell us about yourself"
+                        label="Bio"
                         fullWidth
                         variant="outlined"
-                        margin="dense"
                         multiline
-                        rows={1}
+                        rows={3}
                         size="small"
                         error={Boolean(touched.bio && errors.bio)}
                         helperText={touched.bio && errors.bio}
                         sx={{
-                          "& .MuiInputBase-input": {
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "14px",
                             color: textColor,
+                            backgroundColor: darkMode ? "rgba(0, 0, 0, 0.2)" : "rgba(255, 255, 255, 0.4)",
+                            "& fieldset": {
+                              borderColor: darkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
+                              transition: "all 0.2s ease-in-out",
+                            },
+                            "&:hover fieldset": {
+                              borderColor: darkMode ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.2)",
+                            },
+                            "&.Mui-focused fieldset": {
+                              borderColor: darkMode ? "#60a5fa" : "#2563eb",
+                              boxShadow: `0 0 0 4px ${darkMode ? "rgba(96, 165, 250, 0.15)" : "rgba(37, 99, 235, 0.08)"}`,
+                            },
                           },
                           "& .MuiInputLabel-root": {
-                            color: textColor,
-                          },
+                            color: darkMode ? "#94a3b8" : "#64748b",
+                            fontSize: "0.9rem",
+                            "&.Mui-focused": {
+                              color: darkMode ? "#60a5fa" : "#2563eb",
+                            }
+                          }
                         }}
                       />
                     )}
                   </Field>
+
+                  {/* File Input for Mobile Viewports */}
                   <Box
                     sx={{
                       width: "100%",
-                      maxWidth: { xs: "100%", sm: "50%" },
-                      display: { xs: "block", sm: "none", md: "none" },
-                      flexDirection: "column",
-                      alignItems: "center",
-                      flexShrink: 0,
-                      pt: { xs: 0, sm: 1.1 },
+                      display: { xs: "block", sm: "none" },
+                      mt: 1,
                     }}
                   >
                     <Field name="file">
@@ -501,7 +540,7 @@ const EditProfile = ({ open, handleClose, user }) => {
                       <Typography
                         color="error"
                         variant="caption"
-                        sx={{ mt: 0.1, fontSize: "0.65rem" }}
+                        sx={{ mt: 0.5, display: "block" }}
                       >
                         {errors.file}
                       </Typography>
@@ -511,8 +550,8 @@ const EditProfile = ({ open, handleClose, user }) => {
                   <Box
                     sx={{
                       display: "flex",
-                      mt: { xs: 1, sm: 2 },
-                      gap: 0.6,
+                      mt: 2,
+                      gap: 2,
                     }}
                   >
                     <Button
@@ -520,11 +559,20 @@ const EditProfile = ({ open, handleClose, user }) => {
                       onClick={handleClose}
                       disabled={isSubmitting}
                       sx={{
-                        borderColor: "#8e8e8e",
-                        color: "#8e8e8e",
-                        py: 0.4,
-                        fontSize: "0.65rem",
-                      }} // **Reduced py and font size**
+                        textTransform: "none",
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        borderRadius: "12px",
+                        borderColor: darkMode ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.15)",
+                        color: darkMode ? "#f8fafc" : "#0f172a",
+                        py: 1,
+                        px: 3,
+                        flex: 1,
+                        "&:hover": {
+                          borderColor: darkMode ? "#ffffff" : "#000000",
+                          backgroundColor: darkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
+                        }
+                      }}
                     >
                       Close
                     </Button>
@@ -533,25 +581,39 @@ const EditProfile = ({ open, handleClose, user }) => {
                       type="submit"
                       disabled={isSubmitting}
                       sx={{
-                        backgroundColor: "rgba(0, 0, 0, 0.65)",
+                        textTransform: "none",
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        borderRadius: "12px",
+                        background: darkMode
+                          ? "linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)"
+                          : "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
                         color: "#ffffff",
-                        py: 0.4,
-                        fontSize: "0.65rem",
+                        py: 1,
+                        px: 3,
+                        flex: 1,
+                        boxShadow: darkMode
+                          ? "0 4px 14px 0 rgba(96, 165, 250, 0.2)"
+                          : "0 4px 14px 0 rgba(59, 130, 246, 0.3)",
+                        "&:hover": {
+                          background: darkMode
+                            ? "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)"
+                            : "linear-gradient(135deg, #2563eb 0%, #1e40af 100%)",
+                        }
                       }}
                     >
-                      Edit
+                      Save Changes
                     </Button>
                   </Box>
                 </Box>
+
+                {/* File Input for Desktop Viewports */}
                 <Box
                   sx={{
                     width: "100%",
-                    maxWidth: { xs: "100%", sm: "50%" },
-                    display: { xs: "none", sm: "block", md: "block" },
-                    flexDirection: "column",
-                    alignItems: "center",
+                    maxWidth: { xs: "100%", sm: "45%" },
+                    display: { xs: "none", sm: "block" },
                     flexShrink: 0,
-                    pt: { xs: 0, sm: 1.1 },
                   }}
                 >
                   <Field name="file">
@@ -563,7 +625,7 @@ const EditProfile = ({ open, handleClose, user }) => {
                     <Typography
                       color="error"
                       variant="caption"
-                      sx={{ mt: 0.1, fontSize: "0.65rem" }}
+                      sx={{ mt: 1, display: "block" }}
                     >
                       {errors.file}
                     </Typography>

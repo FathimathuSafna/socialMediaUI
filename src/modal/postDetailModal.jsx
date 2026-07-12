@@ -88,32 +88,33 @@ function PostDetailModal({ open, handleClose, post, onDelete }) {
         aria-labelledby="post-detail-modal-title"
       >
         <Box
+          className="glass-panel"
           sx={{
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: { xs: "90vw", sm: "70vw", md: "50vw" },
-            maxWidth: 300,
-            maxHeight: "65vh",
-            bgcolor: bgColor,
-            color: "#8e8e8e",
-            borderRadius: 0.1,
-            borderColor: "none",
+            width: { xs: "90vw", sm: "400px" },
+            bgcolor: darkMode ? "rgba(9, 13, 22, 0.55)" : "rgba(255, 255, 255, 0.95)",
+            color: darkMode ? "#f8fafc" : "#0f172a",
+            borderRadius: "28px",
+            border: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
+            boxShadow: darkMode
+              ? "0 30px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)"
+              : "0 20px 40px -15px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.7)",
             overflow: "hidden",
           }}
         >
           {/* Image + Menu */}
-          <Box sx={{ position: "relative", height: 300 }}>
+          <Box sx={{ position: "relative", width: "100%", aspectRatio: "1/1" }}>
             <img
               src={post.postImageUrl}
               alt="User post"
               style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "cover", // or "contain" if needed
+                objectFit: "cover",
                 display: "block",
-                borderColor: "none",
               }}
             />
             <IconButton
@@ -123,11 +124,15 @@ function PostDetailModal({ open, handleClose, post, onDelete }) {
               onClick={handleClickMenu}
               sx={{
                 position: "absolute",
-                top: 8,
-                right: 8,
-                backgroundColor: "rgba(0, 0, 0, 0.3)",
-                color: "white",
-                
+                top: 12,
+                right: 12,
+                backgroundColor: "rgba(9, 13, 22, 0.6)",
+                color: "#ffffff",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                "&:hover": {
+                  backgroundColor: "rgba(9, 13, 22, 0.8)",
+                }
               }}
             >
               <MoreVertIcon />
@@ -135,38 +140,62 @@ function PostDetailModal({ open, handleClose, post, onDelete }) {
           </Box>
 
           {/* Icons and Description */}
-          <Box display="flex" alignItems="center" gap={1} padding="8px">
-            <IconButton
-              size="small"
-              sx={{ color: "#8e8e8e" }}
-              onClick={() => handleLikeOpenModal(post._id)}
-            >
-              <FavoriteBorder sx={{ fontSize: 24 }} />
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={() => handleOpenModal(post._id)}
-              sx={{ color: "#8e8e8e" }}
-            >
-              <ChatBubbleOutline sx={{ fontSize: 24 }} />
-            </IconButton>
-          </Box>
+          <Box sx={{ p: 2.5 }}>
+            <Box display="flex" alignItems="center" gap={1.5} mb={1.5}>
+              <IconButton
+                size="small"
+                sx={{
+                  color: "#ef4444",
+                  transition: "transform 0.2s ease",
+                  "&:hover": { transform: "scale(1.15)" }
+                }}
+                onClick={() => handleLikeOpenModal(post._id)}
+              >
+                <FavoriteBorder sx={{ fontSize: 24 }} />
+              </IconButton>
+              <IconButton
+                size="small"
+                onClick={() => handleOpenModal(post._id)}
+                sx={{
+                  color: "#6366f1",
+                  transition: "transform 0.2s ease",
+                  "&:hover": { transform: "scale(1.15)" }
+                }}
+              >
+                <ChatBubbleOutline sx={{ fontSize: 24 }} />
+              </IconButton>
+            </Box>
 
-          <Box sx={{ px: 2, fontWeight: 600, fontSize: "14px" }}>
-            {likeCount} likes
-          </Box>
-          <Box sx={{ bgcolor: bgColor, px: 2, pb: 2 }}>
-            <Typography>{post.description}</Typography>
+            <Typography sx={{ fontWeight: 800, fontSize: "0.9rem", mb: 1, color: darkMode ? "#cbd5e1" : "#475569" }}>
+              {likeCount} likes
+            </Typography>
+
+            <Typography sx={{ fontSize: "0.9rem", lineHeight: 1.5, color: darkMode ? "#cbd5e1" : "#475569" }}>
+              {post.description}
+            </Typography>
           </Box>
 
           {/* Menu for delete */}
-          <Menu anchorEl={anchorEl} open={openMenu} onClose={handleCloseMenu}>
+          <Menu
+            anchorEl={anchorEl}
+            open={openMenu}
+            onClose={handleCloseMenu}
+            PaperProps={{
+              sx: {
+                bgcolor: darkMode ? "#0f1626" : "#ffffff",
+                color: darkMode ? "#f8fafc" : "#0f172a",
+                borderRadius: "12px",
+                border: `1px solid ${darkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+                boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+              }
+            }}
+          >
             <MenuItem
               onClick={handleDelete}
               disabled={isDeleting}
-              sx={{ color: "red" }}
+              sx={{ color: "#ef4444", fontWeight: 700, fontSize: "0.85rem" }}
             >
-              {isDeleting ? <CircularProgress size={24} /> : "Delete"}
+              {isDeleting ? <CircularProgress size={20} sx={{ color: "#ef4444" }} /> : "Delete"}
             </MenuItem>
           </Menu>
         </Box>

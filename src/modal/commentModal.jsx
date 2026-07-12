@@ -116,265 +116,245 @@ export default function SlideUpModal({
         fetchComments();
       })
       .catch((err) => console.error("Error deleting comment:", err));
-    handleMenuClose(idx);
   };
 
   return (
     <>
       {/* Main Comment Modal */}
-      <Modal open={open} onClose={handleClose}>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Slide direction="up" in={open}>
           <Box
             component="form"
             onSubmit={formik.handleSubmit}
+            className="glass-panel"
             sx={{
-              top: { xs: "40%", md: "20%" },
-              left: { xs: "14%", md: "27%" },
-              transform: "translate(-50%, -50%)",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
-              bottom: 0,
-              position: "absolute",
               width: {
-                xs: "75%",
-                sm: "70%",
-                md: "40%",
+                xs: "90%",
+                sm: "500px",
               },
-              bgcolor: bgColor,
-              textColor: textColor,
-              p: 1.2,
-              mt: 2,
-              boxShadow: 24,
-              borderRadius: "10px 10px 0 0",
-              overflowY: "hidden",
+              height: { xs: "75vh", sm: "60vh" },
+              bgcolor: darkMode ? "rgba(9, 13, 22, 0.55)" : "rgba(255, 255, 255, 0.95)",
+              color: textColor,
+              p: 3.5,
+              boxShadow: darkMode
+                ? "0 30px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)"
+                : "0 20px 40px -15px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.7)",
+              borderRadius: "28px",
+              border: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
+              overflow: "hidden",
             }}
           >
-            <Grid2 container direction="row" mb={3} spacing={2}>
-              <Grid2
-                xs={4}
+            {/* Header info */}
+            <Grid2 container direction="row" alignItems="center" mb={2.5} gap={1.5} sx={{ pb: 2, borderBottom: `1px solid ${darkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}` }}>
+              <Avatar
+                src={profilePicture ? profilePicture : "/broken-image.jpg"}
                 sx={{
-                  textAlign: "left",
-                  fontSize: "15px",
-                  color: textColor,
-                  fontWeight: "bold",
-                  fontFamily: "Arial", // Make sure the font is available
+                  width: 40,
+                  height: 40,
+                  border: `1.5px solid ${darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`
                 }}
-              >
-                <Avatar
-                  src={profilePicture ? profilePicture : "/broken-image.jpg"}
-                />
-              </Grid2>
-              <Grid2
-                direction="column"
-                xs={4}
-                sx={{
-                  textAlign: "left",
-                  fontSize: { md: "15px" },
-                  color: textColor,
-                  fontWeight: "bold",
-                  fontFamily: "Arial", // Make sure the font is available
-                }}
-              >
-                <Grid2>{userName}</Grid2>
-
-                <Grid2 xs={6} mt={1}>
-                  <Typography
-                    sx={{
-                      textAlign: "left",
-                      fontSize: { xs: 12, md: 14 },
-                      color: textColor,
-                      fontWeight: "light",
-                      fontFamily: "Georgia",
-                    }}
-                  >
-                    {description}
-                  </Typography>
-                </Grid2>
-              </Grid2>
+              />
+              <Box>
+                <Typography sx={{ fontWeight: 700, fontSize: "0.9rem", color: textColor }}>
+                  {userName}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "0.8rem",
+                    color: darkMode ? "#cbd5e1" : "#475569",
+                    fontWeight: 500,
+                  }}
+                >
+                  {description}
+                </Typography>
+              </Box>
             </Grid2>
 
             {/* Comment List */}
-            <Grid2
-              container
-              direction="column"
-              spacing={1}
+            <Box
               sx={{
-                width: "100%",
-                display: "flex",
-                flexGrow: 1,
+                flex: 1,
                 overflowY: "auto",
                 scrollbarWidth: "none",
+                "&::-webkit-scrollbar": {
+                  display: "none",
+                },
+                mb: 2.5,
               }}
             >
-              <Grid2 sx={{ flex: 1, scrollbarWidth: "none" }}>
-                {loading ? (
-                  <>
-                    {[1, 2, 3].map((i) => (
-                      <Box key={i} sx={{ mb: 1 }}>
-                        <Skeleton
-                          variant="text"
-                          width="80%"
-                          height={32}
-                          sx={{ bgcolor: darkMode ? "#333" : "#ccc" }}
-                        />
-                      </Box>
-                    ))}
-                  </>
-                ) : comments.length > 0 ? (
-                  comments.map((comment, idx) => {
-                    const menuOptions = comment.isEditable
-                      ? ["Edit", "Delete"]
-                      : ["Report"];
+              {loading ? (
+                <Box>
+                  {[1, 2, 3].map((i) => (
+                    <Box key={i} sx={{ mb: 2, display: "flex", gap: 1.5, alignItems: "center" }}>
+                      <Skeleton variant="circular" width={32} height={32} sx={{ bgcolor: darkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }} />
+                      <Skeleton variant="text" width="70%" height={24} sx={{ bgcolor: darkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }} />
+                    </Box>
+                  ))}
+                </Box>
+              ) : comments.length > 0 ? (
+                comments.map((comment, idx) => {
+                  const menuOptions = comment.isEditable
+                    ? ["Edit", "Delete"]
+                    : ["Report"];
 
-                    return (
-                      <Grid2>
-                        <Box
-                          key={idx}
+                  return (
+                    <Box
+                      key={comment.commentId || idx}
+                      sx={{
+                        mb: 1.5,
+                        p: 1.5,
+                        borderRadius: "16px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        backgroundColor: darkMode ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.02)",
+                        border: `1px solid ${darkMode ? "rgba(255,255,255,0.02)" : "rgba(0, 0, 0, 0.03)"}`,
+                      }}
+                    >
+                      <Box display="flex" gap={1.5} alignItems="center">
+                        <Avatar
+                          src={comment.profilePicture || "/broken-image.jpg"}
                           sx={{
-                            mb: 1,
-                            p: 1,
-                            borderRadius: 1,
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
+                            width: 32,
+                            height: 32,
+                            border: `1px solid ${darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`
+                          }}
+                        />
+                        <Box>
+                          <Typography sx={{ fontWeight: 700, fontSize: "0.85rem", color: textColor, display: "inline-block", mr: 0.5 }}>
+                            {comment.userName}
+                          </Typography>
+                          <Typography sx={{ fontSize: "0.85rem", color: darkMode ? "#cbd5e1" : "#475569", display: "inline" }}>
+                            {comment.commentText}
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Box>
+                        <IconButton
+                          sx={{ color: darkMode ? "#94a3b8" : "#64748b" }}
+                          size="small"
+                          onClick={(e) => handleMenuOpen(e, idx)}
+                          aria-controls={`menu-${idx}`}
+                          aria-haspopup="true"
+                        >
+                          <MoreVertIcon fontSize="small" />
+                        </IconButton>
+                        <Menu
+                          id={`menu-${idx}`}
+                          anchorEl={menuAnchorEls[idx]}
+                          open={Boolean(menuAnchorEls[idx])}
+                          onClose={() => handleMenuClose(idx)}
+                          PaperProps={{
+                            sx: {
+                              maxHeight: ITEM_HEIGHT * 4.5,
+                              width: "16ch",
+                              bgcolor: darkMode ? "#0f1626" : "#ffffff",
+                              color: textColor,
+                              borderRadius: "12px",
+                              border: `1px solid ${darkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+                              boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+                            },
                           }}
                         >
-                          <Box display="flex" gap={2}>
-                            <span style={{ fontSize: 11 }}>
-                              {comment.profilePicture ? (
-                                <Avatar src={comment.profilePicture} />
-                              ) : (
-                                <Avatar src="/broken-image.jpg" />
-                              )}
-                            </span>
-                            <span
-                              style={{
-                                fontWeight: 900,
-                                fontSize: 17,
-                                color: textColor,
+                          {menuOptions.map((option) => (
+                            <MenuItem
+                              key={option}
+                              sx={{ fontSize: "0.85rem", fontWeight: 600 }}
+                              onClick={() => {
+                                if (option === "Edit") {
+                                  handleEditClick(comment, idx);
+                                } else if (option === "Delete") {
+                                  handleDeleteComment(comment.commentId);
+                                  handleMenuClose(idx);
+                                } else {
+                                  handleMenuClose(idx);
+                                }
                               }}
                             >
-                              {comment.userName}:
-                            </span>{" "}
-                            <span
-                              style={{
-                                fontSize: { xs: 12, md: 16 },
-                                mb: 2,
-                                color: textColor,
-                              }}
-                            >
-                              {comment.commentText}
-                            </span>
-                          </Box>
-                          <Box>
-                            <IconButton
-                              sx={{ color: textColor }}
-                              size="small"
-                              onClick={(e) => handleMenuOpen(e, idx)}
-                              aria-controls={`menu-${idx}`}
-                              aria-haspopup="true"
-                            >
-                              <MoreVertIcon fontSize="small" />
-                            </IconButton>
-                            <Menu
-                              id={`menu-${idx}`}
-                              anchorEl={menuAnchorEls[idx]}
-                              open={Boolean(menuAnchorEls[idx])}
-                              onClose={() => handleMenuClose(idx)}
-                              PaperProps={{
-                                sx: {
-                                  maxHeight: ITEM_HEIGHT * 4.5,
-                                  width: "20ch",
-                                  bgcolor: bgColor,
-                                  color: textColor,
-                                },
-                              }}
-                            >
-                              {menuOptions.map((option) => (
-                                <MenuItem
-                                  key={option}
-                                  onClick={() => {
-                                    if (option === "Edit") {
-                                      handleEditClick(comment, idx);
-                                    } else if (option === "Delete") {
-                                      handleDeleteComment(
-                                        comment.commentId,
-                                        idx
-                                      );
-                                    } else {
-                                      handleMenuClose(idx);
-                                    }
-                                  }}
-                                >
-                                  {option}
-                                </MenuItem>
-                              ))}
-                            </Menu>
-                          </Box>
-                        </Box>
-                      </Grid2>
-                    );
-                  })
-                ) : (
-                  <Box sx={{ color: "#8e8e8e", fontSize: 14 }}>
-                    No comments yet.
-                  </Box>
-                )}
-              </Grid2>
-            </Grid2>
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      </Box>
+                    </Box>
+                  );
+                })
+              ) : (
+                <Box sx={{ color: darkMode ? "#94a3b8" : "#64748b", fontSize: "0.85rem", textAlign: "center", mt: 4, fontWeight: 500 }}>
+                  No comments yet. Be the first to share your thoughts!
+                </Box>
+              )}
+            </Box>
 
             {/* Comment Input */}
             <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
-                gap: 1, // spacing between TextField and Button
-                width: "100%", // take full available width
+                gap: 1.5,
+                width: "100%",
+                pt: 1.5,
+                borderTop: `1px solid ${darkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`
               }}
             >
               <TextField
                 name="comment"
                 value={formik.values.comment}
                 onChange={formik.handleChange}
-                placeholder="Type your comment here..."
+                placeholder="Write a comment..."
                 fullWidth
-                sx={{
-                  color: textColor,
-                  backgroundColor: bgColor,
-                  "& .MuiInputBase-input": {
-                    height: "20px",
-                    padding: "8px 12px",
-                    fontSize: "14px",
+                variant="outlined"
+                size="small"
+                InputProps={{
+                  sx: {
+                    borderRadius: "14px",
                     color: textColor,
-                    backgroundColor: bgColor,
-                  },
+                    backgroundColor: darkMode ? "rgba(0, 0, 0, 0.15)" : "rgba(255, 255, 255, 0.5)",
+                  }
+                }}
+                sx={{
                   "& .MuiOutlinedInput-root": {
-                    minHeight: "32px",
-                    backgroundColor: bgColor,
-                    "& fieldset": { border: "2px dotted #555" },
-                    "&:hover fieldset": { border: "2px dotted #000" },
+                    "& fieldset": {
+                      borderColor: darkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
+                      transition: "all 0.2s ease-in-out",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: darkMode ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.2)",
+                    },
                     "&.Mui-focused fieldset": {
-                      border: "2px dotted rgb(18, 18, 18)",
+                      borderColor: "#6366f1",
+                      boxShadow: `0 0 0 3px rgba(99, 102, 241, 0.15)`,
                     },
                   },
                 }}
               />
 
-              <Button
+              <IconButton
                 type="submit"
-                variant="contained"
                 sx={{
-                  backgroundColor: bgColor,
-                  color: textColor,
-                  boxShadow: "none",
-                  fontSize: "13px",
-                  minWidth: "50px",
-                  padding: "6px 12px",
+                  background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
+                  color: "#ffffff",
+                  boxShadow: "0 4px 12px rgba(99, 102, 241, 0.25)",
+                  transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                  p: 1.2,
+                  "&:hover": {
+                    background: "linear-gradient(135deg, #4f46e5 0%, #0891b2 100%)",
+                    transform: "translateY(-1px)",
+                  }
                 }}
               >
-                <SendIcon />
-              </Button>
+                <SendIcon sx={{ fontSize: 18 }} />
+              </IconButton>
             </Box>
           </Box>
         </Slide>
@@ -385,19 +365,32 @@ export default function SlideUpModal({
         <Box
           component="form"
           onSubmit={editFormik.handleSubmit}
+          className="glass-panel"
           sx={{
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             position: "absolute",
-            width: { xs: "50%", md: "30%" },
-            bgcolor: "background.paper",
+            width: { xs: "90%", sm: "400px" },
+            bgcolor: darkMode ? "rgba(9, 13, 22, 0.55)" : "rgba(255, 255, 255, 0.95)",
             p: 4,
-            borderRadius: 2,
-            boxShadow: 24,
+            borderRadius: "28px",
+            border: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
+            boxShadow: darkMode
+              ? "0 30px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)"
+              : "0 20px 40px -15px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.7)",
           }}
         >
-          <Typography variant="h6" mb={2}>
+          <Typography
+            variant="h6"
+            mb={2.5}
+            sx={{
+              fontWeight: 800,
+              fontSize: "1.1rem",
+              color: textColor,
+              letterSpacing: "-0.2px",
+            }}
+          >
             Edit Comment
           </Typography>
           <TextField
@@ -408,24 +401,65 @@ export default function SlideUpModal({
             variant="outlined"
             multiline
             rows={3}
-            sx={{ color: "#8e8e8e", border: "#8e8e8e" }}
+            InputProps={{
+              sx: {
+                borderRadius: "14px",
+                color: textColor,
+                backgroundColor: darkMode ? "rgba(0, 0, 0, 0.15)" : "rgba(255, 255, 255, 0.5)",
+              }
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: darkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
+                },
+                "&:hover fieldset": {
+                  borderColor: darkMode ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.2)",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#6366f1",
+                  boxShadow: `0 0 0 3px rgba(99, 102, 241, 0.15)`,
+                },
+              },
+            }}
           />
-          <Box display="flex" justifyContent="flex-end" mt={2}>
+          <Box display="flex" justifyContent="flex-end" gap={1.5} mt={3}>
             <Button
               onClick={() => setEditModalOpen(false)}
-              sx={{ mr: 1, color: "#8e8e8e" }}
+              sx={{
+                textTransform: "none",
+                fontWeight: 700,
+                fontSize: "0.85rem",
+                color: darkMode ? "#94a3b8" : "#64748b",
+                "&:hover": {
+                  backgroundColor: "transparent",
+                  color: textColor,
+                }
+              }}
             >
               Cancel
             </Button>
-            <Box display="flex" justifyContent="flex-end">
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ backgroundColor: "#8e8e8e" }}
-              >
-                Update
-              </Button>
-            </Box>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                textTransform: "none",
+                fontWeight: 700,
+                fontSize: "0.85rem",
+                borderRadius: "12px",
+                background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
+                px: 3,
+                py: 1,
+                color: "#ffffff",
+                boxShadow: "0 4px 12px rgba(99, 102, 241, 0.25)",
+                "&:hover": {
+                  background: "linear-gradient(135deg, #4f46e5 0%, #0891b2 100%)",
+                  transform: "translateY(-1px)",
+                }
+              }}
+            >
+              Update
+            </Button>
           </Box>
         </Box>
       </Modal>

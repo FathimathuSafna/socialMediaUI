@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Avatar } from "@mui/material";
+import { Box, Avatar, IconButton, Typography } from "@mui/material";
 import {
   Favorite,
   FavoriteBorder,
@@ -16,8 +16,6 @@ import { useNavigate } from "react-router-dom";
 
 const InstagramPost = () => {
   const { darkMode } = useCustomTheme();
-  const bgColor = darkMode ? "#121212" : "#ffffff";
-  const textColor = darkMode ? "#ffffff" : "#000000";
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [open, setOpen] = useState(false);
@@ -53,95 +51,156 @@ const InstagramPost = () => {
   return (
     <>
       {posts.map((post) => (
-        <div
+        <Box
           key={post._id}
-          style={{
-            maxWidth: "470px",
-            margin: "24px auto",
-            fontFamily: "system-ui, -apple-system, sans-serif",
-            backgroundColor: bgColor,
-            color: textColor,
-            borderRadius: "8px",
+          className="glass-panel"
+          sx={{
+            maxWidth: "520px",
+            margin: "32px auto",
+            backgroundColor: darkMode ? "rgba(9, 13, 22, 0.55)" : "#ffffff",
+            border: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
+            borderRadius: "24px",
+            boxShadow: darkMode
+              ? "0 20px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)"
+              : "0 15px 30px -10px rgba(15, 23, 42, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.7)",
             overflow: "hidden",
+            p: 2.5,
+            transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+            "&:hover": {
+              transform: "translateY(-3px)",
+              borderColor: darkMode ? "rgba(255, 255, 255, 0.12)" : "rgba(15, 23, 42, 0.12)",
+              boxShadow: darkMode
+                ? "0 30px 60px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.08)"
+                : "0 25px 45px -15px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.8)",
+            }
           }}
         >
           {/* Header */}
-          <div
-            style={{
+          <Box
+            sx={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              padding: "14px 8px",
+              pb: 2,
             }}
           >
-            <div
-              style={{
+            <Box
+              sx={{
                 display: "flex",
                 alignItems: "center",
                 cursor: "pointer",
               }}
               onClick={() => navigate(`/profile/${post.userId.userName}`)}
             >
-              <Avatar
-                src={post.userId?.profilePictureUrl || "/broken-image.jpg"}
+              <Box
                 sx={{
-                  width: 35,
-                  height: 35,
+                  p: "2px",
+                  borderRadius: "50%",
+                  background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 0 12px rgba(99, 102, 241, 0.25)",
                   marginRight: "12px",
+                  transition: "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                  "&:hover": {
+                    transform: "rotate(15deg) scale(1.05)",
+                  }
                 }}
-               
-              /> 
-
-              <span style={{ fontWeight: "600", fontSize: "14px" }}>
-                 {post.userId?.userName || "Unknown"} 
-              </span>
-            </div>
-            <button
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: "8px",
+              >
+                <Avatar
+                  src={post.userId?.profilePictureUrl || "/broken-image.jpg"}
+                  sx={{
+                    width: 38,
+                    height: 38,
+                    border: `2px solid ${darkMode ? "#080b11" : "#ffffff"}`,
+                  }}
+                />
+              </Box>
+              <Box>
+                <Typography
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: "0.9rem",
+                    color: darkMode ? "#f8fafc" : "#0f172a",
+                    letterSpacing: "-0.2px",
+                  }}
+                >
+                  {post.userId?.userName || "Unknown"}
+                </Typography>
+              </Box>
+            </Box>
+            <IconButton
+              sx={{
+                color: darkMode ? "#94a3b8" : "#64748b",
+                borderRadius: "12px",
+                "&:hover": {
+                  backgroundColor: darkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.04)",
+                }
               }}
             >
-              <MoreVert style={{ fontSize: "20px", color: textColor }} />
-            </button>
-          </div>
+              <MoreVert sx={{ fontSize: 20 }} />
+            </IconButton>
+          </Box>
 
           {/* Image */}
           <Box
             sx={{
-              width: { sm: "100%", xs: "90%" },
+              width: "100%",
               aspectRatio: "1/1",
-              backgroundImage: `url(${post.postImageUrl})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              cursor: "pointer",
-            }}
-            onDoubleClick={() => handleLike(post._id)}
-          />
-
-          {/* Action Buttons */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "6px 8px",
-              marginTop: "4px",
+              borderRadius: "18px",
+              overflow: "hidden",
+              position: "relative",
+              border: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
             }}
           >
-            <div>
-              <button onClick={() => handleLike(post._id)} style={btnStyle}>
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                backgroundImage: `url(${post.postImageUrl})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                cursor: "pointer",
+                transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+                "&:hover": {
+                  transform: "scale(1.04)",
+                }
+              }}
+              onDoubleClick={() => handleLike(post._id)}
+            />
+          </Box>
+
+          {/* Action Buttons */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              pt: 2,
+            }}
+          >
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <IconButton
+                onClick={() => handleLike(post._id)}
+                sx={{
+                  color: post.isLiked ? "#f43f5e" : (darkMode ? "#94a3b8" : "#64748b"),
+                  transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                  p: 1,
+                  borderRadius: "12px",
+                  "&:hover": {
+                    transform: "scale(1.15)",
+                    backgroundColor: "rgba(244, 63, 94, 0.08)",
+                  }
+                }}
+              >
                 {post.isLiked ? (
-                  <Favorite style={{ color: "#ed4956", fontSize: "24px" }} />
+                  <Favorite sx={{ fontSize: 22 }} />
                 ) : (
-                  <FavoriteBorder
-                    style={{ fontSize: "24px", color: "#8e8e8e" }}
-                  />
+                  <FavoriteBorder sx={{ fontSize: 22 }} />
                 )}
-              </button>
-              <button
-                style={btnStyle}
+              </IconButton>
+              <IconButton
                 onClick={() =>
                   handleOpen(
                     post._id,
@@ -150,73 +209,114 @@ const InstagramPost = () => {
                     post.userId.profilePictureUrl
                   )
                 }
+                sx={{
+                  color: darkMode ? "#94a3b8" : "#64748b",
+                  transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                  p: 1,
+                  borderRadius: "12px",
+                  "&:hover": {
+                    transform: "scale(1.15) rotate(-8deg)",
+                    backgroundColor: "rgba(99, 102, 241, 0.08)",
+                    color: "#6366f1",
+                  }
+                }}
               >
-                <ChatBubbleOutline
-                  style={{ fontSize: "24px", color: "#8e8e8e" }}
-                />
-              </button>
-              <button style={btnStyle}>
-                <Send style={{ fontSize: "24px", color: "#8e8e8e" }} />
-              </button>
-            </div>
-            <button style={btnStyle}>
-              <BookmarkBorder style={{ fontSize: "24px", color: "#8e8e8e" }} />
-            </button>
-          </div>
+                <ChatBubbleOutline sx={{ fontSize: 22 }} />
+              </IconButton>
+              <IconButton
+                sx={{
+                  color: darkMode ? "#94a3b8" : "#64748b",
+                  transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                  p: 1,
+                  borderRadius: "12px",
+                  "&:hover": {
+                    transform: "scale(1.15) rotate(12deg)",
+                    backgroundColor: "rgba(6, 182, 212, 0.08)",
+                    color: "#06b6d4",
+                  }
+                }}
+              >
+                <Send sx={{ fontSize: 22 }} />
+              </IconButton>
+            </Box>
+            <IconButton
+              sx={{
+                color: darkMode ? "#94a3b8" : "#64748b",
+                transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                p: 1,
+                borderRadius: "12px",
+                "&:hover": {
+                  transform: "scale(1.15)",
+                  backgroundColor: "rgba(245, 158, 11, 0.08)",
+                  color: "#f59e0b",
+                }
+              }}
+            >
+              <BookmarkBorder sx={{ fontSize: 22 }} />
+            </IconButton>
+          </Box>
 
           {/* Likes */}
-          <div
-            style={{
-              fontWeight: "600",
-              margin: "4px 0",
-              fontSize: "14px",
-              padding: "0 8px",
+          <Typography
+            sx={{
+              fontWeight: 700,
+              fontSize: "0.85rem",
+              color: darkMode ? "#f8fafc" : "#0f172a",
+              px: 1,
+              mt: 1,
             }}
           >
             {post.likeCount} likes
-          </div>
+          </Typography>
 
           {/* Caption */}
-          <div
-            style={{
-              fontSize: "14px",
-              lineHeight: "1.4",
-              padding: "0 8px",
-              marginBottom: "4px",
+          <Typography
+            sx={{
+              fontSize: "0.9rem",
+              lineHeight: "1.6",
+              color: darkMode ? "#cbd5e1" : "#334155",
+              px: 1,
+              mt: 0.5,
             }}
           >
-            <span style={{ fontWeight: "600", marginRight: "4px" }}>
+            <span style={{ fontWeight: 700, color: darkMode ? "#f8fafc" : "#0f172a", marginRight: "8px" }}>
               {post.userId?.userName || "Unknown"}
-
             </span>
             {post.description}
-          </div>
+          </Typography>
 
           {/* Comments */}
-          <div
-            style={{
-              color: "#8e8e8e",
-              fontSize: "14px",
-              padding: "0 8px",
-              marginBottom: "4px",
-              cursor: "pointer",
-            }}
-          >
-            View all {post.commentCount} comments
-          </div>
+          {post.commentCount > 0 && (
+            <Typography
+              onClick={() => handleOpen(post._id)}
+              sx={{
+                color: darkMode ? "#94a3b8" : "#64748b",
+                fontSize: "14px",
+                px: 1,
+                mt: 0.5,
+                cursor: "pointer",
+                "&:hover": {
+                  textDecoration: "underline",
+                }
+              }}
+            >
+              View all {post.commentCount} comments
+            </Typography>
+          )}
 
           {/* Timestamp */}
-          <div
-            style={{
-              color: "#8e8e8e",
-              fontSize: "10px",
+          <Typography
+            sx={{
+              color: darkMode ? "#475569" : "#94a3b8",
+              fontSize: "11px",
               textTransform: "uppercase",
-              padding: "0 8px",
-              letterSpacing: "0.2px",
+              letterSpacing: "0.5px",
+              px: 1,
+              mt: 1.5,
             }}
           >
-            3 HOURS AGO
-          </div>
+            3 hours ago
+          </Typography>
 
           {/* Comment Modal */}
           {open && selectedPostId === post._id && (
@@ -229,17 +329,10 @@ const InstagramPost = () => {
               profilePicture={post.userId.profilePictureUrl}
             />
           )}
-        </div>
+        </Box>
       ))}
     </>
   );
-};
-
-const btnStyle = {
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-  padding: "8px",
 };
 
 export default InstagramPost;

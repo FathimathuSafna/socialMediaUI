@@ -24,13 +24,20 @@ import { useTheme as useCustomTheme } from "../store/ThemeContext";
 // ... Search styles (unchanged)
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.black, 0.05),
+  borderRadius: "16px",
+  backgroundColor: "rgba(0, 0, 0, 0.15)",
+  border: "1px solid rgba(255, 255, 255, 0.08)",
+  transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
   "&:hover": {
-    backgroundColor: alpha(theme.palette.common.black, 0.1),
+    borderColor: "rgba(255, 255, 255, 0.2)",
+  },
+  "&:focus-within": {
+    borderColor: "#6366f1",
+    boxShadow: "0 0 0 4px rgba(99, 102, 241, 0.15)",
   },
   width: "100%",
 }));
+
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: "100%",
@@ -39,14 +46,17 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  color: "#94a3b8",
 }));
+
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   width: "100%",
   "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
+    padding: theme.spacing(1.5, 1.5, 1.5, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
+    fontSize: "0.95rem",
+    fontWeight: 500,
   },
 }));
 
@@ -60,8 +70,8 @@ export default function MessageDialog({ open, handleClose }) {
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUserName, setSelectedUserName] = useState(null);
   const { darkMode } = useCustomTheme();
-  const bgColor = darkMode ? "#121212" : "#ffffff";
-  const textColor = darkMode ? "#ffffff" : "#000000";
+  const bgColor = darkMode ? "var(--bg-primary)" : "var(--bg-primary)";
+  const textColor = darkMode ? "#f8fafc" : "#0f172a";
 
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down("sm"));
@@ -108,19 +118,54 @@ export default function MessageDialog({ open, handleClose }) {
   };
 
   return (
-    <Dialog fullScreen open={open} onClose={handleClose} sx={{display:'flex',flexDirection: 'column'}}>
-      <AppBar sx={{ position: "relative", backgroundColor:  "#075E54"}}>
+    <Dialog
+      fullScreen
+      open={open}
+      onClose={handleClose}
+      sx={{ display: "flex", flexDirection: "column" }}
+    >
+      <AppBar
+        elevation={0}
+        sx={{
+          position: "relative",
+          backdropFilter: "blur(28px)",
+          backgroundColor: darkMode ? "rgba(9, 13, 22, 0.55)" : "rgba(248, 250, 252, 0.75)",
+          color: textColor,
+          borderBottom: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
+          boxShadow: darkMode
+            ? "0 4px 30px rgba(0, 0, 0, 0.4), inset 0 -1px 0 0 rgba(255, 255, 255, 0.05)"
+            : "0 4px 20px rgba(15, 23, 42, 0.03), inset 0 -1px 0 0 rgba(255, 255, 255, 0.7)",
+        }}
+      >
         <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={handleClose}>
+          <IconButton edge="start" color="inherit" onClick={handleClose} sx={{ mr: 1.5 }}>
             <CloseIcon />
           </IconButton>
-          <Typography sx={{ flex: 1 }} variant="h6">
-            Messages
+          <Typography
+            sx={{
+              flex: 1,
+              fontWeight: 800,
+              fontSize: "1.2rem",
+              letterSpacing: "-0.5px"
+            }}
+            variant="h6"
+          >
+            Direct Messages
           </Typography>
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ overflow:'auto',flexGrow:1,display: "flex", height: "100%", width: "100%" ,bgcolor:bgColor,color:textColor}}>
+      <Box
+        sx={{
+          overflow: "auto",
+          flexGrow: 1,
+          display: "flex",
+          height: "100%",
+          width: "100%",
+          bgcolor: bgColor,
+          color: textColor,
+        }}
+      >
         {isXs ? (
           selectedUserName ? (
             <Box sx={{ flex: 1, p: 2, overflowY: "auto" }}>
@@ -130,13 +175,15 @@ export default function MessageDialog({ open, handleClose }) {
             <Box
               sx={{
                 flex: 1,
-                px: 2,
-                pt: 2,
+                px: 3,
+                pt: 3,
                 overflowY: "auto",
-                
               }}
             >
-              <Search>
+              <Search sx={{
+                backgroundColor: darkMode ? "rgba(0, 0, 0, 0.15)" : "rgba(255, 255, 255, 0.5)",
+                borderColor: darkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)"
+              }}>
                 <SearchIconWrapper>
                   <SearchIcon />
                 </SearchIconWrapper>
@@ -148,7 +195,7 @@ export default function MessageDialog({ open, handleClose }) {
                 />
               </Search>
 
-              <Box mt={2} >
+              <Box mt={2.5}>
                 {usersToDisplay.length ? (
                   usersToDisplay.map((user) => (
                     <Box
@@ -156,11 +203,18 @@ export default function MessageDialog({ open, handleClose }) {
                       sx={{
                         display: "flex",
                         alignItems: "center",
-                        p: 1,
-                        borderBottom: "1px solid #eee",
+                        p: 2,
+                        borderRadius: "16px",
+                        mb: 1,
                         gap: 2,
                         cursor: "pointer",
-                        
+                        transition: "all 0.2s ease-in-out",
+                        borderBottom: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)"}`,
+                        "&:hover": {
+                          backgroundColor: darkMode ? "rgba(99, 102, 241, 0.05)" : "rgba(99, 102, 241, 0.03)",
+                          transform: "translateX(4px)",
+                          borderColor: "transparent",
+                        }
                       }}
                       onClick={() => setSelectedUserName(user.userName)}
                     >
@@ -168,18 +222,24 @@ export default function MessageDialog({ open, handleClose }) {
                         src={
                           user.profileImageUrl || "/static/images/avatar/1.jpg"
                         }
-                        sx={{ width: 40, height: 40 }}
+                        sx={{
+                          width: 42,
+                          height: 42,
+                          border: `1.5px solid ${darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`
+                        }}
                       />
                       <Box>
-                        <strong>{user.userName}</strong>
-                        <div style={{ fontSize: 12, color: "#888" }}>
+                        <Typography sx={{ fontWeight: 700, fontSize: "0.9rem", color: textColor }}>
+                          {user.userName}
+                        </Typography>
+                        <Typography sx={{ fontSize: "0.8rem", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: 500 }}>
                           {user.name}
-                        </div>
+                        </Typography>
                       </Box>
                     </Box>
                   ))
                 ) : (
-                  <Box textAlign="center" mt={2} color="#999">
+                  <Box textAlign="center" mt={4} color={darkMode ? "#94a3b8" : "#64748b"} sx={{ fontWeight: 500, fontSize: "0.9rem" }}>
                     No users found.
                   </Box>
                 )}
@@ -190,15 +250,22 @@ export default function MessageDialog({ open, handleClose }) {
           <>
             <Box
               sx={{
-                width: "25%",
-                minWidth: "250px",
+                width: "30%",
+                minWidth: "280px",
                 maxWidth: "400px",
-                borderRight: "1px solid #ddd",
-                px: 2,
-                pt: 2,
+                borderRight: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
+                px: 3,
+                pt: 3,
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
               }}
             >
-              <Search>
+              <Search sx={{
+                backgroundColor: darkMode ? "rgba(0, 0, 0, 0.15)" : "rgba(255, 255, 255, 0.5)",
+                borderColor: darkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
+                mb: 2.5,
+              }}>
                 <SearchIconWrapper>
                   <SearchIcon />
                 </SearchIconWrapper>
@@ -210,8 +277,14 @@ export default function MessageDialog({ open, handleClose }) {
               </Search>
 
               <Box
-                mt={2}
-                sx={{ overflowY: "auto", height: "calc(100% - 60px)" }}
+                sx={{
+                  flex: 1,
+                  overflowY: "auto",
+                  scrollbarWidth: "none",
+                  "&::-webkit-scrollbar": {
+                    display: "none",
+                  }
+                }}
               >
                 {usersToDisplay.map((user) => (
                   <Box
@@ -219,10 +292,18 @@ export default function MessageDialog({ open, handleClose }) {
                     sx={{
                       display: "flex",
                       alignItems: "center",
-                      p: 1,
-                      borderBottom: "1px solid #eee",
+                      p: 2,
+                      borderRadius: "16px",
+                      mb: 1,
                       gap: 2,
                       cursor: "pointer",
+                      transition: "all 0.2s ease-in-out",
+                      borderBottom: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)"}`,
+                      "&:hover": {
+                        backgroundColor: darkMode ? "rgba(99, 102, 241, 0.05)" : "rgba(99, 102, 241, 0.03)",
+                        transform: "translateX(4px)",
+                        borderColor: "transparent",
+                      }
                     }}
                     onClick={() => setSelectedUserName(user.userName)}
                   >
@@ -230,25 +311,31 @@ export default function MessageDialog({ open, handleClose }) {
                       src={
                         user.profileImageUrl || "/static/images/avatar/1.jpg"
                       }
-                      sx={{ width: 40, height: 40 }}
+                      sx={{
+                        width: 42,
+                        height: 42,
+                        border: `1.5px solid ${darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`
+                      }}
                     />
                     <Box>
-                      <strong>{user.userName}</strong>
-                      <div style={{ fontSize: 12, color: "#888" }}>
+                      <Typography sx={{ fontWeight: 700, fontSize: "0.9rem", color: textColor }}>
+                        {user.userName}
+                      </Typography>
+                      <Typography sx={{ fontSize: "0.8rem", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: 500 }}>
                         {user.name}
-                      </div>
+                      </Typography>
                     </Box>
                   </Box>
                 ))}
               </Box>
             </Box>
 
-            <Box sx={{ flexGrow: 1, p: 3, overflowY: "auto" }}>
+            <Box sx={{ flexGrow: 1, p: 3, overflowY: "auto", height: "100%" }}>
               {selectedUserName ? (
-                  <Messages userName={selectedUserName} onBack={handleBackToUsers} />
+                <Messages userName={selectedUserName} onBack={handleBackToUsers} />
               ) : (
-                <Box textAlign="center" mt={20} color="#888">
-                  Select a user to start messaging.
+                <Box sx={{ textAlign: "center", mt: 20, color: darkMode ? "#94a3b8" : "#64748b", fontWeight: 600, fontSize: "0.95rem", letterSpacing: "0.5px" }}>
+                  Select a contact to start messaging
                 </Box>
               )}
             </Box>

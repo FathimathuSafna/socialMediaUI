@@ -15,7 +15,7 @@ import { MuiFileInput } from "mui-file-input";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
-import { supabase } from "../store/supabaseClient";
+import { baseURL } from "../service/axiosInstance";
 import * as Yup from "yup";
 import { createPost } from "../service/postAPI";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
@@ -47,7 +47,8 @@ const FileInput = ({ field, form }) => {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedPreviewUrl, setCroppedPreviewUrl] = useState(null);
   const { darkMode } = useCustomTheme();
-  const bgColor = darkMode ? "#121212" : "#ffffff";
+  const bgColor = darkMode ? "rgba(9, 13, 22, 0.55)" : "rgba(255, 255, 255, 0.95)";
+  const textColor = darkMode ? "#f8fafc" : "#0f172a";
 
   const handleFileChange = (file) => {
     setFieldValue(name, file);
@@ -94,34 +95,46 @@ const FileInput = ({ field, form }) => {
         <MuiFileInput
           value={value}
           onChange={handleFileChange}
-          placeholder="Click to upload"
+          placeholder="Click to upload image..."
           fullWidth
           InputProps={{
-            style: { color: "#8e8e8e" },
+            style: { color: textColor },
             startAdornment: (
-              <CloudUploadIcon sx={{ mr: 1, color: "#8e8e8e" }} />
+              <CloudUploadIcon sx={{ mr: 1.5, color: "#6366f1" }} />
             ),
-            sx: {
-              textAlign: "center",
-            },
           }}
           sx={{
             "& .MuiInputBase-root": {
-              height: { xs: 40, md: 116 },
+              height: { xs: 50, md: 120 },
               alignItems: "center",
-            },
-            "& input": {
-              height: "100%",
-              padding: 0,
+              borderRadius: "14px",
+              backgroundColor: darkMode ? "rgba(0, 0, 0, 0.15)" : "rgba(255, 255, 255, 0.5)",
+              border: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)"}`,
+              transition: "all 0.2s ease-in-out",
+              "& fieldset": {
+                borderColor: "transparent !important",
+              },
+              "&:hover": {
+                borderColor: darkMode ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.2)",
+              },
             },
           }}
-          // size="small"
         />
       )}
       {croppedPreviewUrl && (
-        <Card sx={{ mt: 1, maxWidth: 350, mx: "auto", background: bgColor }}>
-          <CardContent sx={{ p: 0.2 }}>
-            <Box sx={{ width: "100%", aspectRatio: "1", overflow: "hidden" }}>
+        <Card
+          className="glass-panel"
+          sx={{
+            mt: 1,
+            maxWidth: 350,
+            mx: "auto",
+            background: bgColor,
+            borderRadius: "20px",
+            border: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
+          }}
+        >
+          <CardContent sx={{ p: 0.5 }}>
+            <Box sx={{ width: "100%", aspectRatio: "1", overflow: "hidden", borderRadius: "16px" }}>
               <img
                 src={croppedPreviewUrl}
                 alt="Cropped Preview"
@@ -136,7 +149,12 @@ const FileInput = ({ field, form }) => {
                 setFieldValue(name, null);
               }}
               size="small"
-              sx={{ fontSize: "0.7rem" }}
+              sx={{
+                textTransform: "none",
+                fontWeight: 700,
+                fontSize: "0.75rem",
+                color: "#ef4444",
+              }}
             >
               Remove
             </Button>
@@ -145,9 +163,20 @@ const FileInput = ({ field, form }) => {
       )}
 
       {preview && !croppedPreviewUrl && (
-        <Card sx={{ mt: 1, maxWidth: 250, mx: "auto", background: bgColor }}>
-          <CardContent sx={{ p: 0.2 }}>
-            <Box sx={{ height: 250, width: "100%", position: "relative" }}>
+        <Card
+          className="glass-panel"
+          sx={{
+            mt: 1,
+            maxWidth: 280,
+            mx: "auto",
+            background: bgColor,
+            borderRadius: "20px",
+            border: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
+            p: 1.5,
+          }}
+        >
+          <CardContent sx={{ p: 0 }}>
+            <Box sx={{ height: 200, width: "100%", position: "relative", borderRadius: "12px", overflow: "hidden" }}>
               <Cropper
                 image={preview}
                 crop={crop}
@@ -164,19 +193,24 @@ const FileInput = ({ field, form }) => {
               max={3}
               step={0.1}
               onChange={(e, newZoom) => setZoom(newZoom)}
-              sx={{ mt: 0.5, color: "#8e8e8e" }}
+              sx={{ mt: 1.5, color: "#6366f1" }}
             />
           </CardContent>
-          <CardActions sx={{ justifyContent: "flex-end" }}>
+          <CardActions sx={{ justifyContent: "flex-end", p: 0, mt: 1 }}>
             <Button
-              variant="outlined"
+              variant="text"
               onClick={() => {
                 setPreview(null);
                 setCroppedPreviewUrl(null);
-                setFieldValue(field.name, null);
+                setFieldValue(name, null);
               }}
               size="small"
-              sx={{ fontSize: "0.65rem" }}
+              sx={{
+                textTransform: "none",
+                fontWeight: 700,
+                fontSize: "0.75rem",
+                color: darkMode ? "#94a3b8" : "#64748b"
+              }}
             >
               Cancel
             </Button>
@@ -185,10 +219,14 @@ const FileInput = ({ field, form }) => {
               onClick={showCroppedImage}
               size="small"
               sx={{
-                ml: 1,
-                backgroundColor: "rgba(0, 0, 0, 0.65)",
+                ml: 1.5,
+                textTransform: "none",
+                fontWeight: 700,
+                fontSize: "0.75rem",
+                borderRadius: "10px",
+                background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
                 color: "#ffffff",
-                fontSize: "0.65rem",
+                boxShadow: "0 4px 12px rgba(99, 102, 241, 0.25)",
               }}
             >
               Crop & Use
@@ -204,6 +242,8 @@ const LocationSearch = ({ value, onSelect }) => {
   const [query, setQuery] = useState(value || "");
   const [results, setResults] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const { darkMode } = useCustomTheme();
+  const textColor = darkMode ? "#f8fafc" : "#0f172a";
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -255,31 +295,58 @@ const LocationSearch = ({ value, onSelect }) => {
           if (results.length > 0) setShowSuggestions(true);
         }}
         onBlur={() => {
-          setTimeout(() => setShowSuggestions(false), 100);
+          setTimeout(() => setShowSuggestions(false), 150);
         }}
-        InputLabelProps={{ style: { color: "#8e8e8e" } }}
+        InputLabelProps={{
+          style: { color: darkMode ? "#94a3b8" : "#64748b", fontWeight: 500 }
+        }}
         InputProps={{
-          style: { color: "#8e8e8e" },
+          sx: {
+            borderRadius: "14px",
+            color: textColor,
+            backgroundColor: darkMode ? "rgba(0, 0, 0, 0.15)" : "rgba(255, 255, 255, 0.5)",
+          },
           startAdornment: (
             <InputAdornment position="start">
-              <LocationOnIcon style={{ color: "#8e8e8e" }} />
+              <LocationOnIcon style={{ color: "#6366f1" }} />
             </InputAdornment>
           ),
+        }}
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              borderColor: darkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
+              transition: "all 0.2s ease-in-out",
+            },
+            "&:hover fieldset": {
+              borderColor: darkMode ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.2)",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#6366f1",
+              boxShadow: `0 0 0 3px rgba(99, 102, 241, 0.15)`,
+            },
+          },
         }}
       />
       {showSuggestions && results.length > 0 && (
         <Box
+          className="glass-panel"
           sx={{
             position: "absolute",
             top: "100%",
             left: 0,
             right: 0,
-            backgroundColor: "white",
+            backgroundColor: darkMode ? "#0f1626" : "#ffffff",
             zIndex: 999,
             maxHeight: 200,
             overflowY: "auto",
-            border: "1px solid #ccc",
-            borderRadius: 1,
+            border: `1px solid ${darkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+            borderRadius: "16px",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.25)",
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": {
+              display: "none",
+            }
           }}
         >
           {results.map((place) => (
@@ -292,9 +359,15 @@ const LocationSearch = ({ value, onSelect }) => {
                 setShowSuggestions(false);
               }}
               sx={{
-                padding: 1,
+                padding: "12px 16px",
                 cursor: "pointer",
-                "&:hover": { backgroundColor: "#f0f0f0" },
+                fontSize: "0.85rem",
+                fontWeight: 500,
+                color: textColor,
+                borderBottom: `1px solid ${darkMode ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.03)"}`,
+                "&:hover": {
+                  backgroundColor: darkMode ? "rgba(99, 102, 241, 0.08)" : "rgba(99, 102, 241, 0.05)",
+                },
               }}
             >
               {place.display_name}
@@ -309,8 +382,17 @@ const LocationSearch = ({ value, onSelect }) => {
 const AddPost = ({ open, handleClose }) => {
   const navigate = useNavigate();
   const { darkMode } = useCustomTheme();
-  const bgColor = darkMode ? "#121212" : "#ffffff";
+  const bgColor = darkMode ? "rgba(9, 13, 22, 0.55)" : "rgba(255, 255, 255, 0.95)";
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
 
   const handleSubmit = async (values, { setSubmitting }) => {
     const { location, file, description } = values;
@@ -330,26 +412,20 @@ const AddPost = ({ open, handleClose }) => {
 
       setUploadProgress(30);
 
-      const fileExt = fileToUpload.name.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `uploads/${fileName}`;
+      const base64Image = await fileToBase64(fileToUpload);
+      setUploadProgress(60);
 
-      const { data, error: uploadError } = await supabase.storage
-        .from("posts")
-        .upload(filePath, fileToUpload, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+      const uploadResponse = await axios.post(`${baseURL}/upload`, {
+        image: base64Image,
+        folder: "posts"
+      });
 
-      if (uploadError) throw uploadError;
+      if (!uploadResponse.data.status) {
+        throw new Error(uploadResponse.data.message || "Failed to upload to Cloudinary");
+      }
 
+      const imageUrl = uploadResponse.data.url;
       setUploadProgress(90);
-
-      const { data: publicUrlData } = supabase.storage
-        .from("posts")
-        .getPublicUrl(filePath);
-
-      const imageUrl = publicUrlData.publicUrl;
 
       await createPost({ location, postImageUrl: imageUrl, description });
 
@@ -364,44 +440,49 @@ const AddPost = ({ open, handleClose }) => {
       setUploadProgress(0);
     }
   };
-  const textColor = darkMode ? "#ffffff" : "#000000";
+  const textColor = darkMode ? "#f8fafc" : "#0f172a";
 
   return (
     <Modal open={open} onClose={handleClose}>
       <Box
+        className="glass-panel"
         sx={{
           position: "absolute",
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: { xs: "85vw", sm: "70vw", md: "600px" },
-          p: 2,
-          borderRadius: 2,
-          boxShadow: 24,
+          width: { xs: "90vw", sm: "70vw", md: "600px" },
+          p: { xs: 3.5, sm: 4.5 },
+          borderRadius: "28px",
+          boxShadow: darkMode
+            ? "0 30px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)"
+            : "0 20px 40px -15px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.7)",
           backgroundColor: bgColor,
-          color: "#8e8e8e",
+          color: textColor,
+          border: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
         }}
       >
         {uploadProgress > 0 && uploadProgress < 100 && (
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="caption" sx={{ color: textColor }}>
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="caption" sx={{ color: textColor, fontWeight: 700 }}>
               Uploading... {uploadProgress}%
             </Typography>
             <Box
               sx={{
-                height: 5,
+                height: 6,
                 width: "100%",
-                backgroundColor: "#ccc",
-                borderRadius: 1,
+                backgroundColor: darkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
+                borderRadius: 99,
                 mt: 1,
+                overflow: "hidden",
               }}
             >
               <Box
                 sx={{
                   height: "100%",
                   width: `${uploadProgress}%`,
-                  backgroundColor: "#8e8e8e",
-                  borderRadius: 1,
+                  background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
+                  borderRadius: 99,
                   transition: "width 0.4s ease-in-out",
                 }}
               />
@@ -421,23 +502,32 @@ const AddPost = ({ open, handleClose }) => {
                 direction="row"
                 alignItems="center"
                 justifyContent="space-between"
-                sx={{ mb: 2 }}
+                sx={{ mb: 3, pb: 1.5, borderBottom: `1px solid ${darkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}` }}
               >
-                <Typography variant="h6" gutterBottom>
-                  Add Post
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 800,
+                    fontSize: "1.25rem",
+                    color: textColor,
+                    letterSpacing: "-0.5px"
+                  }}
+                >
+                  Create New Post
                 </Typography>
 
                 <IconButton
                   onClick={handleClose}
                   disabled={isSubmitting}
                   sx={{
-                    color: "#8e8e8e",
-                    padding: "2px",
-                    fontSize: "0.7rem",
-                    minWidth: 0,
+                    color: darkMode ? "#94a3b8" : "#64748b",
+                    padding: "4px",
+                    "&:hover": {
+                      backgroundColor: darkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)"
+                    }
                   }}
                 >
-                  <CloseIcon sx={{ fontSize: "1.6rem" }} />
+                  <CloseIcon sx={{ fontSize: "1.4rem" }} />
                 </IconButton>
               </Grid2>
 
@@ -445,7 +535,7 @@ const AddPost = ({ open, handleClose }) => {
                 sx={{
                   display: "flex",
                   flexDirection: { xs: "column", sm: "row" },
-                  gap: 2,
+                  gap: 3,
                 }}
               >
                 <Box
@@ -460,7 +550,7 @@ const AddPost = ({ open, handleClose }) => {
                     )}
                   </Field>
                   {touched.location && errors.location && (
-                    <Typography color="error" variant="caption">
+                    <Typography color="error" variant="caption" sx={{ fontWeight: 600 }}>
                       {errors.location}
                     </Typography>
                   )}
@@ -473,13 +563,32 @@ const AddPost = ({ open, handleClose }) => {
                         fullWidth
                         size="small"
                         multiline
-                        rows={2}
+                        rows={3}
                         margin="dense"
                         InputLabelProps={{
-                          style: { color: "#8e8e8e" },
+                          style: { color: darkMode ? "#94a3b8" : "#64748b", fontWeight: 500 }
                         }}
                         InputProps={{
-                          style: { color: "#8e8e8e" },
+                          sx: {
+                            borderRadius: "14px",
+                            color: textColor,
+                            backgroundColor: darkMode ? "rgba(0, 0, 0, 0.15)" : "rgba(255, 255, 255, 0.5)",
+                          }
+                        }}
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            "& fieldset": {
+                              borderColor: darkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
+                              transition: "all 0.2s ease-in-out",
+                            },
+                            "&:hover fieldset": {
+                              borderColor: darkMode ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.2)",
+                            },
+                            "&.Mui-focused fieldset": {
+                              borderColor: "#6366f1",
+                              boxShadow: `0 0 0 3px rgba(99, 102, 241, 0.15)`,
+                            },
+                          },
                         }}
                         error={
                           touched.description && Boolean(errors.description)
@@ -489,44 +598,53 @@ const AddPost = ({ open, handleClose }) => {
                     )}
                   </Field>
                   <Box
-                  sx={{
-                    width: "100%",
-                    maxWidth: { xs: "100%" },
-                    mt: 1,
-                    display: { xs: "block",sm:'none', md: "none" },
-                  }}
-                >
-                  <Field name="file">
-                    {({ field, form }) => (
-                      <FileInput field={field} form={form} />
+                    sx={{
+                      width: "100%",
+                      maxWidth: { xs: "100%" },
+                      mt: 1.5,
+                      display: { xs: "block", sm: "none" },
+                    }}
+                  >
+                    <Field name="file">
+                      {({ field, form }) => (
+                        <FileInput field={field} form={form} />
+                      )}
+                    </Field>
+                    {touched.file && errors.file && (
+                      <Typography color="error" variant="caption" sx={{ fontWeight: 600, mt: 0.5 }}>
+                        {errors.file}
+                      </Typography>
                     )}
-                  </Field>
-                  {touched.file && errors.file && (
-                    <Typography color="error" variant="caption">
-                      {errors.file}
-                    </Typography>
-                  )}
-                </Box>
+                  </Box>
 
                   <Box
                     sx={{
                       display: "flex",
-                      justifyContent: "space-between",
-                      mt: 2,
+                      justifyContent: "flex-start",
+                      mt: 3,
                     }}
                   >
                     <Button
                       variant="contained"
                       type="submit"
                       disabled={isSubmitting}
-                      size="small"
                       sx={{
-                        backgroundColor: "rgba(0, 0, 0, 0.65)",
-                        color: "#fff",
-                        mt: 3,
+                        textTransform: "none",
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        borderRadius: "12px",
+                        background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
+                        px: 4,
+                        py: 1,
+                        color: "#ffffff",
+                        boxShadow: "0 4px 12px rgba(99, 102, 241, 0.25)",
+                        "&:hover": {
+                          background: "linear-gradient(135deg, #4f46e5 0%, #0891b2 100%)",
+                          transform: "translateY(-1px)",
+                        }
                       }}
                     >
-                      submit
+                      Publish Post
                     </Button>
                   </Box>
                 </Box>
@@ -536,7 +654,7 @@ const AddPost = ({ open, handleClose }) => {
                     width: "100%",
                     maxWidth: { xs: "100%", sm: "50%" },
                     mt: 1,
-                    display: { xs: "none",sm:'block', md: "block" },
+                    display: { xs: "none", sm: "block" },
                   }}
                 >
                   <Field name="file">
@@ -545,7 +663,7 @@ const AddPost = ({ open, handleClose }) => {
                     )}
                   </Field>
                   {touched.file && errors.file && (
-                    <Typography color="error" variant="caption">
+                    <Typography color="error" variant="caption" sx={{ fontWeight: 600, mt: 0.5, display: "block" }}>
                       {errors.file}
                     </Typography>
                   )}

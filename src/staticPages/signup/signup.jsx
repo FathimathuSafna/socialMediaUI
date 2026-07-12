@@ -6,6 +6,7 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import "./signup.css";
 import { signup } from "../../service/userApi";
+import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import "@fontsource/pacifico";
 
 // Validation schema
@@ -24,6 +25,7 @@ const SignupSchema = Yup.object().shape({
 function Signup() {
   const navigate = useNavigate();
   const [serverError, setServerError] = useState("");
+  const { darkMode } = useCustomTheme();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -49,7 +51,6 @@ function Signup() {
       dob,
     })
       .then((response) => {
-        console.log("response ", response);
         if (response.status === true) {
           alert("Signup successful! Please check your email for confirmation.");
           localStorage.setItem("userName", response.userName);
@@ -72,21 +73,34 @@ function Signup() {
       });
   };
 
+  const pageBg = "transparent";
+
   return (
     <Grid2
       container
       alignItems="center"
       justifyContent="center"
-      gap={3}
-      sx={{ padding: "20px", }}
+      sx={{
+        minHeight: "100vh",
+        background: pageBg,
+        transition: "background 0.3s ease-in-out",
+        py: 4,
+        px: 2,
+      }}
     >
       <Box
+        className="glass-panel"
         sx={{
           width: "100%",
-          maxWidth: "300px",
-          padding: "20px",
-          borderRadius: "8px",
-          boxShadow: 1,
+          maxWidth: "400px",
+          p: { xs: 4, md: 5 },
+          borderRadius: "28px",
+          backdropFilter: "blur(28px)",
+          backgroundColor: darkMode ? "rgba(9, 13, 22, 0.55)" : "rgba(255, 255, 255, 0.75)",
+          border: `1px solid ${darkMode ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.05)"}`,
+          boxShadow: darkMode
+            ? "0 30px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)"
+            : "0 20px 40px -15px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.7)",
         }}
       >
         <Formik
@@ -106,122 +120,191 @@ function Signup() {
             <Form>
               <Grid2
                 container
-                justifyContent={"center"}
-                alignItems={"center"}
+                justifyContent="center"
+                alignItems="center"
                 direction="column"
-                gap={1}
+                gap={2.5}
               >
                 <Typography
+                  className="shimmer-text"
                   sx={{
-                    fontSize: 24,
+                    fontSize: 38,
                     fontFamily: "'Pacifico', cursive",
-                    paddingTop: 3,
-                    paddingBottom: 3,
-                    color: "#000",
+                    textAlign: "center",
+                    mb: 0.5,
+                    background: "linear-gradient(90deg, #6366f1 0%, #06b6d4 50%, #6366f1 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
                   }}
                 >
                   Appmosphere
                 </Typography>
 
                 <Typography
-                  fontStyle="oblique"
+                  variant="body2"
                   sx={{
-                    pr: 0,
-                    fontSize: 12,
-                    lineHeight: 1.2,
-                    color: "#8e8e8e",
-                    pb: 3,
+                    color: darkMode ? "#94a3b8" : "#64748b",
+                    textAlign: "center",
+                    mb: 1.5,
+                    fontWeight: 600,
+                    fontSize: "0.875rem",
+                    letterSpacing: "0.2px",
                   }}
                 >
-                  Signup and explore to see more photos and videos
+                  Sign up to share photos and chat with friends.
                 </Typography>
 
                 {serverError && (
-                  <Typography
-                    color="error"
-                    variant="body2"
-                    sx={{ mb: 2, textAlign: "center" }}
+                  <Box
+                    sx={{
+                      width: "100%",
+                      p: 1.5,
+                      borderRadius: "14px",
+                      bgcolor: darkMode ? "rgba(239, 68, 68, 0.1)" : "rgba(254, 226, 226, 0.4)",
+                      border: `1px solid ${darkMode ? "rgba(239, 68, 68, 0.2)" : "rgba(239, 68, 68, 0.2)"}`,
+                      textAlign: "center",
+                      mb: 1,
+                    }}
                   >
-                    {serverError}
-                  </Typography>
+                    <Typography
+                      color="error"
+                      sx={{ fontSize: "0.85rem", fontWeight: 700 }}
+                    >
+                      {serverError}
+                    </Typography>
+                  </Box>
                 )}
 
                 {[
                   { name: "userName", label: "Username" },
-                  { name: "name", label: "Name" },
-                  { name: "phoneNumber", label: "Phone No" },
-                  { name: "email", label: "Email" },
+                  { name: "name", label: "Full Name" },
+                  { name: "phoneNumber", label: "Phone Number" },
+                  { name: "email", label: "Email Address" },
                   { name: "password", label: "Password", type: "password" },
-                  { name: "bio", label: "Bio" },
-                  { name: "dob", type: "date" },
+                  { name: "bio", label: "Short Bio" },
+                  { name: "dob", label: "Date of Birth", type: "date" },
                 ].map(({ name, label, type = "text" }) => (
                   <Field
                     key={name}
                     name={name}
                     as={TextField}
-                    label={label}
+                    label={type === "date" ? "" : label}
                     type={type}
+                    placeholder={type === "date" ? "Date of Birth" : ""}
                     variant="outlined"
                     size="small"
-                    className="textBox"
                     error={touched[name] && Boolean(errors[name])}
                     helperText={touched[name] && errors[name]}
                     fullWidth
+                    InputLabelProps={type === "date" ? { shrink: true } : undefined}
+                    InputProps={{
+                      sx: {
+                        borderRadius: "14px",
+                        color: darkMode ? "#f8fafc" : "#0f172a",
+                        backgroundColor: darkMode ? "rgba(0, 0, 0, 0.15)" : "rgba(255, 255, 255, 0.5)",
+                      }
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: darkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
+                          transition: "all 0.2s ease-in-out",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: darkMode ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.2)",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#6366f1",
+                          boxShadow: `0 0 0 4px ${darkMode ? "rgba(99, 102, 241, 0.15)" : "rgba(99, 102, 241, 0.08)"}`,
+                        },
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: darkMode ? "#94a3b8" : "#64748b",
+                        fontSize: "0.9rem",
+                        fontWeight: 500,
+                        "&.Mui-focused": {
+                          color: "#6366f1",
+                        }
+                      }
+                    }}
                   />
                 ))}
 
-                <Grid2 sx={{ paddingTop: "25px", width: "50%" }}>
-                  <Button
-                    variant="contained"
-                    type="submit"
-                    sx={{
-                      borderRadius: "8px",
-                      width: "100%",
-                    }}
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Signing up..." : "Signup"}
-                  </Button>
-                 </Grid2>
-                  <Divider
-                    sx={{
-                      mb: { xs: 2, sm: 3 },
-                      width: "100%",
-                      p: 0,
-                      mt: { xs: 4 },
-                      backgroundColor: "#8e8e8e",
-                    }}
-                  />
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={isSubmitting}
+                  fullWidth
+                  sx={{
+                    borderRadius: "14px",
+                    background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
+                    boxShadow: darkMode
+                      ? "0 8px 24px -4px rgba(99, 102, 241, 0.4)"
+                      : "0 8px 24px -4px rgba(99, 102, 241, 0.25)",
+                    textTransform: "none",
+                    fontWeight: 700,
+                    fontSize: "0.95rem",
+                    py: 1.6,
+                    mt: 1.5,
+                    color: "#ffffff",
+                    transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                    "&:hover": {
+                      background: "linear-gradient(135deg, #4f46e5 0%, #0891b2 100%)",
+                      transform: "translateY(-1.5px)",
+                      boxShadow: darkMode
+                        ? "0 12px 28px -4px rgba(99, 102, 241, 0.5)"
+                        : "0 12px 28px -4px rgba(99, 102, 241, 0.35)",
+                    }
+                  }}
+                >
+                  {isSubmitting ? "Signing up..." : "Sign Up"}
+                </Button>
 
-                  <Grid2
-                    container
-                    direction="row"
-                    sx={{ display: "flex", flexWrap: "wrap" }}
+                <Divider
+                  sx={{
+                    width: "100%",
+                    my: 1.5,
+                    borderColor: darkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
+                  }}
+                />
+
+                <Grid2
+                  container
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="center"
+                  gap={1}
+                  sx={{ width: "100%" }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: "0.85rem",
+                      color: darkMode ? "#94a3b8" : "#64748b",
+                      fontWeight: 500,
+                    }}
                   >
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        fontStyle: "italic",
-                        paddingTop: "20px",
-                        color: "#8e8e8e",
-                      }}
-                    >
-                      Already have an account?
-                    </Typography>
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        pt: 2.2,
-                        width: "auto",
-                        border: "#8e8e8e",
-                        fontSize: 14,
-                      }}
-                      onClick={() => navigate("/login")}
-                    >
-                      Login
-                    </Button>
-                  </Grid2>
+                    Already have an account?
+                  </Typography>
+                  <Button
+                    variant="text"
+                    sx={{
+                      textTransform: "none",
+                      fontSize: "0.85rem",
+                      fontWeight: 700,
+                      color: darkMode ? "#38bdf8" : "#6366f1",
+                      p: 0,
+                      minWidth: "auto",
+                      "&:hover": {
+                        backgroundColor: "transparent",
+                        textDecoration: "underline",
+                      }
+                    }}
+                    onClick={() => navigate("/login")}
+                  >
+                    Login
+                  </Button>
                 </Grid2>
+              </Grid2>
             </Form>
           )}
         </Formik>
