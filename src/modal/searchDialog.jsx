@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha, useTheme } from "@mui/material/styles";
-import { getAllUsers } from "../service/userAPI"; 
+import { getAllUsers } from "../service/user_api"; 
 import Grid2 from "@mui/material/Grid2";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
 import { followUser,getFollowers } from "../service/followApi";
