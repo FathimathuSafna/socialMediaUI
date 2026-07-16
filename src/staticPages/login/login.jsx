@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { login } from "../../service/userApi";
+import { login } from "../../service/userAPI";
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 import '@fontsource/pacifico';
 
