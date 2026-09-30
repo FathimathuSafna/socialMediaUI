@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
-import { getUserDetails } from "../../service/user_api";
+import { getUserDetails } from "../../service/userApi";
 import Avatar from "@mui/material/Avatar";
 import { Grid2, Box, Typography, Divider } from "@mui/material";
 import { Button } from "@mui/joy";
@@ -196,7 +196,7 @@ function Profile() {
                 >
                   {user.name || "Unknown"}
                 </Typography>
-                
+
                 <Button
                   onClick={() => {
                     if (currentUser) {
@@ -240,8 +240,8 @@ function Profile() {
                   {currentUser
                     ? "Edit Profile"
                     : isfollow
-                    ? "Unfollow"
-                    : "Follow"}
+                      ? "Unfollow"
+                      : "Follow"}
                 </Button>
               </Box>
 

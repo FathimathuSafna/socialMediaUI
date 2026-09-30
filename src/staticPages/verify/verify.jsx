@@ -3,7 +3,7 @@ import { Grid2, Typography, TextField, Button, Box } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
-import { verify } from "../../service/user_api";
+import { verify } from "../../service/userApi";
 import { useTheme as useCustomTheme } from "../../store/ThemeContext";
 
 // Validation schema
@@ -35,7 +35,7 @@ function Verify() {
       const response = await verify({ otp: values.otp });
 
       localStorage.setItem("token", response.data); // Save token
-      
+
       navigate("/login");
     } catch (error) {
       console.error("Error during OTP verification:", error);

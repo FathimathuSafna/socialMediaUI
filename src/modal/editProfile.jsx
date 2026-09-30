@@ -6,7 +6,7 @@ import { Formik, Form, Field } from "formik";
 import axios from "axios";
 import { baseURL } from "../service/axiosInstance";
 import * as Yup from "yup";
-import { updateUserDetails } from "../service/user_api";
+import { updateUserDetails } from "../service/userApi";
 import { useTheme as useCustomTheme } from "../store/ThemeContext";
 import Cropper from "react-easy-crop";
 import Slider from "@mui/material/Slider";
@@ -28,7 +28,7 @@ const FileInput = ({ field, form }) => {
   const [croppedPreview, setCroppedPreview] = useState(null);
   const { darkMode } = useCustomTheme();
   const bgColor = darkMode ? "#121212" : "#ffffff";
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
 
   const handleFileChange = (file) => {
@@ -98,7 +98,7 @@ const FileInput = ({ field, form }) => {
               padding: 0,
             },
           }}
-          // size="small"
+        // size="small"
         />
       )}
 
@@ -157,8 +157,8 @@ const FileInput = ({ field, form }) => {
               color="secondary"
               onClick={() => {
                 setCroppedPreview(null);
-                setPreview(null); 
-                setFieldValue(name, null); 
+                setPreview(null);
+                setFieldValue(name, null);
                 navigate(`/`)
               }}
               size="small"
