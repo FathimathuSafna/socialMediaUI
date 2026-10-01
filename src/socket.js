@@ -5,6 +5,7 @@ const SOCKET_URL = import.meta.env.VITE_API_URL || "https://socialmediabackend-t
 console.log('Socket connecting to:', SOCKET_URL);
 
 export const socket = io(SOCKET_URL, {
+  autoConnect: false,
   transports: ["polling", "websocket"],
   upgrade: true,
   withCredentials: true,

@@ -30,6 +30,15 @@ export default function Messages({ userName, onBack }) {
   const background = darkMode ? "#121212" : "#ffffff";
 
   useEffect(() => {
+    if (!socket.connected) {
+      socket.connect();
+    }
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
     const loadConversation = async () => {
       if (!userName) return;
       try {
