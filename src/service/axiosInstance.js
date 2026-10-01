@@ -26,21 +26,26 @@ const setupInterceptors = (instance) => {
       }
       return config;
     },
-    (error) => {
-      return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
   );
 
   instance.interceptors.response.use(
-    (response) => {
-      return response;
-    },
-    (error) => {
+    (response) => response,
+    async (error) => {
+      const config = error.config;
+
+      // Auto-retry when Render free tier is waking up from cold sleep (503 / Network Error)
+      if (config && (!config._retryCount || config._retryCount < 2) && (!error.response || error.response.status === 503 || error.code === "ERR_NETWORK")) {
+        config._retryCount = (config._retryCount || 0) + 1;
+        console.warn(`Render backend waking up... Retrying request (${config._retryCount}/2)`);
+        await new Promise((resolve) => setTimeout(resolve, 2500));
+        return instance(config);
+      }
+
       if (error.response && error.response.status === 401) {
         console.log("Unauthorized, logging out...");
-
         localStorage.clear();
-        window.location.href = "/login"; // redirect to login page
+        window.location.href = "/login";
       }
       return Promise.reject(error);
     }
